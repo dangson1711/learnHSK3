@@ -584,6 +584,7 @@ export default function App() {
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<string | null>(null);
   const [quizScore, setQuizScore] = useState<number>(0);
   const [quizCompleted, setQuizCompleted] = useState<boolean>(false);
+  const [activeLessonTab, setActiveLessonTab] = useState<'details' | 'strokes'>('details');
 
   // Roadmap list View tab: 'topics' | 'library1000'
   const [roadmapViewTab, setRoadmapViewTab] = useState<'topics' | 'library1000'>('topics');
@@ -1033,6 +1034,7 @@ export default function App() {
     setQuizCompleted(false);
     setSelectedQuizAnswer(null);
     setQuizScore(0);
+    setActiveLessonTab('details');
   };
 
   // Complete Word in Lesson
@@ -1048,11 +1050,13 @@ export default function App() {
     if (lessonWordIndex < activeTopicVocabularies.length - 1) {
       setLessonWordIndex(prev => prev + 1);
       setShowExampleTranslation(false);
+      setActiveLessonTab('details');
     } else {
       // Trigger short topic evaluation quiz to review
       setQuizMode(true);
       setQuizCompleted(false);
       setLessonWordIndex(0);
+      setActiveLessonTab('details');
     }
   };
 
@@ -2231,7 +2235,7 @@ export default function App() {
                           </p>
 
                           <p>
-                            Khi bóc tách chữ Hán thành <strong>các bộ thủ cơ bản</strong> (những khối thiết kế cơ bản) rồi gắn chúng lại bằng sức mạnh trí tưởng tượng từ các câu chuyện liên tưởng, việc ghi nhớ bỗng trở nên vô cùng tự nhiên, thư giãn và cực kỳ khó quên.
+                            Khi bóc tách chữ Hán thành <strong>các bộ thủ cơ bản</strong> rồi gắn chúng lại bằng sức mạnh trí tưởng tượng từ các câu chuyện liên tưởng, việc ghi nhớ bỗng trở nên vô cùng tự nhiên, thư giãn và cực kỳ khó quên.
                           </p>
 
                           <p>
@@ -2522,98 +2526,136 @@ export default function App() {
                       </h4>
                     </div>
 
-                    {/* Radicals parsing section */}
-                    <div className="p-5 bg-slate-50/60 border-b border-slate-100 space-y-3">
-                      <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
-                        Phân tích cấu trúc gốc bộ thủ
-                      </span>
+                    {/* Segmented tab custom switcher */}
+                    <div className="flex border-b border-slate-100 bg-slate-50/50 p-1.5 gap-1.5">
+                      <button
+                        onClick={() => setActiveLessonTab('details')}
+                        className={`flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                          activeLessonTab === 'details'
+                            ? 'bg-white text-blue-600 shadow-sm border border-slate-200/50'
+                            : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/30'
+                        }`}
+                      >
+                        Ý Nghĩa & Câu Chuyện
+                      </button>
+                      <button
+                        onClick={() => setActiveLessonTab('strokes')}
+                        className={`flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                          activeLessonTab === 'strokes'
+                            ? 'bg-white text-blue-600 shadow-sm border border-slate-200/50'
+                            : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/30'
+                        }`}
+                      >
+                        Thứ Tự Nét (Ô Mễ)
+                      </button>
+                    </div>
 
-                      <div className="flex flex-wrap gap-2">
-                        {activeTopicVocabularies[lessonWordIndex]?.radicals.map((radChar, idx) => {
-                          const foundRad = findRadicalByChar(radChar);
-                          return (
+                    {activeLessonTab === 'details' ? (
+                      <>
+                        {/* Radicals parsing section */}
+                        <div className="p-5 bg-slate-50/60 border-b border-slate-100 space-y-3">
+                          <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
+                            Phân tích cấu trúc gốc bộ thủ
+                          </span>
+
+                          <div className="flex flex-wrap gap-2">
+                            {activeTopicVocabularies[lessonWordIndex]?.radicals.map((radChar, idx) => {
+                              const foundRad = findRadicalByChar(radChar);
+                              return (
+                                <button
+                                  key={idx}
+                                  onClick={() => {
+                                    if (foundRad) {
+                                      setSelectedRadicalInModal(foundRad);
+                                    }
+                                  }}
+                                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-indigo-500 rounded-full text-slate-700 hover:text-indigo-600 text-xs font-bold transition-colors shadow-sm"
+                                >
+                                  <span className="font-serif text-sm font-bold text-indigo-650 text-indigo-600">{radChar}</span>
+                                  {foundRad && (
+                                    <span className="text-[10px] text-slate-400 font-medium">({foundRad.vietnameseName})</span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                          <p className="text-[10px] text-slate-400 italic">
+                            Mẹo: Tap vào bong bóng để giải mã ý niệm của bộ thủ cấu tạo chữ.
+                          </p>
+                        </div>
+
+                        {/* Story explanation */}
+                        <div className="p-6 space-y-2.5">
+                          <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
+                            Câu chuyện liên tưởng khơi dậy trí nhớ
+                          </span>
+                          <p className="text-xs text-slate-700 leading-relaxed bg-blue-50/45 p-4 rounded-2xl border border-blue-100">
+                            {activeTopicVocabularies[lessonWordIndex]?.story}
+                          </p>
+                        </div>
+
+                        {/* Dialogue sentence with visibility trigger and Speaker Trigger */}
+                        <div className="px-6 py-5 bg-slate-50 border-t border-slate-100 space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
+                              Câu đàm thoại mẫu văn
+                            </span>
+                            
                             <button
-                              key={idx}
-                              onClick={() => {
-                                if (foundRad) {
-                                  setSelectedRadicalInModal(foundRad);
-                                }
-                              }}
-                              className="flex items-center space-x-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-indigo-500 rounded-full text-slate-700 hover:text-indigo-600 text-xs font-bold transition-colors shadow-sm"
+                              onClick={() => speakChinese(activeTopicVocabularies[lessonWordIndex]?.exampleSentence)}
+                              className="p-1 px-2.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center space-x-1"
                             >
-                              <span className="font-serif text-sm font-bold text-indigo-650 text-indigo-600">{radChar}</span>
-                              {foundRad && (
-                                <span className="text-[10px] text-slate-400 font-medium">({foundRad.vietnameseName})</span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      <p className="text-[10px] text-slate-400 italic">
-                        Mẹo: Tap vào bong bóng để giải mã ý niệm của bộ thủ cấu tạo chữ.
-                      </p>
-                    </div>
-
-                    {/* Story explanation */}
-                    <div className="p-6 space-y-2.5">
-                      <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
-                        Câu chuyện liên tưởng khơi dậy trí nhớ
-                      </span>
-                      <p className="text-xs text-slate-700 leading-relaxed bg-blue-50/45 p-4 rounded-2xl border border-blue-100">
-                        {activeTopicVocabularies[lessonWordIndex]?.story}
-                      </p>
-                    </div>
-
-                    {/* Dialogue sentence with visibility trigger and Speaker Trigger */}
-                    <div className="px-6 py-5 bg-slate-50 border-t border-slate-100 space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
-                          Câu đàm thoại mẫu văn
-                        </span>
-                        
-                        <button
-                          onClick={() => speakChinese(activeTopicVocabularies[lessonWordIndex]?.exampleSentence)}
-                          className="p-1 px-2.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center space-x-1"
-                        >
-                          <Volume2 className="w-3.5 h-3.5" />
-                          <span>Nghe phát âm</span>
-                        </button>
-                      </div>
-
-                      <p className="text-base font-serif text-slate-900 tracking-wide font-bold">
-                        {activeTopicVocabularies[lessonWordIndex]?.exampleSentence}
-                      </p>
-                      
-                      <p className="text-xs text-blue-600 font-mono font-medium">
-                        {activeTopicVocabularies[lessonWordIndex]?.examplePinyin}
-                      </p>
-
-                      <div className="pt-1.5">
-                        {showExampleTranslation ? (
-                          <div className="flex items-start justify-between bg-white px-3 py-2.5 rounded-xl border border-slate-200">
-                            <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                              {activeTopicVocabularies[lessonWordIndex]?.exampleMeaning}
-                            </p>
-                            <button 
-                              onClick={() => setShowExampleTranslation(false)}
-                              className="text-[10px] text-slate-400 hover:text-slate-600 ml-2 font-bold"
-                            >
-                              Ẩn
+                              <Volume2 className="w-3.5 h-3.5" />
+                              <span>Nghe phát âm</span>
                             </button>
                           </div>
-                        ) : (
-                          <button
-                            onClick={() => setShowExampleTranslation(true)}
-                            className="text-xs text-indigo-600 font-bold hover:underline flex items-center space-x-1"
-                          >
-                            <span className="flex items-center gap-1">
-                              <Eye className="w-3.5 h-3.5" />
-                              Xem nghĩa dịch tiếng Việt
-                            </span>
-                          </button>
-                        )}
+
+                          <p className="text-base font-serif text-slate-900 tracking-wide font-bold">
+                            {activeTopicVocabularies[lessonWordIndex]?.exampleSentence}
+                          </p>
+                          
+                          <p className="text-xs text-blue-600 font-mono font-medium">
+                            {activeTopicVocabularies[lessonWordIndex]?.examplePinyin}
+                          </p>
+
+                          <div className="pt-1.5">
+                            {showExampleTranslation ? (
+                              <div className="flex items-start justify-between bg-white px-3 py-2.5 rounded-xl border border-slate-200">
+                                <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                                  {activeTopicVocabularies[lessonWordIndex]?.exampleMeaning}
+                                </p>
+                                <button 
+                                  onClick={() => setShowExampleTranslation(false)}
+                                  className="text-[10px] text-slate-400 hover:text-slate-600 ml-2 font-bold"
+                                >
+                                  Ẩn
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => setShowExampleTranslation(true)}
+                                className="text-xs text-indigo-600 font-bold hover:underline flex items-center space-x-1"
+                              >
+                                <span className="flex items-center gap-1">
+                                  <Eye className="w-3.5 h-3.5" />
+                                  Xem nghĩa dịch tiếng Việt
+                                </span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="p-6 flex flex-col items-center justify-center space-y-3 bg-slate-50/30">
+                        <span className="text-[10.5px] font-extrabold text-slate-400 tracking-wider uppercase">
+                          Hướng Dẫn Thứ Tự Nét Vẽ Chữ Hán
+                        </span>
+                        <StrokeOrderVisualizer 
+                          text={activeTopicVocabularies[lessonWordIndex]?.word} 
+                          className="w-full max-w-sm" 
+                        />
                       </div>
-                    </div>
+                    )}
 
                     {/* Control Bar Actions */}
                     <div className="p-4 bg-white border-t border-slate-200 flex justify-end">
