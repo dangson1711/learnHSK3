@@ -24,6 +24,7 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,6 +43,12 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
 
     if (password.length < 6) {
       setError('Mật khẩu tối thiểu phải dài 6 ký tự.');
+      setLoading(false);
+      return;
+    }
+
+    if (isRegister && password !== confirmPassword) {
+      setError('Mật khẩu xác nhận không trùng khớp. Vui lòng nhập lại chính xác.');
       setLoading(false);
       return;
     }
@@ -109,7 +116,7 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         {/* Tabs switcher */}
         <div className="flex border-b border-slate-150">
           <button
-            onClick={() => { setIsRegister(false); setError(null); }}
+            onClick={() => { setIsRegister(false); setError(null); setConfirmPassword(''); }}
             className={`flex-1 py-3 text-xs font-bold transition-all border-b-2 text-center uppercase tracking-wide cursor-pointer ${
               !isRegister 
                 ? 'border-blue-600 text-blue-600 font-extrabold bg-blue-50/10' 
@@ -119,7 +126,7 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
             Đăng nhập
           </button>
           <button
-            onClick={() => { setIsRegister(true); setError(null); }}
+            onClick={() => { setIsRegister(true); setError(null); setConfirmPassword(''); }}
             className={`flex-1 py-3 text-xs font-bold transition-all border-b-2 text-center uppercase tracking-wide cursor-pointer ${
               isRegister 
                 ? 'border-blue-600 text-blue-600 font-extrabold bg-blue-50/10' 
@@ -181,6 +188,26 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
               />
             </div>
           </div>
+
+          {/* Confirm Password input (only for registration) */}
+          {isRegister && (
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Xác nhận mật khẩu</label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
+                  <Lock className="w-4 h-4" />
+                </span>
+                <input
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  placeholder="Nhập lại mật khẩu giống hệt"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Submit Trigger */}
           <button

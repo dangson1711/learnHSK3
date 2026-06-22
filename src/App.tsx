@@ -23,6 +23,7 @@ import {
   User,
   ShoppingBag,
   Clock,
+  Info,
   Briefcase,
   HeartPulse,
   Users,
@@ -592,6 +593,55 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResult, setSearchResult] = useState<Vocabulary | null>(null);
 
+  // Helper to calculate exact active daily study streak from session dates
+  const computeActualStreak = (history: StudySession[] | undefined, lastLearnDate: string | null): number => {
+    if (!history || history.length === 0) {
+      return lastLearnDate ? 1 : 0;
+    }
+    const todayStr = new Date().toISOString().split('T')[0];
+    const uniqueDates = Array.from(new Set(history.map(h => h.date).filter(Boolean))).sort();
+    if (uniqueDates.length === 0) {
+      return lastLearnDate ? 1 : 0;
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    const lastSessionDate = uniqueDates[uniqueDates.length - 1];
+    // If last session wasn't today or yesterday, streak is broken
+    if (lastSessionDate !== todayStr && lastSessionDate !== yesterdayStr) {
+      return 0;
+    }
+
+    let streakCount = 0;
+    let checkDate = new Date(lastSessionDate);
+    let protection = 0;
+    while (protection < 365) {
+      protection++;
+      const checkStr = checkDate.toISOString().split('T')[0];
+      if (uniqueDates.includes(checkStr)) {
+        streakCount++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+    return streakCount;
+  };
+
+  // Enforce correct streak on any loaded progression record to prevent desynchronization
+  const calibrateProgress = (p: UserProgress): UserProgress => {
+    const actualStreak = computeActualStreak(p.studyHistory, p.lastLearnDate);
+    if (p.streak !== actualStreak) {
+      return {
+        ...p,
+        streak: actualStreak
+      };
+    }
+    return p;
+  };
+
   // Initialize progress and sync with Firebase Auth State change listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -602,35 +652,54 @@ export default function App() {
         try {
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
-            setProgress(userSnap.data() as UserProgress);
+            const data = userSnap.data() as UserProgress;
+            // Handle correcting legacy default seed "streak: 3" and "learnedRadicals/Vocabulary" to absolute 0
+            let correctedData = { ...data };
+            let hasCorrection = false;
+            
+            // Check if user has the legacy seed and needs a clean reset to 0
+            if (
+              (data.streak === 3 && data.learnedVocabulary?.includes('voc_001') && data.learnedVocabulary?.includes('voc_002')) ||
+              (data.streak === 3 && (!data.studyHistory || data.studyHistory.length === 0) && (!data.learnedVocabulary || data.learnedVocabulary.length <= 2))
+            ) {
+              correctedData = {
+                learnedRadicals: [],
+                learnedVocabulary: [],
+                streak: 0,
+                lastLearnDate: null,
+                studyHistory: [],
+                srsVocabulary: {}
+              };
+              hasCorrection = true;
+            }
+            
+            // Run streak calibration
+            const calibrated = calibrateProgress(correctedData);
+            if (calibrated.streak !== correctedData.streak) {
+              correctedData = calibrated;
+              hasCorrection = true;
+            }
+
+            if (hasCorrection) {
+              await setDoc(userRef, correctedData);
+              setProgress(correctedData);
+              localStorage.setItem('hanzi_story_progress', JSON.stringify(correctedData));
+            } else {
+              setProgress(correctedData);
+            }
           } else {
-            // First time registration: merge prior localStorage data with default state
-            const saved = localStorage.getItem('hanzi_story_progress');
-            let mergedProgress: UserProgress = {
-              learnedRadicals: ['rad_01', 'rad_14', 'rad_18'],
-              learnedVocabulary: ['voc_001', 'voc_002'],
-              streak: 3,
-              lastLearnDate: new Date().toISOString().split('T')[0],
+            // First time registration: Everything must start from absolute 0
+            const newProgress: UserProgress = {
+              learnedRadicals: [],
+              learnedVocabulary: [],
+              streak: 0,
+              lastLearnDate: null,
               studyHistory: [],
               srsVocabulary: {}
             };
-            if (saved) {
-              try {
-                const parsed = JSON.parse(saved);
-                mergedProgress = {
-                  learnedRadicals: parsed.learnedRadicals || mergedProgress.learnedRadicals,
-                  learnedVocabulary: parsed.learnedVocabulary || mergedProgress.learnedVocabulary,
-                  streak: parsed.streak || mergedProgress.streak,
-                  lastLearnDate: parsed.lastLearnDate || mergedProgress.lastLearnDate,
-                  studyHistory: parsed.studyHistory || [],
-                  srsVocabulary: parsed.srsVocabulary || {}
-                };
-              } catch (e) {
-                console.error("Error reading saved progress", e);
-              }
-            }
-            await setDoc(userRef, mergedProgress);
-            setProgress(mergedProgress);
+            await setDoc(userRef, newProgress);
+            setProgress(newProgress);
+            localStorage.setItem('hanzi_story_progress', JSON.stringify(newProgress));
           }
         } catch (dbErr) {
           console.error("Error fetching Firestore record user", dbErr);
@@ -640,17 +709,44 @@ export default function App() {
         const saved = localStorage.getItem('hanzi_story_progress');
         if (saved) {
           try {
-            setProgress(JSON.parse(saved));
+            let parsed = JSON.parse(saved) as UserProgress;
+            // Correct the offline legacy seed "streak: 3" to absolute 0
+            let hasCorrection = false;
+            if (
+              (parsed.streak === 3 && parsed.learnedVocabulary?.includes('voc_001') && parsed.learnedVocabulary?.includes('voc_002')) ||
+              (parsed.streak === 3 && (!parsed.studyHistory || parsed.studyHistory.length === 0) && (!parsed.learnedVocabulary || parsed.learnedVocabulary.length <= 2))
+            ) {
+              parsed = {
+                learnedRadicals: [],
+                learnedVocabulary: [],
+                streak: 0,
+                lastLearnDate: null,
+                studyHistory: [],
+                srsVocabulary: {}
+              };
+              hasCorrection = true;
+            }
+
+            const calibrated = calibrateProgress(parsed);
+            if (calibrated.streak !== parsed.streak) {
+              parsed = calibrated;
+              hasCorrection = true;
+            }
+
+            if (hasCorrection) {
+              localStorage.setItem('hanzi_story_progress', JSON.stringify(parsed));
+            }
+            setProgress(parsed);
           } catch (e) {
             console.error("Error loading localStorage progress", e);
           }
         } else {
-          // Defaults
+          // Defaults: Everything starts from absolute 0
           const initialOffline: UserProgress = {
-            learnedRadicals: ['rad_01', 'rad_14', 'rad_18'],
-            learnedVocabulary: ['voc_001', 'voc_002'],
-            streak: 3,
-            lastLearnDate: new Date().toISOString().split('T')[0],
+            learnedRadicals: [],
+            learnedVocabulary: [],
+            streak: 0,
+            lastLearnDate: null,
             studyHistory: [],
             srsVocabulary: {}
           };
@@ -698,11 +794,40 @@ export default function App() {
       });
     }
 
-    const updated = {
+    let updated = {
       ...progress,
       studyHistory: currentHistory
     };
+    updated = getStreakUpdatedProgress(updated);
     await saveProgress(updated);
+  };
+
+  // Helper to safely calculate streak updates without state races
+  const getStreakUpdatedProgress = (currProgress: UserProgress): UserProgress => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    
+    // Ensure we have a session today in studyHistory so streak counts it
+    let currentHistory = currProgress.studyHistory ? [...currProgress.studyHistory] : [];
+    const hasToday = currentHistory.some(h => h.date === todayStr);
+    if (!hasToday) {
+      currentHistory.push({
+        date: todayStr,
+        minutes: 0,
+        seconds: 0
+      });
+    }
+
+    const nextProgress = {
+      ...currProgress,
+      studyHistory: currentHistory,
+      lastLearnDate: todayStr
+    };
+
+    const actualStreak = computeActualStreak(currentHistory, todayStr);
+    return {
+      ...nextProgress,
+      streak: actualStreak
+    };
   };
 
   // Sync state to LocalStorage and remote Firestore Database if logged in
@@ -737,14 +862,14 @@ export default function App() {
       newList.push(vocabId);
     }
 
-    const updatedProgress = {
+    let updatedProgress = {
       ...progress,
       learnedVocabulary: newList,
       srsVocabulary: updatedSrsMap
     };
 
+    updatedProgress = getStreakUpdatedProgress(updatedProgress);
     await saveProgress(updatedProgress);
-    updateStreak();
   };
 
   // Toggle radical mastered status
@@ -756,9 +881,9 @@ export default function App() {
     } else {
       newList = [...progress.learnedRadicals, id];
     }
-    const updated = { ...progress, learnedRadicals: newList };
-    updateStreak();
-    saveProgress({ ...updated, streak: progress.streak }); // keep streak updated
+    let updated = { ...progress, learnedRadicals: newList };
+    updated = getStreakUpdatedProgress(updated);
+    saveProgress(updated);
   };
 
   // Toggle vocabulary mastered status
@@ -770,38 +895,9 @@ export default function App() {
     } else {
       newList = [...progress.learnedVocabulary, id];
     }
-    const updated = { ...progress, learnedVocabulary: newList };
+    let updated = { ...progress, learnedVocabulary: newList };
+    updated = getStreakUpdatedProgress(updated);
     saveProgress(updated);
-  };
-
-  // Streak logic simulation on study actions
-  const updateStreak = () => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    if (progress.lastLearnDate === todayStr) {
-      return;
-    }
-    
-    let newStreak = progress.streak;
-    if (progress.lastLearnDate) {
-      const lastDate = new Date(progress.lastLearnDate);
-      const today = new Date(todayStr);
-      const diffTime = Math.abs(today.getTime() - lastDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
-      if (diffDays === 1) {
-        newStreak += 1;
-      } else if (diffDays > 1) {
-        newStreak = 1;
-      }
-    } else {
-      newStreak = 1;
-    }
-    
-    saveProgress({
-      ...progress,
-      streak: newStreak,
-      lastLearnDate: todayStr
-    });
   };
 
   const handleResetAll = () => {
@@ -856,14 +952,11 @@ export default function App() {
       
       let mins = historyMap[dateStr];
       if (mins === undefined) {
-        // Fallback visual seeds for an immediately engaging chart on day one!
-        if (i === 6) mins = 4.5;
-        else if (i === 5) mins = 6.2;
-        else if (i === 4) mins = 0; // missed study
-        else if (i === 3) mins = 8.1;
-        else if (i === 2) mins = 12.0;
-        else if (i === 1) mins = 5.5;
-        else mins = (studyTimeSeconds / 60);
+        if (i === 0) {
+          mins = studyTimeSeconds / 60;
+        } else {
+          mins = 0;
+        }
       } else if (i === 0) {
         mins = Math.max(mins, studyTimeSeconds / 60);
       }
@@ -957,8 +1050,10 @@ export default function App() {
   const markCurrentWordMastered = (vocabId: string) => {
     if (!progress.learnedVocabulary.includes(vocabId)) {
       toggleVocabLearned(vocabId);
+    } else {
+      const updated = getStreakUpdatedProgress(progress);
+      saveProgress(updated);
     }
-    updateStreak();
     
     // Proceed to next
     if (lessonWordIndex < activeTopicVocabularies.length - 1) {
@@ -1033,11 +1128,12 @@ export default function App() {
           updatedVocabList.push(v.id);
         }
       });
-      saveProgress({
+      let updated = {
         ...progress,
         learnedVocabulary: updatedVocabList
-      });
-      updateStreak();
+      };
+      updated = getStreakUpdatedProgress(updated);
+      saveProgress(updated);
     }
   };
 
@@ -1189,6 +1285,18 @@ export default function App() {
               >
                 <Award className="w-5 h-5 text-amber-500" />
                 <span>Ôn Tập Từ Vựng</span>
+              </button>
+
+              <button 
+                onClick={() => { setCurrentView('about'); }}
+                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  currentView === 'about' 
+                    ? 'bg-blue-50 text-blue-700 font-semibold shadow-sm' 
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                <Info className="w-5 h-5 text-teal-500" />
+                <span>Về Hanzi Story</span>
               </button>
             </div>
 
@@ -1834,7 +1942,6 @@ export default function App() {
                                         <button
                                           onClick={() => {
                                             toggleVocabLearned(wordItem.word);
-                                            updateStreak();
                                           }}
                                           className={`p-1 px-2.5 rounded-lg text-[10px] font-bold ${
                                             isLearnedWord
@@ -1998,7 +2105,6 @@ export default function App() {
                           <button
                             onClick={() => {
                               toggleVocabLearned(searchResult.word);
-                              updateStreak();
                             }}
                             className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors ${
                               progress.learnedVocabulary.includes(searchResult.word) || progress.learnedVocabulary.some(v => v.includes(searchResult.word))
@@ -2044,6 +2150,221 @@ export default function App() {
                       srsVocabulary={progress.srsVocabulary || {}}
                       onUpdateSrs={handleUpdateSrs}
                     />
+                  </motion.div>
+                )}
+
+                {/* 6. ABOUT / INTRODUCTION VIEW */}
+                {currentView === 'about' && (
+                  <motion.div
+                    key="about"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="space-y-8 max-w-5xl mx-auto"
+                  >
+                    {/* Unique Hero Banner */}
+                    <div className="bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-white rounded-3xl p-8 md:p-10 shadow-xl relative overflow-hidden border border-slate-800">
+                      <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+                      <div className="absolute left-1/4 bottom-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+                      
+                      <div className="relative max-w-3xl space-y-4">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-500/10 text-blue-300 rounded-full text-xs font-bold border border-blue-400/20 tracking-wider uppercase">
+                          <Sparkles className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
+                          Người Thật - Việc Thật - Gốc Rễ Đích Thực
+                        </span>
+                        <h1 className="text-3xl font-black tracking-tight md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-blue-200 leading-tight">
+                          Hanzi Story
+                        </h1>
+                        <p className="text-base md:text-lg text-slate-300 leading-relaxed font-light max-w-2xl">
+                          Ứng dụng miễn phí 100% bẻ khóa chữ Hán qua tư duy logic kỹ thuật, kết hợp 50 bộ thủ cốt lõi và sức mạnh của câu chuyện liên tưởng tự nhiên.
+                        </p>
+                      </div>
+
+                      {/* Cool subtle stats counters on banner bottom */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 mt-8 border-t border-slate-800/80">
+                        <div>
+                          <div className="text-2xl md:text-3xl font-black text-white">50</div>
+                          <div className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">Bộ thủ sơ bản</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl md:text-3xl font-black text-blue-400">1000+</div>
+                          <div className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">Từ vựng HSK 1-3</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl md:text-3xl font-black text-teal-400">0đ</div>
+                          <div className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">Chi phí ẩn</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl md:text-3xl font-black text-amber-400 font-mono">100%</div>
+                          <div className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">Tự tâm xây dựng</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Desktop Split-Grid: 12 Columns */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                      
+                      {/* Left: Founder's Story & Letter (Columns 1 to 7) */}
+                      <div className="lg:col-span-7 bg-white rounded-3xl p-6 md:p-8 border border-slate-150 shadow-sm space-y-6">
+                        <div className="flex gap-4 items-center border-b border-slate-100 pb-5">
+                          <div className="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-xl font-extrabold shadow-sm">
+                            ĐS
+                          </div>
+                          <div>
+                            <h2 className="text-lg font-bold text-slate-800 leading-tight">Đặng Thành Sơn</h2>
+                            <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mt-0.5">Kỹ sư tự động hóa — Người sáng lập</p>
+                          </div>
+                        </div>
+
+                        <div className="prose prose-slate max-w-none text-slate-600 text-sm leading-relaxed space-y-5">
+                          <p className="font-medium text-slate-800 text-base">
+                            Xin chào các bạn đang theo đuổi tiếng Trung!
+                          </p>
+                          
+                          <p>
+                            Khởi điểm tôi không phải là một chuyên gia hay nhà nghiên cứu ngôn ngữ. Tôi tìm đến tiếng Trung với một mục tiêu cực kỳ thiết thực của một kỹ sư: <strong className="text-blue-700 font-semibold">Mở rộng cơ hội và bứt phá thăng tiến trong sự nghiệp</strong>.
+                          </p>
+
+                          <p>
+                            Thế nhưng, ngay từ những chạm tay đầu tiên, tôi đã vấp phải bức tường lớn nhất mà hầu hết chúng ta đều run sợ: <strong className="text-slate-800">ghi nhớ hàng ngàn "ký tự tượng hình" phức tạp</strong>. Việc học vẹt từng nét vẽ không những làm mất thời gian mà còn khiến người học rơi vào cái bẫy "học trước quên sau", mệt mỏi và dễ buông xuôi.
+                          </p>
+
+                          {/* Beautiful quote component with accent borders */}
+                          <div className="relative p-6 my-6 bg-slate-50 border-l-4 border-blue-600 rounded-r-2xl overflow-hidden shadow-inner">
+                            <div className="absolute right-3 top-2 text-slate-150 text-7xl font-serif pointer-events-none">”</div>
+                            <blockquote className="text-slate-700 font-medium italic relative z-10 text-sm md:text-base leading-relaxed">
+                              "Tại sao chúng ta phải căng mắt học vẹt từng nét chữ vô hồn, trong khi có thể thấu hiểu trọn vẹn nguyên lý cấu tạo của chúng một cách khoa học?"
+                            </blockquote>
+                          </div>
+
+                          <p>
+                            Dưới lăng kính của một người làm kỹ thuật số, quen xử lý các hệ thống máy móc phức tạp qua tư duy mô-đun hóa, tôi nhận ra: <span className="font-semibold text-slate-800">Chữ Hán thực chất là một hệ thống lắp ghép cực kỳ logic!</span>
+                          </p>
+
+                          <p>
+                            Khi bóc tách chữ Hán thành <strong>các bộ thủ cơ bản</strong> (những khối thiết kế cơ bản) rồi gắn chúng lại bằng sức mạnh trí tưởng tượng từ các câu chuyện liên tưởng, việc ghi nhớ bỗng trở nên vô cùng tự nhiên, thư giãn và cực kỳ khó quên.
+                          </p>
+
+                          <p>
+                            Đó chính là khoảnh khắc ý tưởng bùng nổ, thôi thúc tôi tạo dựng nên một nơi lưu giữ và chia sẻ phương pháp này. Và thế là <strong className="text-blue-600">Hanzi Story</strong> được ra đời từ chính mong mỏi ấy.
+                          </p>
+                        </div>
+
+                        {/* Professional Signature Signature Block */}
+                        <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+                          <span className="text-slate-400 text-xs font-medium">Bản quyền thuộc về tác giả • 2026</span>
+                          <div className="text-right">
+                            <span className="font-serif italic text-lg text-slate-800 mr-2 block">Dang Thanh Son</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block -mt-1">Kỹ sư / Creator</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: Mission, Features & Guarantee Cards (Columns 8 to 12) */}
+                      <div className="lg:col-span-5 space-y-6">
+                        
+                        {/* Highlights & Values Box */}
+                        <div className="bg-white rounded-3xl p-6 border border-slate-150 shadow-sm space-y-4">
+                          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest text-slate-500">Hanzi Story Cung Cấp Cho Bạn</h3>
+                          
+                          <div className="space-y-4">
+                            {/* Feature item 1 */}
+                            <div className="flex gap-4 items-start p-3 hover:bg-slate-50 rounded-2xl transition-all">
+                              <div className="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                                <BookOpen className="w-4.5 h-4.5" />
+                              </div>
+                              <div className="space-y-0.5">
+                                <h4 className="text-sm font-bold text-slate-800">Nền Tảng 50 Bộ Thủ Cơ Bản</h4>
+                                <p className="text-xs text-slate-500 leading-relaxed">
+                                  Ví như những "vật liệu nền móng" đầu tiên giúp bóc tách gốc rễ ý nghĩa nguyên văn của chữ Hán thông qua hình ảnh sống động.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Feature item 2 */}
+                            <div className="flex gap-4 items-start p-3 hover:bg-slate-50 rounded-2xl transition-all">
+                              <div className="w-9 h-9 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center shrink-0">
+                                <Sparkles className="w-4.5 h-4.5" />
+                              </div>
+                              <div className="space-y-0.5">
+                                <h4 className="text-sm font-bold text-slate-800">Phương Pháp Thuyết Khóa Câu Chuyện</h4>
+                                <p className="text-xs text-slate-500 leading-relaxed">
+                                  Học bộ thủ kết hợp tạo lập cốt truyện liên tưởng đặc biệt, khắc sâu trực tiếp vào trí nhớ dài hạn ngay từ cái nhìn đầu tiên.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Feature item 3 */}
+                            <div className="flex gap-4 items-start p-3 hover:bg-slate-50 rounded-2xl transition-all">
+                              <div className="w-9 h-9 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+                                <Layers className="w-4.5 h-4.5" />
+                              </div>
+                              <div className="space-y-0.5">
+                                <h4 className="text-sm font-bold text-slate-800">Lộ Trình Chuẩn HSK 1 - 3</h4>
+                                <p className="text-xs text-slate-500 leading-relaxed">
+                                  Hệ thống hóa khoa học theo chủ điểm giao tiếp sinh động, tự tin chinh phục mốc lộ trình <strong>1000 từ vựng cốt lõi</strong>.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Feature item 4 */}
+                            <div className="flex gap-4 items-start p-3 hover:bg-slate-50 rounded-2xl transition-all">
+                              <div className="w-9 h-9 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center shrink-0">
+                                <TrendingUp className="w-4.5 h-4.5" />
+                              </div>
+                              <div className="space-y-0.5">
+                                <h4 className="text-sm font-bold text-slate-800">Theo Dõi Thống Kê & Ghi Nhớ Srs</h4>
+                                <p className="text-xs text-slate-500 leading-relaxed">
+                                  Thuật toán lặp lại ngắt quãng thông minh phối hợp với biểu đồ thống kê cá nhân hóa giúp tối ưu hóa thời học của bạn.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 100% Free Non-profit Guarantee Box */}
+                        <div className="bg-gradient-to-br from-amber-50 to-orange-50/50 rounded-3xl p-6 border border-amber-200 shadow-sm space-y-4">
+                          <div className="flex gap-3 items-center">
+                            <div className="w-10 h-10 bg-amber-500/10 text-amber-700 rounded-xl flex items-center justify-center shrink-0">
+                              <Heart className="w-5 h-5 fill-amber-500 text-amber-500" />
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-slate-800 text-sm">Dự Án Từ Tâm – Miễn Phí 100%</h4>
+                              <p className="text-[10px] text-amber-800 font-bold uppercase tracking-wider">Không thương mại • Trọn đời miễn phí</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2.5 text-xs text-slate-600 leading-relaxed">
+                            <p>
+                              Hanzi Story <strong>không phải dự án thương mại</strong>. Đây ban đầu chỉ là cuốn "sổ tay kỹ thuật số" cá nhân mà tôi tự lập trình cho mục đích học tập của bản thân.
+                            </p>
+                            <p className="border-t border-amber-200/60 pt-2 font-medium text-amber-900">
+                              Tuyệt đối không có phí ẩn, không giới hạn tính năng và không quảng cáo phiền nhiễu. Dự án hoạt động vì sự tiến bộ của toàn thể cộng đồng tự học thông minh.
+                            </p>
+                          </div>
+
+                          {/* Navigation Triggers */}
+                          <div className="pt-3 flex gap-2.5">
+                            <button
+                              onClick={() => setCurrentView('radicals')}
+                              className="flex-1 py-2.5 px-4 bg-slate-850 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <BookOpen className="w-3.5 h-3.5" />
+                              Học bộ thủ
+                            </button>
+                            <button
+                              onClick={() => setCurrentView('roadmap')}
+                              className="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1 cursor-pointer"
+                            >
+                              <Layers className="w-3.5 h-3.5" />
+                              Lộ trình 1000 từ
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
                   </motion.div>
                 )}
               </>
@@ -2638,7 +2959,6 @@ export default function App() {
                 <button
                   onClick={() => {
                     toggleVocabLearned(selectedVocabDetail.word);
-                    updateStreak();
                   }}
                   className={`flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                     progress.learnedVocabulary.includes(selectedVocabDetail.word)
