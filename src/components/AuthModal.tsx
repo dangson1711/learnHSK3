@@ -71,8 +71,14 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         localMsg = 'Địa chỉ email không đúng định dạng.';
       } else if (err.code === 'auth/weak-password') {
         localMsg = 'Mật khẩu quá yếu (yêu cầu ít nhất 6 ký tự).';
+      } else if (err.code === 'auth/operation-not-allowed') {
+        localMsg = 'Tính năng đăng ký tài khoản qua Email hiện chưa được bật trên cấu hình Firebase Auth. Vui lòng bật "Email/Password" provider.';
       } else if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
         localMsg = 'Email hoặc mật khẩu không chính xác.';
+      } else if (err.code) {
+        localMsg = `Gặp lỗi hệ thống (${err.code}): ${err.message || 'vui lòng thử lại.'}`;
+      } else if (err.message) {
+        localMsg = `Lỗi hệ thống: ${err.message}`;
       }
       setError(localMsg);
     } finally {
