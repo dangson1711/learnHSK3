@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Vocabulary, SrsItem } from '../types';
 import { StrokeOrderVisualizer } from './StrokeOrderVisualizer';
 import { calculateSrs } from '../lib/srs';
+import { speakChineseText } from '../utils/speech';
 import { 
   Award, 
   HelpCircle, 
@@ -44,14 +45,7 @@ export function VocabularyReview({
   
   // Speak Chinese pronunciation helper using Web Speech API
   const speakChinese = (word: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = 'zh-CN';
-      utterance.rate = 0.85; // slightly slower for clarity
-      window.speechSynthesis.speak(utterance);
-    }
+    speakChineseText(word, e);
   };
 
   const todayStr = new Date().toISOString().split('T')[0];

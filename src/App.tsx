@@ -46,6 +46,7 @@ import { TOPICS_DATA, VOCABULARY_DATA, getVocabularyDetail, get1000HskWords } fr
 import { StrokeOrderVisualizer } from './components/StrokeOrderVisualizer';
 import { VocabularyReview } from './components/VocabularyReview';
 import { AuthModal } from './components/AuthModal';
+import { speakChineseText } from './utils/speech';
 import { auth, db, onAuthStateChanged, signOut, FirebaseUser } from './lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { calculateSrs } from './lib/srs';
@@ -916,19 +917,7 @@ export default function App() {
 
   // Speaks Chinese words or examples using the native browser Text-to-Speech API
   const speakChinese = (text: string, e?: React.MouseEvent) => {
-    if (e) {
-      e.stopPropagation(); // Stop clicks from propagating
-    }
-    if (!text) return;
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      // Clean text from translation fragments before reading
-      const cleanText = text.split('(')[0].trim();
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = 'zh-CN';
-      utterance.rate = 0.85; // slightly slower for optimal learning audit
-      window.speechSynthesis.speak(utterance);
-    }
+    speakChineseText(text, e);
   };
 
   // Compile 7-day study minutes history data for Recharts display
