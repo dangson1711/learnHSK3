@@ -1,5 +1,6 @@
 import { Topic, Vocabulary } from '../types';
 import { pinyin } from 'pinyin-pro';
+import { RADICALS_DATA } from './radicals';
 
 export const TOPICS_DATA: Topic[] = [
   // HSK 1 (8 Bài)
@@ -522,8 +523,8 @@ export const VOCABULARY_DATA: Vocabulary[] = [
     word: '比',
     pinyin: 'bǐ',
     meaning: 'So sánh, kề cận',
-    radicals: ['人 / 亻'],
-    story: 'Hai người kề sát đứng vai kề vai song hành đo xem chiều cao vóc dáng rạch ròi cao thấp gầy béo.',
+    radicals: ['匕'],
+    story: 'Chữ 比 (Tỷ) được tạo thành từ hai bộ Chủy (匕 - cái thìa) đặt kề vai sát cánh bên nhau, tượng trưng cho hành động đặt hai chiếc thìa xinh đẹp hoặc hai vật cạnh nhau để so sánh, đối chiếu hơn kém cao thấp.',
     exampleSentence: '哥哥比弟弟高。',
     examplePinyin: 'Gēge bǐ dìdi gāo.',
     exampleMeaning: 'Anh trai có tầm vóc cao hơn em trai nhiều.'
@@ -537,8 +538,8 @@ export const VOCABULARY_DATA: Vocabulary[] = [
     word: '准',
     pinyin: 'zhǔn',
     meaning: 'Chuẩn bị, chuẩn mực',
-    radicals: ['水 / 氵'],
-    story: 'Dòng nước chảy xiết ngưng giọt mài giũa tỉ mỉ tinh anh nương náu bờ kè biểu thị quy cách đạt Chuẩn mười phân vẹn mười.',
+    radicals: ['冫', '隹'],
+    story: 'Sử dụng bộ Băng (冫- nước đá đông đặc) ở bên trái và bộ Chuy (隹 - con chim đuôi ngắn) ở bên phải. Câu chuyện: loài chim hoang dã (隹) muốn di trú tránh rét phải tính toán chính xác độ dày của lớp băng tuyết (冫) để hạ cánh an toàn, từ đó dập khuôn chuẩn mực, chuẩn bị kỹ càng bài bản.',
     exampleSentence: '大家都准备好了。',
     examplePinyin: 'Dàjiā dōu zhǔnbèi hǎo le.',
     exampleMeaning: 'Bách nhân đồng bào đều đã dự sẵn chuẩn bị xong mọc tươm tất.'
@@ -552,8 +553,8 @@ export const VOCABULARY_DATA: Vocabulary[] = [
     word: '帮',
     pinyin: 'bāng',
     meaning: 'Trợ giúp, giúp đỡ',
-    radicals: ['力'],
-    story: 'Ra bắp tay góp phần sức khỏe của con người (力) cùng hỗ trợ đùm bọc chắp tà tơ may rổ đầy.',
+    radicals: ['巾'],
+    story: 'Sử dụng bộ Cân (巾 - chiếc khăn, mảnh lụa nâng niu). Thời phong kiến xưa, người ta thường dùng dải khăn lụa lớn (巾) thêu chữ bang giao để giương cao kêu gọi liên minh tương trợ, giúp đỡ đùm bọc lẫn nhau vượt qua khó khăn hoạn nạn.',
     exampleSentence: '谢谢你帮我。',
     examplePinyin: 'Xièxie nǐ bāng wǒ.',
     exampleMeaning: 'Kính tạ bạn hảo tâm giúp giùm trợ lực tôi lúc lâm nguy ngập đầu.'
@@ -610,8 +611,8 @@ export const VOCABULARY_DATA: Vocabulary[] = [
     word: '写',
     pinyin: 'xiě',
     meaning: 'Viết sách, sáng tác',
-    radicals: ['宀'],
-    story: 'Che ấm cúng dưới mái bút nghiên thanh tịnh che tối gió mưa (宀), tạc từng nét đao viết nên áng chương hay tặng bạn đời hảo ý.',
+    radicals: ['冖'],
+    story: 'Sử dụng bộ Mịch (冖 - dải lụa che phủ trùm lên). Ngày xưa sĩ tử muốn viết sách, sáng tác văn chương hay soạn lục đều phải dỡ dải khăn lụa trùm che (冖) bọc trên nghiên bút nghiên ra rồi mới bắt đầu chắp bút sáng tác dệt chữ.',
     exampleSentence: '这个汉字写得很漂亮。',
     examplePinyin: 'Zhège hànzì xiě de hěn piàoliang.',
     exampleMeaning: 'Hán tự vuông vức này được viết mộc cực kỳ thanh lịch sắc sảo.'
@@ -1032,78 +1033,540 @@ export function get1000HskWords(hskLevel: 1 | 2 | 3, topicOrder: number): Array<
   }));
 }
 
+export function getVocabulariesForTopic(hskLevel: 1 | 2 | 3, topicId: string, topicOrder: number): Vocabulary[] {
+  const words = get1000HskWords(hskLevel, topicOrder);
+  return words.map(w => getVocabularyDetail(w.word, topicId, hskLevel, w.meaning));
+}
+
 // Fallback procedural breakdown & story generator for any generic character,
 // ensuring that if the user searches or studies beyond the pre-authored list
 // we can instantly provide clean, elegant explanations that map to standard keys!
-export function getVocabularyDetail(word: string, fallbackTopicId: string = 'top_hsk1_01', level: 1 | 2 | 3 = 1): Vocabulary {
-  const existing = VOCABULARY_DATA.find(v => v.word === word || word.includes(v.word));
-  if (existing) {
+const characterToRadicalList: Record<string, string[]> = {
+  '你': ['人'],
+  '好': ['女', '子'],
+  '我': ['手'],
+  '们': ['人'],
+  '他': ['人'],
+  '她': ['女'],
+  '它': ['宀'],
+  '这': ['辶'],
+  '那': ['阝'],
+  '都': ['阝'],
+  '国': ['囗'],
+  '家': ['宀'],
+  '学': ['宀', '子'],
+  '校': ['木'],
+  '师': ['巾'],
+  '医': ['广'],
+  '院': ['阝', '宀'],
+  '爸': ['父'],
+  '妈': ['女', '马'],
+  '哥': ['口'],
+  '姐': ['女'],
+  '妹': ['女'],
+  '弟': ['弓'],
+  '猫': ['犭', '艹', '田'],
+  '狗': ['犭', '口'],
+  '谁': ['言', '隹'],
+  '什': ['人'],
+  '怎': ['心'],
+  '样': ['木'],
+  '谢': ['言'],
+  '客': ['宀', '口'],
+  '没': ['水'],
+  '请': ['言'],
+  '问': ['囗', '口'],
+  '对': ['手', '寸'],
+  '起': ['走'],
+  '是': ['日'],
+  '有': ['月'],
+  '在': ['土'],
+  '去': ['土'],
+  '来': ['木'],
+  '叫': ['口'],
+  '听': ['口'],
+  '说': ['言', '口'],
+  '读': ['言', '贝'],
+  '写': ['宀'],
+  '看': ['手', '目'],
+  '见': ['目'],
+  '买': ['贝'],
+  '卖': ['贝'],
+  '做': ['人', '口'],
+  '作': ['人'],
+  '岁': ['山'],
+  '钱': ['金', '戈'],
+  '茶': ['艹', '人', '木'],
+  '水': ['水'],
+  '药': ['艹', '木'],
+  '杯': ['木'],
+  '饭': ['食'],
+  '吃': ['口'],
+  '喝': ['口'],
+  '冷': ['冫', '人'],
+  '热': ['火'],
+  '雨': ['雨'],
+  '时': ['日'],
+  '候': ['人'],
+  '会': ['人'],
+  '能': ['月'],
+  '和': ['口'],
+  '同': ['口', '囗'],
+  '多': ['夕'],
+  '少': ['小'],
+  '大': ['大'],
+  '小': ['小'],
+  '红': ['纟'],
+  '绿': ['纟'],
+  '黑': ['火'],
+  '快': ['心'],
+  '慢': ['心'],
+  '远': ['辶'],
+  '近': ['辶', '斤'],
+  '错': ['金'],
+  '路': ['足', '口'],
+  '车': ['车'],
+  '机': ['木'],
+  '火': ['火'],
+  '站': ['口'],
+  '座': ['广', '土'],
+  '桌': ['木', '日'],
+  '椅': ['木', '口'],
+  '里': ['田', '土'],
+  '外': ['夕'],
+  '前': ['月', '刀'],
+  '后': ['口'],
+  '左': ['手'],
+  '右': ['手', '口'],
+  '点': ['口', '火'],
+  '百': ['日'],
+  '零': ['雨'],
+  '冬': ['冫'],
+  '准': ['冫', '隹'],
+  '难': ['隹']
+};
+
+const combinationStories: Array<{
+  radicals: string[];
+  story: string;
+}> = [
+  {
+    radicals: ['女', '子'],
+    story: 'Sự kết hợp hoàn mỹ giữa bộ Nữ (Phụ nữ) và bộ Tử (Đứa con) gợi lên hoạt cảnh thiêng liêng: một người mẹ dịu hiền đang trìu mến ôm ấp đứa con yêu quý, biểu thị cho sự may mắn, tốt lành và an lành tuyệt diệu nhất trên thế gian.'
+  },
+  {
+    radicals: ['艹', '人', '木'],
+    story: 'Sự hội tụ tinh tế của bộ Thảo (Cỏ cây), bộ Nhân (Người) và bộ Mộc (Cây cối) vẽ nên bức họa thanh tao: một con người đang thảnh thơi đứng giữa rặng cỏ non và bóng mát tán cây rừng, vừa hòa mình vào thiên nhiên hoang dã vừa thưởng thức ngụm trà mát ngọt khai sáng tâm hồn.'
+  },
+  {
+    radicals: ['手', '目'],
+    story: 'Một bức họa cổ kính đầy chất điện ảnh: Đặt bộ Thủ (Bàn tay) lên vầng trán, che bớt ánh nắng gay gắt phía trên bộ Mục (Con mắt) để dướn rộng tầm nhìn ra xa thấu quang phong cảnh thiên nhiên rộng mở.'
+  },
+  {
+    radicals: ['田', '土'],
+    story: 'Mảnh ghép giản dị mà thâm sâu từ bộ Điền (Ruộng lúa) tọa lạc ngay trên bờ cõi bộ Thổ (Đất trồng): Gợi hoạt cảnh những thớ bửu sỏi bùn đất đai màu mỡ được người nông dân vun xới chu đáo để kiến tạo nên thửa ruộng trĩu bông đem lại cơm no áo ấm.'
+  },
+  {
+    radicals: ['犭', '艹', '田'],
+    story: 'Tấm lòng liên tưởng vui tươi kết hợp giữa bộ Khuyển (Con thú), bộ Thảo (Cỏ) và bộ Điền (Ruộng): Khắc họa chú chuột/thú nhỏ nhút nhát đang rón rén lách qua những bụi cỏ xanh um rập rờn ven cánh đồng lúa nước phì nhiêu.'
+  },
+  {
+    radicals: ['言', '隹'],
+    story: 'Sự giao thoa tuyệt đẹp giữa bộ Ngôn (Lời nói) và bộ Chuẩn (Chim đuôi ngắn): Ví von lời hỏi han, đối thoại trò chuyện lanh lảnh dịu ngọt giống như tiếng chim hót líu lo đọng sương mai giữa cành đông.'
+  },
+  {
+    radicals: ['辶', '斤'],
+    story: 'Sự lắp ráp đầy ý chí giữa bộ Sước (Bước đi xa) và bộ Cân/Rìu (Rìu đốn củi): Mô tả hình ảnh một người thợ tiều phu rảo bước vác rìu đi phạt cành bẻ vụn cây cỏ ven đường để dọn quang lối đi ở cự ly ranh giới cực kỳ gần.'
+  },
+  {
+    radicals: ['冫', '人'],
+    story: 'Sự quy tụ của bộ Băng (Băng giá, nước đá) kết hợp hài hòa với bộ Nhân (Người): Biểu đạt một con người đang co ro run lẩy bẩy trước những nấc sương tuyết và tảng băng lạnh buốt đầy khắc nghiệt của gió đông tràn về.'
+  },
+  {
+    radicals: ['冫', '隹'],
+    story: 'Sự kết tinh lý thú từ bộ Băng (Băng giá) và bộ Chuẩn (Con chim đuôi ngắn): Tượng trưng cho những chú chim nhỏ bé dũng cảm dạt đôi cánh bay lượn vách núi tìm thức ăn vượt qua mưa tuyết đá dập đóng dày mùa đông.'
+  },
+  {
+    radicals: ['宀', '子'],
+    story: 'Dưới bộ Miên (Mái nhà) vững chãi ấm áp, bộ Tử (Đứa trẻ) đang chăm chỉ ngồi bên bàn gỗ mài mực nắn nót học từng mặt chữ tinh anh, hun đúc học vấn rực rỡ mai sau.'
+  },
+  {
+    radicals: ['女', '马'],
+    story: 'Gốc từ bộ Nữ (Phụ nữ) chịu thương chịu khó kết hợp hài hòa với hình ảnh chú tuấn mã phi dũng mãnh của bộ Mã (Ngựa): Thần thái người mẹ tần tảo, rảo bước nhanh và kiên cường lo toan cuộc sống, vỗ về dải lụa ấm chở che gia đình.'
+  },
+  {
+    radicals: ['人', '口'],
+    story: 'Phối hợp từ bộ Nhân (Người) và bộ Khẩu (Cái miệng): Gợi tả hoạt động một con người đang mở rộng chiếc miệng trò chuyện líu lo, thưởng thức hạt cơm ngon lành hay tập trung ca hát reo múa giữa mọi người.'
+  },
+  {
+    radicals: ['食', '反'],
+    story: 'Bộ Thực (Ăn uống) xếp ở mạn trái, hòa chung nét hoán chuyển hành động dâng cơm dẻo ấm: biểu thị mọi món ngon ẩm thực, cơm nóng khói bay nghi ngút bồi bổ dưỡng chất dạt dào sức sống.'
+  }
+];
+
+interface ExampleContext {
+  sentence: string;
+  meaning: string;
+}
+
+export function getContextExample(word: string, fallbackLevel: number): ExampleContext {
+  if (word.includes('茶')) {
     return {
-      ...existing,
-      pinyin: pinyin(existing.word) || existing.pinyin
+      sentence: '我喜欢喝热茶。',
+      meaning: 'Tôi thích uống trà nóng.'
     };
   }
+  if (word.includes('喝')) {
+    return {
+      sentence: '你想喝一杯热茶吗？',
+      meaning: 'Bạn có muốn uống một ly trà nóng không?'
+    };
+  }
+  if (word.includes('水')) {
+    return {
+      sentence: '请给我一杯温水。',
+      meaning: 'Xin vui lòng cho tôi một cốc nước ấm.'
+    };
+  }
+  if (word.includes('吃') || word.includes('饭')) {
+    if (word.includes('饭')) {
+      return {
+        sentence: '我们今天晚上一起吃饭吧。',
+        meaning: 'Tối nay chúng ta cùng ăn cơm nhé.'
+      };
+    }
+    return {
+      sentence: '你吃饱了没有？',
+      meaning: 'Bạn đã ăn no chưa?'
+    };
+  }
+  if (word.includes('苹果') || word.includes('果')) {
+    return {
+      sentence: '桌子上放着几个红苹果。',
+      meaning: 'Trên bàn có đặt mấy quả táo đỏ.'
+    };
+  }
+  if (word.includes('菜')) {
+    return {
+      sentence: '这也是我最爱吃的中国菜。',
+      meaning: 'Đây cũng là món ăn Trung Quốc mà tôi yêu thích nhất.'
+    };
+  }
+  if (word.includes('爸')) {
+    return {
+      sentence: '我爸爸每天都很忙碌。',
+      meaning: 'Bố tôi mỗi ngày đều rất bận rộn.'
+    };
+  }
+  if (word.includes('妈')) {
+    return {
+      sentence: '我最喜欢吃妈妈做的菜。',
+      meaning: 'Tôi thích ăn món ăn mẹ nấu nhất.'
+    };
+  }
+  if (word.includes('哥') || word.includes('姐')) {
+    return {
+      sentence: '我哥哥在河内的一家公司上班。',
+      meaning: 'Anh trai tôi đang làm việc tại một công ty ở Hà Nội.'
+    };
+  }
+  if (word.includes('弟') || word.includes('妹')) {
+    return {
+      sentence: '我妹妹今年刚上大学。',
+      meaning: 'Em gái tôi năm nay vừa mới vào đại học.'
+    };
+  }
+  if (word.includes('家')) {
+    return {
+      sentence: '我家 although không to but êm đềm.', // Vietnamese standard natural text: "Nhà tôi tuy không lớn nhưng vô cùng ấm cúng."
+      meaning: 'Nhà tôi tuy không lớn nhưng vô cùng ấm cúng.'
+    };
+  }
+  if (word.replace('朋友', '') !== word || word.includes('友')) {
+    return {
+      sentence: '他是我的一个好朋友。',
+      meaning: 'Cậu ấy là một người bạn tốt của tôi.'
+    };
+  }
+  if (word.includes('她')) {
+    return {
+      sentence: '她是多才多艺的年轻女孩。',
+      meaning: 'Cô ấy là một cô gái trẻ đầy tài năng.'
+    };
+  }
+  if (word.includes('他')) {
+    return {
+      sentence: '他是一个踏实认真的学生。',
+      meaning: 'Cậu ấy là một học sinh chân thật và nghiêm túc.'
+    };
+  }
+  if (word.includes('学') || word.includes('校')) {
+    return {
+      sentence: '我们在学校里一起努力学习。',
+      meaning: 'Chúng tôi cùng nỗ lực học tập ở trường học.'
+    };
+  }
+  if (word.includes('写') || word.includes('字')) {
+    return {
+      sentence: '这个汉字写得很漂亮。',
+      meaning: 'Chữ Hán này được viết rất đẹp.'
+    };
+  }
+  if (word.includes('书')) {
+    return {
+      sentence: '阅读一本好书能让人安静下来。',
+      meaning: 'Đọc một cuốn sách hay có thể khiến con người ta tĩnh tâm lại.'
+    };
+  }
+  if (word.includes('老师') || word.includes('老')) {
+    return {
+      sentence: '王老师对每一个学生都很好。',
+      meaning: 'Thầy Vương đối với mỗi một học sinh đều rất tốt.'
+    };
+  }
+  if (word.includes('汉语') || word.includes('语') || word.includes('言')) {
+    return {
+      sentence: '我认为学习汉语是一件有趣的事情。',
+      meaning: 'Tôi nghĩ rằng học tiếng Trung là một việc rất thú vị.'
+    };
+  }
+  if (word.includes('车') || word.includes('机')) {
+    if (word.includes('飞机')) {
+      return {
+        sentence: '我下午要坐飞机去北京。',
+        meaning: 'Chiều nay tôi phải đi máy bay đến Bắc Kinh.'
+      };
+    }
+    return {
+      sentence: '这里有很多公共汽车正在排队。',
+      meaning: 'Ở đây có rất nhiều xe buýt đang xếp hàng.'
+    };
+  }
+  if (word.includes('路')) {
+    return {
+      sentence: '这条去火车站的路十分宽阔。',
+      meaning: 'Con đường đi đến ga tàu hỏa này vô cùng rộng rãi.'
+    };
+  }
+  if (word.includes('走') || word.includes('跑') || word.includes('去')) {
+    return {
+      sentence: '我们一起走，不要走得太急。',
+      meaning: 'Chúng ta cùng đi đi, đừng đi gấp gáp quá.'
+    };
+  }
+  if (word.includes('雨')) {
+    return {
+      sentence: '外面正下着淅淅沥沥的小雨。',
+      meaning: 'Bên ngoài trời đang mưa phùn lất phất.'
+    };
+  }
+  if (word.includes('天气') || word.includes('天') || word.includes('气')) {
+    return {
+      sentence: '今天的天气格外晴朗和暖和。',
+      meaning: 'Thời tiết hôm nay đặc biệt trong xanh và ấm áp.'
+    };
+  }
+  if (word.includes('山') || word.includes('石')) {
+    return {
+      sentence: '这座高耸入云的山峰非常宏伟。',
+      meaning: 'Ngọn núi cao chọc trời này vô cùng hùng vĩ.'
+    };
+  }
+  if (word.includes('钱')) {
+    return {
+      sentence: '请问这件衣服要多少钱？',
+      meaning: 'Xin hỏi bộ quần áo này giá bao nhiêu tiền?'
+    };
+  }
+  if (word.includes('店')) {
+    return {
+      sentence: '我们要不要去那家水果店看看？',
+      meaning: 'Chúng ta có nên đến cửa hàng trái cây kia xem thử không?'
+    };
+  }
+  if (word.includes('贵') || word.includes('便宜')) {
+    return {
+      sentence: '这里的商品虽然贵但质量很好。',
+      meaning: 'Hàng hóa ở đây tuy đắt nhưng chất lượng rất tốt.'
+    };
+  }
+  if (word.includes('年') || word.includes('月') || word.includes('星期') || word.includes('天')) {
+    return {
+      sentence: '祝你新学年取得好成绩。',
+      meaning: 'Chúc bạn đạt thành tích tốt trong năm học mới.'
+    };
+  }
+  if (word.includes('时') || word.includes('分') || word.includes('秒') || word.includes('点')) {
+    return {
+      sentence: '一分一秒的时间都非常宝贵。',
+      meaning: 'Từng phút từng giây thời gian đều vô cùng quý giá.'
+    };
+  }
+  if (word.includes('人')) {
+    return {
+      sentence: '我们每个人都要不断学习。',
+      meaning: 'Mỗi người chúng ta đều cần không ngừng học hỏi.'
+    };
+  }
+
+  if (fallbackLevel === 1) {
+    return {
+      sentence: '我很喜欢这个实用的学习工具。',
+      meaning: 'Tôi rất thích công cụ học tập hữu dụng này.'
+    };
+  } else if (fallbackLevel === 2) {
+    return {
+      sentence: '我们已经准备妥当，立刻就出发。',
+      meaning: 'Chúng tôi đã chuẩn bị sẵn sàng chu đáo, lập tức xuất phát thôi.'
+    };
+  } else {
+    return {
+      sentence: '我们要认真对待生活中遇到的困难。',
+      meaning: 'Chúng ta cần nghiêm túc đối mặt với những khó khăn gặp phải trong cuộc sống.'
+    };
+  }
+}
+
+// Fallback procedural breakdown & story generator for any generic character,
+// ensuring that if the user searches or studies beyond the pre-authored list
+// we can instantly provide clean, elegant explanations that map to standard keys!
+export function getVocabularyDetail(word: string, fallbackTopicId: string = 'top_hsk1_01', level: 1 | 2 | 3 = 1, overrideMeaning?: string): Vocabulary {
+  const existing = VOCABULARY_DATA.find(v => v.word === word || word.includes(v.word));
+  
+  let targetMeaning = overrideMeaning || (existing ? existing.meaning : '');
+  if (!targetMeaning) {
+    targetMeaning = 'Từ vựng tiếng Hán thực chiến';
+    if (word.includes('你')) { targetMeaning = 'Bạn, anh, chị (ngôi thứ hai)'; }
+    else if (word.includes('好')) { targetMeaning = 'Tốt, đẹp, khỏe'; }
+    else if (word.includes('学')) { targetMeaning = 'Học, nghiên cứu'; }
+    else if (word.includes('茶')) { targetMeaning = 'Lá trà xanh thơm'; }
+    else if (word.includes('雨')) { targetMeaning = 'Cơn mưa tưới dội mát'; }
+    else if (word.includes('风')) { targetMeaning = 'Cơn gió gió mát'; }
+    else if (word.includes('写')) { targetMeaning = 'Viết, sáng tác vần thơ'; }
+  }
+
+  const fallbackPinyin = pinyin(word);
 
   // Split word into characters and find radical parts
   const chars = Array.from(word);
   const detectedRadicals: string[] = [];
-  
-  // Try to find if characters belong to recognized radicals or simple breakdown logic
+
+  const variantMap: Record<string, string> = {
+    '亻': '人', '人': '人',
+    '氵': '水', '水': '水',
+    '忄': '心', '心': '心',
+    '讠': '言', '言': '言',
+    '刂': '刀', '刀': '刀',
+    '饣': '食', '食': '食',
+    '纟': '纟',
+    '衤': '衣', '衣': '衣',
+    '阝': '阝',
+    '艹': '艹',
+    '辶': '辶',
+    '宀': '宀',
+    '冖': '宀',
+    '冫': '冫',
+    '灬': '火', '火': '火',
+    '钅': '金', '金': '金',
+    '扌': '手', '手': '手',
+    '⻊': '足', '🦿': '足', '足': '足',
+    '冂': '囗', '囗': '囗',
+    '𠂇': '手',
+    '糸': '纟'
+  };
+
   chars.forEach(char => {
-    if (char === '人' || char === '亻') detectedRadicals.push('人 / 亻');
-    else if (char === '木') detectedRadicals.push('木');
-    else if (char === '水' || char === '氵') detectedRadicals.push('水 / 氵');
-    else if (char === '火' || char === '灬') detectedRadicals.push('火 / 灬');
-    else if (char === '口') detectedRadicals.push('口');
-    else if (char === '女') detectedRadicals.push('女');
-    else if (char === '子') detectedRadicals.push('子');
-    else if (char === '日') detectedRadicals.push('日');
-    else if (char === '月') detectedRadicals.push('月');
-    else if (char === '宀') detectedRadicals.push('宀');
-    else if (char === '讠' || char === '言') detectedRadicals.push('言 / 讠');
-    else if (char === '艹') detectedRadicals.push('艹');
-    else if (char === '辶') detectedRadicals.push('辶');
-    else if (char === '忄' || char === '心') detectedRadicals.push('心 / 忄');
-    else if (char === '金' || char === '钅') detectedRadicals.push('金 / 钅');
-    else if (char === '衣' || char === '衤') detectedRadicals.push('衣 / 衤');
-    else if (char === '食' || char === '饣') detectedRadicals.push('食 / 饣');
-    else if (char === '刀' || char === '刂') detectedRadicals.push('刀 / 刂');
-    else if (char === '示' || char === '礻') detectedRadicals.push('示 / 礻');
-    else if (char === '糸' || char === '纟') detectedRadicals.push('糸 / 纟');
-    else if (char === '犬' || char === '犭') detectedRadicals.push('犬 / 犭');
-    else if (char === '阝') detectedRadicals.push('阝');
+    // 1. Check mapped list
+    if (characterToRadicalList[char]) {
+      characterToRadicalList[char].forEach(r => {
+        if (!detectedRadicals.includes(r)) {
+          detectedRadicals.push(r);
+        }
+      });
+    }
+
+    // 2. Direct match or variants check
+    RADICALS_DATA.forEach(rad => {
+      let isExact = (rad.character === char);
+      let mappedVar = variantMap[char];
+      let matchesVariant = (mappedVar && rad.character === mappedVar);
+
+      if ((isExact || matchesVariant) && !detectedRadicals.includes(rad.character)) {
+        detectedRadicals.push(rad.character);
+      }
+    });
   });
 
+  // Falls back if completely empty
   if (detectedRadicals.length === 0) {
-    detectedRadicals.push('Mộc');
-    detectedRadicals.push('Nhân / 亻');
+    chars.forEach(char => {
+      Object.keys(variantMap).forEach(key => {
+        if (char.includes(key)) {
+          const mainRad = variantMap[key];
+          if (mainRad && !detectedRadicals.includes(mainRad)) {
+            detectedRadicals.push(mainRad);
+          }
+        }
+      });
+    });
   }
 
-  // Generate beautiful fallback pinyin and meaning based on search word
-  const fallbackPinyin = pinyin(word);
-  let fallbackMeaning = 'Từ vựng tiếng Hán thực chiến';
-  
-  // Try to match search terms for pinyin/meanings
-  if (word.includes('你')) { fallbackMeaning = 'Bạn, anh, chị (ngôi thứ hai)'; }
-  else if (word.includes('好')) { fallbackMeaning = 'Tốt, đẹp, khỏe'; }
-  else if (word.includes('学')) { fallbackMeaning = 'Học, nghiên cứu'; }
-  else if (word.includes('茶')) { fallbackMeaning = 'Lá trà xanh thơm'; }
-  else if (word.includes('雨')) { fallbackMeaning = 'Cơn mưa tưới dội mát'; }
-  else if (word.includes('风')) { fallbackMeaning = 'Cơn gió gió mát'; }
-  else if (word.includes('写')) { fallbackMeaning = 'Viết, sáng tác vần thơ'; }
+  // Get dynamic example context based on word
+  const exampleCtx = getContextExample(word, existing ? existing.hskLevel : level);
+  const exampleSentence = exampleCtx.sentence;
+  const exampleMeaning = exampleCtx.meaning;
+  const examplePinyin = pinyin(exampleSentence);
 
-  // Generate beautiful mnemonic story
+  // Generate beautifully tailored and correct story about the detected component radicals
+  let customStory = `Chữ "${word}" được dệt thành từ những nét ghép vô cùng tinh tế và hàm súc. `;
+  if (detectedRadicals.length > 1) {
+    const sortedRads = [...detectedRadicals].sort();
+    const matchComb = combinationStories.find(c => {
+      if (c.radicals.length !== sortedRads.length) return false;
+      const sortedPair = [...c.radicals].sort();
+      return sortedPair.every((r, idx) => r === sortedRads[idx]);
+    });
+
+    if (matchComb) {
+      customStory += matchComb.story;
+    } else {
+      const radicalExplanations = detectedRadicals.map(r => {
+        const found = RADICALS_DATA.find(rad => rad.character === r);
+        return found ? `bộ ${found.vietnameseName} (${found.character} - biểu thị ${found.meaning.toLowerCase()})` : `thành tố "${r}"`;
+      });
+      customStory += `Đây là sự kết cấu hài hòa của ${radicalExplanations.join(' và ')}. Cổ nhân xưa lồng ghép các nét vẽ tượng hình này lại để tạo nên ý nghĩa liên hệ bổ trợ sinh động cho "${word}".`;
+    }
+  } else if (detectedRadicals.length === 1) {
+    const singleRad = detectedRadicals[0];
+    const found = RADICALS_DATA.find(rad => rad.character === singleRad);
+    if (found) {
+      customStory += `Chữ chứa bộ thủ cốt lõi là bộ ${found.vietnameseName} (${found.character} - ${found.meaning.toLowerCase()}). ${found.story}`;
+    } else {
+      customStory += `Chứa thành tố "${singleRad}" tạo lập nhịp điệu riêng, giúp ghi khắc hình ảnh liên tưởng của "${word}" một cách sâu sắc nhất.`;
+    }
+  } else {
+    customStory += `Mỗi nét chi tiết được viết nắn nót vuông vức giống như một bức họa thâu tóm ý niệm cổ xưa, hòa quyện tạo nên sự rực sáng của tư duy biểu ý, giúp ghi nhớ trực quan sinh động.`;
+  }
+
   return {
-    id: `generated_${word}`,
-    topicId: fallbackTopicId,
-    hskLevel: level,
+    id: existing ? existing.id : `generated_${word}`,
+    topicId: existing ? existing.topicId : fallbackTopicId,
+    hskLevel: existing ? existing.hskLevel : level,
     word: word,
     pinyin: fallbackPinyin,
-    meaning: fallbackMeaning,
+    meaning: targetMeaning,
     radicals: detectedRadicals,
-    story: `Chữ "${word}" được kết hợp từ các nét vẽ truyền thống vô cùng hàm súc. Mỗi thành tố bộ thủ như bức tranh cổ nhân xưa, thêu dệt lên ý nghĩa sâu kín dâng đầy tri thức giao tiếp, rực sáng tinh thần hiếu học.`,
-    exampleSentence: `我们一起学习 "${word}" 吧！`,
-    examplePinyin: pinyin('我们一起学习吧！'),
-    exampleMeaning: 'Chúng ta cùng hòa ái chung tay học tập từ vựng này nhé!'
+    story: customStory,
+    exampleSentence,
+    examplePinyin,
+    exampleMeaning
   };
 }
+
+export const ALL_1000_VOCABULARIES: Vocabulary[] = (() => {
+  const result: Vocabulary[] = [];
+  TOPICS_DATA.forEach(t => {
+    result.push(...getVocabulariesForTopic(t.hskLevel, t.id, t.order));
+  });
+  return result;
+})();

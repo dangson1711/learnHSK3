@@ -175,14 +175,19 @@ export function StrokeOrderVisualizer({ text, className = '' }: StrokeOrderVisua
       {/* Main Grid Card Canvas */}
       <div className="relative w-48 h-48 bg-white border-2 border-red-200 rounded-2xl shadow-sm flex items-center justify-center">
         
-        {/* Style block to patch WebKit SVG masking bugs */}
+        {/* Style block to patch WebKit SVG masking bugs securely without breaking coordinates */}
         <style>{`
-          .hanzi-writer-svg-wrap svg {
+          .hanzi-writer-svg-wrap {
+            isolation: isolate !important;
             transform: translateZ(0) !important;
             -webkit-transform: translateZ(0) !important;
+          }
+          .hanzi-writer-svg-wrap svg {
             isolation: isolate !important;
-            backface-visibility: hidden !important;
-            -webkit-backface-visibility: hidden !important;
+          }
+          /* This is the key fix for Safari clipPath rendering artifacts */
+          .hanzi-writer-svg-wrap clipPath, .hanzi-writer-svg-wrap mask {
+            isolation: isolate !important;
           }
         `}</style>
 

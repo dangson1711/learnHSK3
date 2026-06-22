@@ -1150,5 +1150,51 @@ export const RADICALS_DATA: Radical[] = [
     ],
     "category": "object",
     "usageExplanation": "Gợi sườn núi mái hiên cơ sở dinh biệt thự rộng ngõ, cửa tiệm cửa hàng điếm điệu huyên náo đón khách."
+  },
+  {
+    "id": "rad_51",
+    "character": "冫",
+    "pinyin": "bīng",
+    "vietnameseName": "Băng",
+    "meaning": "Băng giá / Nước đá",
+    "story": "Mô tả hai vết băng nứt nhọn hoắt dập vỡ, tượng trưng cho cái lạnh thấu xương của mùa đông buốt giá.",
+    "emojiIllustration": "❄️",
+    "commonCharacters": [
+      {
+        "character": "冷",
+        "pinyin": "lěng",
+        "meaning": "Lãnh (Lạnh lẽo) (Thời tiết buốt giá (có hai chấm băng 冫 ở bên trái))"
+      },
+      {
+        "character": "冬",
+        "pinyin": "dōng",
+        "meaning": "Đông (Mùa đông) (Mùa đông tuyết phủ (có bộ băng 冫 lấp lánh dưới gót))"
+      }
+    ],
+    "category": "nature",
+    "usageExplanation": "Liên quan trực tiếp đến nhiệt độ lạnh giá, tuyết băng đông đặc hoặc trạng thái buốt thấu sương."
+  },
+  {
+    "id": "rad_52",
+    "character": "隹",
+    "pinyin": "zhuī",
+    "vietnameseName": "Chuẩn",
+    "meaning": "Chim đuôi ngắn",
+    "story": "Khắc họa hình ảnh chú chim nhỏ có đuôi ngắn rụt rè xòe cánh tìm mồi, gợi lên sự tò mò trong thiên nhiên hoang dã.",
+    "emojiIllustration": "🦅",
+    "commonCharacters": [
+      {
+        "character": "准",
+        "pinyin": "zhǔn",
+        "meaning": "Chuẩn (Chính xác) (Nghị quyết chuẩn xác (được cân đo đong đếm như chim chuẩn 隹))"
+      },
+      {
+        "character": "难",
+        "pinyin": "nán",
+        "meaning": "Nan (Gian nan) (Đi vào rừng rậm nguy nan (gặp chim dữ 隹 đe dọa bên bụi cây))"
+      }
+    ],
+    "category": "lifestyle",
+    "usageExplanation": "Dùng chỉ chim muông lông vũ đuôi ngắn, các trạng thái bay lượn hoang dã hoặc ranh giới cạm bẫy."
   }
 ];

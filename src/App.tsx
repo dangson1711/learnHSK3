@@ -42,7 +42,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 import { Radical, Topic, Vocabulary, UserProgress, StudySession, SrsItem } from './types';
 import { RADICALS_DATA } from './data/radicals';
-import { TOPICS_DATA, VOCABULARY_DATA, getVocabularyDetail, get1000HskWords } from './data/vocabulary';
+import { TOPICS_DATA, VOCABULARY_DATA, getVocabularyDetail, get1000HskWords, getVocabulariesForTopic, ALL_1000_VOCABULARIES } from './data/vocabulary';
 import { StrokeOrderVisualizer } from './components/StrokeOrderVisualizer';
 import { VocabularyReview } from './components/VocabularyReview';
 import { AuthModal } from './components/AuthModal';
@@ -988,19 +988,26 @@ export default function App() {
   // Vocabularies within active topic (for interactive flashcard flow)
   const activeTopicVocabularies = useMemo(() => {
     if (!activeTopic) return [];
-    return VOCABULARY_DATA.filter(v => v.topicId === activeTopic.id);
+    return getVocabulariesForTopic(activeTopic.hskLevel, activeTopic.id, activeTopic.order);
   }, [activeTopic]);
 
   // Calculate topic progression progress
   const getTopicProgress = (topicId: string) => {
-    const vocabInTopic = VOCABULARY_DATA.filter(v => v.topicId === topicId);
+    const topic = TOPICS_DATA.find(t => t.id === topicId);
+    if (!topic) return 0;
+    const vocabInTopic = getVocabulariesForTopic(topic.hskLevel, topic.id, topic.order);
     if (vocabInTopic.length === 0) return 0;
     const learnedInTopic = vocabInTopic.filter(v => progress.learnedVocabulary.includes(v.id));
     return Math.round((learnedInTopic.length / vocabInTopic.length) * 100);
   };
 
   const currentLevelSummary = useMemo(() => {
-    const wordsInLevel = VOCABULARY_DATA.filter(v => v.hskLevel === activeLevelTab);
+    const levelTopics = TOPICS_DATA.filter(t => t.hskLevel === activeLevelTab);
+    const wordsInLevel: Vocabulary[] = [];
+    levelTopics.forEach(t => {
+      wordsInLevel.push(...getVocabulariesForTopic(activeLevelTab, t.id, t.order));
+    });
+    
     const masteredInLevel = wordsInLevel.filter(v => progress.learnedVocabulary.includes(v.id));
     return {
       total: wordsInLevel.length,
@@ -1473,8 +1480,8 @@ export default function App() {
                       </div>
 
                       {/* Custom styled responsive chart using Recharts */}
-                      <div className="h-[210px] w-full pt-2">
-                        <ResponsiveContainer width="100%" height="100%">
+                      <div className="h-[210px] w-full pt-2 min-h-[210px]">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                           <AreaChart
                             data={chartData}
                             margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
@@ -1905,7 +1912,7 @@ export default function App() {
                                   return (
                                     <tr 
                                       key={idx}
-                                      onClick={() => setSelectedVocabDetail(getVocabularyDetail(wordItem.word))}
+                                      onClick={() => setSelectedVocabDetail(getVocabularyDetail(wordItem.word, 'top_hsk' + activeLevelTab + '_01', activeLevelTab, wordItem.meaning))}
                                       className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors cursor-pointer group text-xs text-slate-700"
                                     >
                                       {/* Word */}
@@ -2022,9 +2029,9 @@ export default function App() {
                             <span className="text-2xl font-bold text-blue-700 font-mono tracking-wider flex items-center justify-center sm:justify-start gap-1">
                               {searchResult.pinyin}
                               <button 
-                                onClick={() => speakChinese(searchResult.pinyin)}
+                                onClick={() => speakChinese(searchResult.word)}
                                 className="p-1 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
-                                title="Phát âm Pinyin"
+                                title="Nghe phát âm"
                               >
                                 <Volume2 className="w-4 h-4" />
                               </button>
@@ -2136,7 +2143,7 @@ export default function App() {
                   >
                     <VocabularyReview 
                       learnedWordIds={progress.learnedVocabulary}
-                      allVocabularies={VOCABULARY_DATA}
+                      allVocabularies={ALL_1000_VOCABULARIES}
                       onToggleWordLearned={(id) => {
                         toggleVocabLearned(id);
                       }}

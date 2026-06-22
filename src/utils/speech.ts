@@ -1,18 +1,15 @@
-/**
- * Robust Speech Synthesis Utility for Hanzi Story
- * Solves iOS Safari, Mobile Chrome, and hybrid WebViews (Zalo, Facebook, Messenger)
- * combines native Web Speech API and premium Youdao/Google Cloud audio fallback engines.
- */
+import { Howl } from 'howler';
+import { VOCABULARY_DATA, HSK_1_WORDS_LIST, HSK_2_WORDS_LIST, HSK_3_WORDS_LIST, TOPICS_DATA, get1000HskWords, getVocabularyDetail } from '../data/vocabulary';
+import { RADICALS_DATA } from '../data/radicals';
 
 // Mapping of abstract/rare stroke-only radicals to common homophones
-// This ensures that all mobile and desktop browsers have proper pronunciations
-// instead of remaining silent or reading them incorrectly.
+// This ensures we download high quality pronunciations of phonetic equivalents
 export const RADICAL_PRONUNCIATION_MAP: Record<string, string> = {
   "彳": "赤", // chì
   "辶": "绰", // chuò
-  "疒": "讷", // nè (Bộ Nạch - Correctly reads as "nè", resolving incorrect mobile/desktop pronunciations like "chuang" or "bing")
+  "疒": "讷", // nè
   "艹": "草", // cǎo
-  "阝": "阜", // fù / yì
+  "阝": "阜", // fù
   "宀": "棉", // mián
   "犭": "犬", // quǎn
   "纟": "丝", // sī
@@ -25,168 +22,178 @@ export const RADICAL_PRONUNCIATION_MAP: Record<string, string> = {
   "亻": "人", // rén
 };
 
-// Global references
-let hasUnlockedSpeech = false;
-let activeFallbackAudio: HTMLAudioElement | null = null;
+// Compute the exact set of pre-downloaded static assets at runtime
+const PRE_DOWNLOADED_TERMS = new Set<string>();
 
-/**
- * Detects if the current browser environment is an in-app WebView
- * (such as Facebook custom WebView, Zalo WebView, Telegram, iOS WKWebView with restrictions)
- */
-export const isMobileWebView = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  const ua = navigator.userAgent || navigator.vendor || (window as any).opera || '';
-  const isZalo = /zalo/i.test(ua);
-  const isFb = /fban|fbav/i.test(ua);
-  const isMessenger = /messenger/i.test(ua);
-  const isInstagram = /instagram/i.test(ua);
-  const isWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(ua) || /wv/i.test(ua);
-  return isZalo || isFb || isMessenger || isInstagram || isWebView;
-};
+function sanitizeFilename(text: string): string {
+  return text.replace(/[\\/:*?"<>|.,!?;'，。！？；：\s\-"'“”‘’`…~@#$%^&*()_+={}[\]|;:]/g, '').trim();
+}
 
-/**
- * Perform a tiny, silent speech synthesis to unlock the iOS device sound channel.
- * Must be executed within a direct user interaction event (touchend, click, etc.).
- */
-export const unlockMobileSpeech = () => {
-  if (typeof window === 'undefined') return;
+function cleanTextForSet(text: string): string {
+  if (!text) return '';
+  const base = text.split('(')[0].split('（')[0].split('/')[0].trim();
+  const mapped = RADICAL_PRONUNCIATION_MAP[base] || base;
+  return sanitizeFilename(mapped);
+}
 
-  // Unlock speechSynthesis
-  if (window.speechSynthesis && !hasUnlockedSpeech) {
-    try {
-      const unlockUtterance = new SpeechSynthesisUtterance('');
-      unlockUtterance.volume = 0;
-      window.speechSynthesis.speak(unlockUtterance);
-      hasUnlockedSpeech = true;
-      console.log('Mobile Speech Synthesis unlocked successfully.');
-    } catch (err) {
-      console.warn('Failed to unlock mobile speech:', err);
-    }
+VOCABULARY_DATA.forEach(v => {
+  if (v.word) {
+    const c = cleanTextForSet(v.word);
+    if (c) PRE_DOWNLOADED_TERMS.add(c);
   }
+  if (v.exampleSentence) {
+    const c = cleanTextForSet(v.exampleSentence);
+    if (c) PRE_DOWNLOADED_TERMS.add(c);
+  }
+});
 
-  // Unlock HTML5 Audio context on iOS too
-  try {
-    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-    if (AudioContext) {
-      const ctx = new AudioContext();
-      if (ctx.state === 'suspended') {
-        ctx.resume();
+HSK_1_WORDS_LIST.forEach(v => {
+  if (v.word) {
+    const c = cleanTextForSet(v.word);
+    if (c) PRE_DOWNLOADED_TERMS.add(c);
+  }
+});
+
+HSK_2_WORDS_LIST.forEach(v => {
+  if (v.word) {
+    const c = cleanTextForSet(v.word);
+    if (c) PRE_DOWNLOADED_TERMS.add(c);
+  }
+});
+
+HSK_3_WORDS_LIST.forEach(v => {
+  if (v.word) {
+    const c = cleanTextForSet(v.word);
+    if (c) PRE_DOWNLOADED_TERMS.add(c);
+  }
+});
+
+RADICALS_DATA.forEach(r => {
+  const cleanRad = cleanTextForSet(r.character);
+  if (cleanRad) PRE_DOWNLOADED_TERMS.add(cleanRad);
+  if (r.commonCharacters) {
+    r.commonCharacters.forEach(cc => {
+      if (cc.character) {
+        const cleanCc = cleanTextForSet(cc.character);
+        if (cleanCc) PRE_DOWNLOADED_TERMS.add(cleanCc);
       }
-    }
+    });
+  }
+});
+
+// Also add all 1000 HSK words generated procedurally along with their dynamic example sentences
+TOPICS_DATA.forEach(t => {
+  try {
+    const hskWords = get1000HskWords(t.hskLevel, t.order);
+    hskWords.forEach(w => {
+      if (w.word) {
+        const c = cleanTextForSet(w.word);
+        if (c) PRE_DOWNLOADED_TERMS.add(c);
+
+        // Pre-register corresponding dynamic example sentence
+        const detail = getVocabularyDetail(w.word, t.id, t.hskLevel);
+        if (detail && detail.exampleSentence) {
+          const ce = cleanTextForSet(detail.exampleSentence);
+          if (ce) PRE_DOWNLOADED_TERMS.add(ce);
+        }
+      }
+    });
   } catch (_) {}
+});
+
+// Sound channel state
+let isAudioEngineUnlocked = false;
+let activeHowlSound: Howl | null = null;
+
+// Base64 0.1s silent MP3 to force browser audio context initialization
+const SILENT_MP3_BASE64 = 'data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAATAAADc29mdHdhcmUATGF2ZjUyLjkzLjAAAAAA//MUxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq';
+
+/**
+ * Initialize Web Audio API engine & unlock physical silent switches on iOS / Zalo / Facebook etc.
+ * Must be bound to user gestures.
+ */
+export const initAudioEngine = () => {
+  if (isAudioEngineUnlocked || typeof window === 'undefined') return;
+
+  const unlock = () => {
+    try {
+      const silentHowl = new Howl({
+        src: [SILENT_MP3_BASE64],
+        format: ['mp3'],
+        html5: false, // Must be false to initialize Web Audio API Context
+      });
+      silentHowl.play();
+      isAudioEngineUnlocked = true;
+      console.log('[Hanzi Story] Audio Engine successfully unlocked on interaction.');
+    } catch (err) {
+      console.warn('[Hanzi Story] Failed to unlock audio context:', err);
+    }
+
+    // Force unlock browser AudioContext if built-in
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass) {
+        const tempCtx = new AudioContextClass();
+        if (tempCtx.state === 'suspended') {
+          tempCtx.resume();
+        }
+      }
+    } catch (_) {}
+
+    // Cleanup listeners
+    document.removeEventListener('touchstart', unlock);
+    document.removeEventListener('click', unlock);
+  };
+
+  document.addEventListener('touchstart', unlock, { once: true, passive: true });
+  document.addEventListener('click', unlock, { once: true, passive: true });
 };
 
-// Initialize listeners to auto-unlock on first tap if possible
+// Bind auto-unlock on client initialization
 if (typeof window !== 'undefined') {
-  const triggerUnlock = () => {
-    unlockMobileSpeech();
-    document.removeEventListener('click', triggerUnlock);
-    document.removeEventListener('touchstart', triggerUnlock);
-  };
-  document.addEventListener('click', triggerUnlock, { passive: true });
-  document.addEventListener('touchstart', triggerUnlock, { passive: true });
+  initAudioEngine();
 }
 
 /**
- * Find the optimal native voice matching the Chinese Mandarin language pattern
+ * Clean text: strips Vietnamese meaning fragments in parentheses
  */
-const getBestChineseVoice = (voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null => {
-  if (!voices || voices.length === 0) return null;
-
-  // 1. Try Mandarin China local service
-  let matched = voices.find(v => v.lang === 'zh-CN' && v.localService);
-  if (matched) return matched;
-
-  // 2. Try any zh-CN voice
-  matched = voices.find(v => v.lang === 'zh-CN');
-  if (matched) return matched;
-
-  // 3. Try any voice starting with zh (e.g. zh-TW, zh-HK)
-  matched = voices.find(v => v.lang.toLowerCase().startsWith('zh'));
-  if (matched) return matched;
-
-  // 4. Try any voice that contains Chinese or Mandarin
-  matched = voices.find(v => {
-    const nameLower = v.name.toLowerCase();
-    return nameLower.includes('chinese') || nameLower.includes('mandarin') || nameLower.includes('putonghua');
-  });
-  if (matched) return matched;
-
-  return null;
-};
+function cleanChineseText(text: string): string {
+  let clean = text.split('(')[0].split('（')[0].split('/')[0].trim();
+  if (RADICAL_PRONUNCIATION_MAP[clean]) {
+    clean = RADICAL_PRONUNCIATION_MAP[clean];
+  }
+  return sanitizeFilename(clean);
+}
 
 /**
- * Fallback to premium cloud tts engine (Youdao & Google)
- * Works flawlessly inside Zalo, Facebook, Messenger and restricted mobile WebViews!
+ * Unified stop for any ongoing audio tracks (both Howler and Native)
  */
-export const playCloudTTS = (text: string): Promise<boolean> => {
-  return new Promise((resolve) => {
+export function stopAllActiveAudio() {
+  if (activeHowlSound) {
     try {
-      if (activeFallbackAudio) {
-        activeFallbackAudio.pause();
-        activeFallbackAudio = null;
-      }
-
-      // Clean text: strip pinyin or meaning elements inside parentheses
-      let cleanText = text.split('(')[0].trim();
-      if (RADICAL_PRONUNCIATION_MAP[cleanText]) {
-        cleanText = RADICAL_PRONUNCIATION_MAP[cleanText];
-      }
-
-      // 1. Try Youdao Audio TTS (Mandarin type 2)
-      const youdaoUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanText)}&type=2`;
-      const audio = new Audio(youdaoUrl);
-      activeFallbackAudio = audio;
-
-      // Set timeout fallback in case of slow loads
-      const timeoutId = setTimeout(() => {
-        resolve(false);
-      }, 3500);
-
-      audio.oncanplaythrough = () => {
-        // Safe play
-        audio.play().then(() => {
-          clearTimeout(timeoutId);
-          resolve(true);
-        }).catch(err => {
-          console.warn('Youdao play failed, trying Google Translate backup...', err);
-          
-          // 2. Backup to Google Translate TTS
-          const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=zh-cn&client=tw-ob`;
-          const backupAudio = new Audio(googleUrl);
-          activeFallbackAudio = backupAudio;
-
-          backupAudio.play().then(() => {
-            clearTimeout(timeoutId);
-            resolve(true);
-          }).catch(e => {
-            clearTimeout(timeoutId);
-            console.error('All cloud fallback audio sources failed to play.', e);
-            resolve(false);
-          });
-        });
-      };
-
-      audio.onerror = () => {
-        clearTimeout(timeoutId);
-        // Instant retry google translate as backup
-        const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=zh-cn&client=tw-ob`;
-        const backupAudio = new Audio(googleUrl);
-        activeFallbackAudio = backupAudio;
-        backupAudio.play().then(() => resolve(true)).catch(() => resolve(false));
-      };
-
-    } catch (err) {
-      console.error('Cloud TTS error:', err);
-      resolve(false);
+      activeHowlSound.stop();
+      activeHowlSound.unload();
+    } catch (_) {}
+    activeHowlSound = null;
+  }
+  
+  try {
+    const nativeAudio = (window as any)._activeNativeAudio;
+    if (nativeAudio) {
+      nativeAudio.pause();
+      nativeAudio.currentTime = 0;
+      (window as any)._activeNativeAudio = null;
     }
-  });
-};
+  } catch (_) {}
+}
 
 /**
- * Robust text speaker for Chinese language
- * Handles audio resume, text sanitization, mobile unlocking, and voice mapping.
- * Automatically handles Zalo/Facebook WebViews and blocks with seamless fallback.
+ * Plays a Chinese text (word, sentence, radical) using Howler.js and native fallbacks.
+ * Utilizes pre-downloaded same-domain local audio files via multi-layered strategies:
+ * - Strategy A: Howler Web Audio (html5: false) (bypasses iOS physical silent switches)
+ * - Strategy B: Howler HTML5 Audio (html5: true) (reliable inside sandboxed browser iframes)
+ * - Strategy C: Native Browser HTML5 audio tag fallback (highest user permission boundary)
+ * - Strategy D: Backup live streaming CDN Fallback (for arbitrary user queries / searches)
  */
 export const speakChineseText = (text: string, event?: any) => {
   if (event) {
@@ -199,85 +206,196 @@ export const speakChineseText = (text: string, event?: any) => {
 
   if (!text) return;
 
-  // Trigger sound-channel unlocking
-  unlockMobileSpeech();
+  const clean = cleanChineseText(text);
+  if (!clean) return;
 
-  // Clean the text to avoid spelling/expression remnants
-  let cleanText = text.split('(')[0].trim();
-  if (RADICAL_PRONUNCIATION_MAP[cleanText]) {
-    cleanText = RADICAL_PRONUNCIATION_MAP[cleanText];
-  }
+  console.log(`[Audio Engine] Received request to play: "${clean}"`);
 
-  // FORCE CLOUD AUDIO ENG FOR IN-APP WEBVIEWS (Facebook, Zalo, Messenger, built-in WebViews)
-  // because speechSynthesis is either completely stripped, blocked or voice-less in those custom client apps.
-  if (isMobileWebView()) {
-    console.log('Detected Mobile WebView (Zalo/Facebook/etc). Using robust Cloud TTS Engine...');
-    playCloudTTS(cleanText);
-    return;
-  }
+  // Stop any active channel immediately
+  stopAllActiveAudio();
 
-  // Desktop or standard mobile browsers (Chrome, Safari, Firefox)
-  if (typeof window === 'undefined' || !window.speechSynthesis) {
-    console.log('speechSynthesis not available. Using robust Cloud TTS Engine...');
-    playCloudTTS(cleanText);
-    return;
-  }
+  // Check if our term has a pre-cached local file
+  const isLocalStorageAvailable = PRE_DOWNLOADED_TERMS.has(clean);
 
-  try {
-    // Cancel any active speech synthesis cue
-    window.speechSynthesis.cancel();
+  if (isLocalStorageAvailable) {
+    // Sources list containing both raw Chinese name and URL-encoded versions
+    // This solves all character encodings across various browser proxy configurations
+    const sources = [
+      `/audio/${clean}.mp3`,
+      `/audio/${encodeURIComponent(clean)}.mp3`
+    ];
 
-    // Ensure state is un-paused
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-    }
+    console.log(`[Audio Engine] Local pre-cached files found. Deploying Strategy A...`);
 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'zh-CN';
-    utterance.rate = 0.85; // Optimal speed for foreign learners to practice tones
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
-
-    // Resolve voices list
-    const voices = window.speechSynthesis.getVoices();
-    const matchedVoice = getBestChineseVoice(voices);
-    
-    if (matchedVoice) {
-      utterance.voice = matchedVoice;
-    } else {
-      window.speechSynthesis.onvoiceschanged = () => {
-        const liveVoices = window.speechSynthesis.getVoices();
-        const liveMatched = getBestChineseVoice(liveVoices);
-        if (liveMatched) {
-          utterance.voice = liveMatched;
+    try {
+      // Strategy A: Web Audio API
+      const sound = new Howl({
+        src: sources,
+        format: ['mp3'],
+        html5: false,
+        volume: 1.0,
+        onloaderror: (id, err) => {
+          console.warn(`[Audio Engine] Strategy A (Web Audio) load error: ${err}. Deploying Strategy B...`);
+          playStrategyB(sources, clean);
+        },
+        onplayerror: (id, err) => {
+          console.warn(`[Audio Engine] Strategy A (Web Audio) play error: ${err}. Deploying Strategy B...`);
+          playStrategyB(sources, clean);
         }
-      };
+      });
+
+      activeHowlSound = sound;
+      // Timeout guard: If state is suspended or fails silently, trigger Strategy B after a short delay
+      sound.play();
+    } catch (e) {
+      console.warn(`[Audio Engine] Strategy A failed to start. Deploying Strategy B...`);
+      playStrategyB(sources, clean);
     }
-
-    let isSpeakingSuccessful = false;
-
-    // If text fails to speak using the native Speech API within 350ms, play standard HTML5 fallback immediately!
-    const fallbackTimer = setTimeout(() => {
-      if (!isSpeakingSuccessful) {
-        console.warn('Native speechSynthesis is unresponsive or silent. Launching robust Cloud TTS Fallback...');
-        playCloudTTS(cleanText);
-      }
-    }, 400);
-
-    utterance.onstart = () => {
-      isSpeakingSuccessful = true;
-      clearTimeout(fallbackTimer);
-    };
-
-    utterance.onerror = (e) => {
-      clearTimeout(fallbackTimer);
-      console.warn('Native SpeechSynthesis error, falling back to Cloud TTS...', e);
-      playCloudTTS(cleanText);
-    };
-
-    window.speechSynthesis.speak(utterance);
-  } catch (err) {
-    console.error('Failed to speak via native SpeechSynthesis, using Cloud TTS fallback...', err);
-    playCloudTTS(cleanText);
+  } else {
+    // Dynamic Online streaming lookup fallback
+    console.log(`[Audio Engine] Term not in statically downloaded list. Deploying Strategy D (Dynamic Streaming fallback)...`);
+    playStrategyD(clean);
   }
 };
+
+/**
+ * Strategy B: Same-origin HTML5 media elements inside Howler.js (safe within sandboxed iframes)
+ */
+function playStrategyB(sources: string[], cleanText: string) {
+  stopAllActiveAudio();
+  console.log(`[Audio Engine] Strategy B (Howler HTML5 Audio) playing standard tracks...`);
+
+  try {
+    const sound = new Howl({
+      src: sources,
+      format: ['mp3'],
+      html5: true, // Uses HTML5 Audio stream - compatible with iframe restrictions!
+      volume: 1.0,
+      onloaderror: (id, err) => {
+        console.warn(`[Audio Engine] Strategy B load failed: ${err}. Deploying Strategy C (Native HTML5 Media)...`);
+        playStrategyC(sources, cleanText);
+      },
+      onplayerror: (id, err) => {
+        console.warn(`[Audio Engine] Strategy B play failed: ${err}. Deploying Strategy C (Native HTML5 Media)...`);
+        playStrategyC(sources, cleanText);
+      }
+    });
+
+    activeHowlSound = sound;
+    sound.play();
+  } catch (err) {
+    console.warn(`[Audio Engine] Strategy B failed to instantiate. Deploying Strategy C...`);
+    playStrategyC(sources, cleanText);
+  }
+}
+
+/**
+ * Strategy C: Plain simple Native HTML5 Audio constructor context (highest user action bypass priority)
+ */
+function playStrategyC(sources: string[], cleanText: string) {
+  stopAllActiveAudio();
+  console.log(`[Audio Engine] Strategy C (Native Audio) playing standard path...`);
+
+  // Try sequentially
+  let currentSourceIdx = 0;
+
+  const playNext = () => {
+    if (currentSourceIdx >= sources.length) {
+      console.warn(`[Audio Engine] Strategy C completely exhausted. Falling back to Strategy D (Live Dynamic Stream)...`);
+      playStrategyD(cleanText);
+      return;
+    }
+
+    const currentUrl = sources[currentSourceIdx];
+    try {
+      const audio = new Audio(currentUrl);
+      audio.volume = 1.0;
+      
+      // Store globally for stop callbacks
+      (window as any)._activeNativeAudio = audio;
+
+      audio.play().then(() => {
+        console.log(`[Audio Engine] Strategy C successfully playing source: ${currentUrl}`);
+      }).catch(err => {
+        console.warn(`[Audio Engine] Strategy C failed playing source: ${currentUrl}. Trying next...`, err);
+        currentSourceIdx++;
+        playNext();
+      });
+    } catch (err) {
+      console.error(`[Audio Engine] Strategy C failed to create Audio tag. Trying next...`, err);
+      currentSourceIdx++;
+      playNext();
+    }
+  };
+
+  playNext();
+}
+
+/**
+ * Strategy D: Premium external audio translation services (dynamic lookups / live streaming fallbacks)
+ */
+function playStrategyD(cleanText: string) {
+  stopAllActiveAudio();
+
+  // Try Native Browser Web Speech synthesis API as primary dynamic fallback (works perfectly inside sandboxed iframes)
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = 'zh-CN';
+      utterance.volume = 1.0;
+      utterance.rate = 0.85;
+
+      const voices = window.speechSynthesis.getVoices();
+      const zhVoice = voices.find(v => v.lang.toLowerCase().includes('zh-cn') || v.lang.toLowerCase().includes('zh'));
+      if (zhVoice) {
+        utterance.voice = zhVoice;
+      }
+      window.speechSynthesis.speak(utterance);
+      console.log(`[Audio Engine] Dynamic speech played via Web Speech API: "${cleanText}"`);
+      return;
+    } catch (err) {
+      console.warn('[Audio Engine] Web Speech API failed, trying live streaming endpoints:', err);
+    }
+  }
+
+  const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=zh-cn&client=tw-ob`;
+  const youdaoUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanText)}&le=zh`;
+
+  try {
+    const sound = new Howl({
+      src: [googleUrl],
+      format: ['mp3'],
+      html5: true, // Cross-Origin media must bypass CORS using HTML5 mode
+      volume: 1.0,
+      onloaderror: () => {
+        console.warn(`[Audio Engine] Google Translate stream failed. Retrying with Youdao backup stream...`);
+        
+        try {
+          const backupSound = new Howl({
+            src: [youdaoUrl],
+            format: ['mp3'],
+            html5: true,
+            volume: 1.0,
+          });
+          activeHowlSound = backupSound;
+          backupSound.play();
+        } catch (_) {}
+      }
+    });
+
+    activeHowlSound = sound;
+    sound.play();
+  } catch (err) {
+    console.error(`[Audio Engine] Strategy D failed. Trying direct browser fallback...`);
+    try {
+      const directAudio = new Audio(googleUrl);
+      (window as any)._activeNativeAudio = directAudio;
+      directAudio.play().catch(() => {
+        const directBackup = new Audio(youdaoUrl);
+        (window as any)._activeNativeAudio = directBackup;
+        directBackup.play().catch(() => {});
+      });
+    } catch (_) {}
+  }
+}
