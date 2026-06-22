@@ -173,26 +173,39 @@ export function StrokeOrderVisualizer({ text, className = '' }: StrokeOrderVisua
       )}
 
       {/* Main Grid Card Canvas */}
-      <div className="relative w-48 h-48 bg-white border-2 border-red-200 rounded-2xl shadow-sm flex items-center justify-center overflow-hidden">
+      <div className="relative w-48 h-48 bg-white border-2 border-red-200 rounded-2xl shadow-sm flex items-center justify-center">
         
-        {/* Calligraphy Red Rice Grid Background "Ô kẻ mễ" (米字格) */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100">
-          {/* Inner border */}
-          <rect x="1" y="1" width="98" height="98" fill="none" stroke="#fecaca" strokeWidth="1" strokeDasharray="1,1" />
-          {/* Calligraphy Cross Lines */}
-          <line x1="0" y1="50" x2="100" y2="50" stroke="#fee2e2" strokeWidth="0.75" strokeDasharray="3,3" />
-          <line x1="50" y1="0" x2="50" y2="100" stroke="#fee2e2" strokeWidth="0.75" strokeDasharray="3,3" />
-          {/* Diagonals */}
-          <line x1="0" y1="0" x2="100" y2="100" stroke="#fca5a5" strokeWidth="0.5" strokeDasharray="4,4" opacity="0.4" />
-          <line x1="100" y1="0" x2="0" y2="100" stroke="#fca5a5" strokeWidth="0.5" strokeDasharray="4,4" opacity="0.4" />
-        </svg>
+        {/* Style block to patch WebKit SVG masking bugs */}
+        <style>{`
+          .hanzi-writer-svg-wrap svg {
+            transform: translateZ(0) !important;
+            -webkit-transform: translateZ(0) !important;
+            isolation: isolate !important;
+            backface-visibility: hidden !important;
+            -webkit-backface-visibility: hidden !important;
+          }
+        `}</style>
 
-        {/* HanziWriter Container */}
-        <div ref={containerRef} className="z-10 w-[180px] h-[180px]" />
+        {/* Calligraphy Red Rice Grid Background "Ô kẻ mễ" (米字格) wrapped in a separate safe overflow-hidden container */}
+        <div className="absolute inset-0 w-full h-full rounded-2xl overflow-hidden pointer-events-none">
+          <svg className="w-full h-full" viewBox="0 0 100 100">
+            {/* Inner border */}
+            <rect x="1" y="1" width="98" height="98" fill="none" stroke="#fecaca" strokeWidth="1" strokeDasharray="1,1" />
+            {/* Calligraphy Cross Lines */}
+            <line x1="0" y1="50" x2="100" y2="50" stroke="#fee2e2" strokeWidth="0.75" strokeDasharray="3,3" />
+            <line x1="50" y1="0" x2="50" y2="100" stroke="#fee2e2" strokeWidth="0.75" strokeDasharray="3,3" />
+            {/* Diagonals */}
+            <line x1="0" y1="0" x2="100" y2="100" stroke="#fca5a5" strokeWidth="0.5" strokeDasharray="4,4" opacity="0.4" />
+            <line x1="100" y1="0" x2="0" y2="100" stroke="#fca5a5" strokeWidth="0.5" strokeDasharray="4,4" opacity="0.4" />
+          </svg>
+        </div>
+
+        {/* HanziWriter Container is outside of outer overflow-hidden context to prevent WebKit GPU clipping issues */}
+        <div ref={containerRef} className="z-10 w-[180px] h-[180px] hanzi-writer-svg-wrap" />
 
         {/* Loading Spinner */}
         {isLoading && (
-          <div className="absolute inset-0 bg-white/95 z-20 flex flex-col items-center justify-center gap-2">
+          <div className="absolute inset-0 bg-white/95 rounded-2xl z-20 flex flex-col items-center justify-center gap-2">
             <RefreshCw className="w-6 h-6 animate-spin text-red-400" />
             <span className="text-[11px] text-slate-400 font-medium">Đang tải nét vẽ...</span>
           </div>
@@ -200,7 +213,7 @@ export function StrokeOrderVisualizer({ text, className = '' }: StrokeOrderVisua
 
         {/* Error Fallback */}
         {hasError && (
-          <div className="absolute inset-0 bg-white/95 z-20 flex flex-col items-center justify-center p-4 text-center">
+          <div className="absolute inset-0 bg-white/95 rounded-2xl z-20 flex flex-col items-center justify-center p-4 text-center">
             <span className="text-3xl mb-1 text-slate-600 font-serif font-bold">{activeChar}</span>
             <span className="text-[11px] text-red-500 font-bold">Không thể tải thứ tự nét</span>
             <button 

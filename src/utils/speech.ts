@@ -1,6 +1,7 @@
 /**
  * Robust Speech Synthesis Utility for Hanzi Story
- * Solves iOS Safari & Mobile Chrome silent speech engines
+ * Solves iOS Safari, Mobile Chrome, and hybrid WebViews (Zalo, Facebook, Messenger)
+ * combines native Web Speech API and premium Youdao/Google Cloud audio fallback engines.
  */
 
 // Mapping of abstract/rare stroke-only radicals to common homophones
@@ -24,32 +25,61 @@ export const RADICAL_PRONUNCIATION_MAP: Record<string, string> = {
   "亻": "人", // rén
 };
 
-// Global reference for fallback unlock status
+// Global references
 let hasUnlockedSpeech = false;
+let activeFallbackAudio: HTMLAudioElement | null = null;
+
+/**
+ * Detects if the current browser environment is an in-app WebView
+ * (such as Facebook custom WebView, Zalo WebView, Telegram, iOS WKWebView with restrictions)
+ */
+export const isMobileWebView = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const ua = navigator.userAgent || navigator.vendor || (window as any).opera || '';
+  const isZalo = /zalo/i.test(ua);
+  const isFb = /fban|fbav/i.test(ua);
+  const isMessenger = /messenger/i.test(ua);
+  const isInstagram = /instagram/i.test(ua);
+  const isWebView = /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(ua) || /wv/i.test(ua);
+  return isZalo || isFb || isMessenger || isInstagram || isWebView;
+};
 
 /**
  * Perform a tiny, silent speech synthesis to unlock the iOS device sound channel.
  * Must be executed within a direct user interaction event (touchend, click, etc.).
  */
 export const unlockMobileSpeech = () => {
-  if (typeof window === 'undefined' || !window.speechSynthesis || hasUnlockedSpeech) return;
+  if (typeof window === 'undefined') return;
 
-  try {
-    const unlockUtterance = new SpeechSynthesisUtterance('');
-    unlockUtterance.volume = 0;
-    window.speechSynthesis.speak(unlockUtterance);
-    hasUnlockedSpeech = true;
-    console.log('Mobile Speech Synthesis unlocked successfully.');
-  } catch (err) {
-    console.warn('Failed to unlock mobile speech:', err);
+  // Unlock speechSynthesis
+  if (window.speechSynthesis && !hasUnlockedSpeech) {
+    try {
+      const unlockUtterance = new SpeechSynthesisUtterance('');
+      unlockUtterance.volume = 0;
+      window.speechSynthesis.speak(unlockUtterance);
+      hasUnlockedSpeech = true;
+      console.log('Mobile Speech Synthesis unlocked successfully.');
+    } catch (err) {
+      console.warn('Failed to unlock mobile speech:', err);
+    }
   }
+
+  // Unlock HTML5 Audio context on iOS too
+  try {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioContext) {
+      const ctx = new AudioContext();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+    }
+  } catch (_) {}
 };
 
 // Initialize listeners to auto-unlock on first tap if possible
-if (typeof window !== 'undefined' && window.speechSynthesis) {
+if (typeof window !== 'undefined') {
   const triggerUnlock = () => {
     unlockMobileSpeech();
-    // Auto-remove listeners once unlocked
     document.removeEventListener('click', triggerUnlock);
     document.removeEventListener('touchstart', triggerUnlock);
   };
@@ -58,7 +88,7 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
 }
 
 /**
- * Find the optimal native voice matching the language pattern
+ * Find the optimal native voice matching the Chinese Mandarin language pattern
  */
 const getBestChineseVoice = (voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null => {
   if (!voices || voices.length === 0) return null;
@@ -86,8 +116,77 @@ const getBestChineseVoice = (voices: SpeechSynthesisVoice[]): SpeechSynthesisVoi
 };
 
 /**
+ * Fallback to premium cloud tts engine (Youdao & Google)
+ * Works flawlessly inside Zalo, Facebook, Messenger and restricted mobile WebViews!
+ */
+export const playCloudTTS = (text: string): Promise<boolean> => {
+  return new Promise((resolve) => {
+    try {
+      if (activeFallbackAudio) {
+        activeFallbackAudio.pause();
+        activeFallbackAudio = null;
+      }
+
+      // Clean text: strip pinyin or meaning elements inside parentheses
+      let cleanText = text.split('(')[0].trim();
+      if (RADICAL_PRONUNCIATION_MAP[cleanText]) {
+        cleanText = RADICAL_PRONUNCIATION_MAP[cleanText];
+      }
+
+      // 1. Try Youdao Audio TTS (Mandarin type 2)
+      const youdaoUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanText)}&type=2`;
+      const audio = new Audio(youdaoUrl);
+      activeFallbackAudio = audio;
+
+      // Set timeout fallback in case of slow loads
+      const timeoutId = setTimeout(() => {
+        resolve(false);
+      }, 3500);
+
+      audio.oncanplaythrough = () => {
+        // Safe play
+        audio.play().then(() => {
+          clearTimeout(timeoutId);
+          resolve(true);
+        }).catch(err => {
+          console.warn('Youdao play failed, trying Google Translate backup...', err);
+          
+          // 2. Backup to Google Translate TTS
+          const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=zh-cn&client=tw-ob`;
+          const backupAudio = new Audio(googleUrl);
+          activeFallbackAudio = backupAudio;
+
+          backupAudio.play().then(() => {
+            clearTimeout(timeoutId);
+            resolve(true);
+          }).catch(e => {
+            clearTimeout(timeoutId);
+            console.error('All cloud fallback audio sources failed to play.', e);
+            resolve(false);
+          });
+        });
+      };
+
+      audio.onerror = () => {
+        clearTimeout(timeoutId);
+        // Instant retry google translate as backup
+        const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=zh-cn&client=tw-ob`;
+        const backupAudio = new Audio(googleUrl);
+        activeFallbackAudio = backupAudio;
+        backupAudio.play().then(() => resolve(true)).catch(() => resolve(false));
+      };
+
+    } catch (err) {
+      console.error('Cloud TTS error:', err);
+      resolve(false);
+    }
+  });
+};
+
+/**
  * Robust text speaker for Chinese language
  * Handles audio resume, text sanitization, mobile unlocking, and voice mapping.
+ * Automatically handles Zalo/Facebook WebViews and blocks with seamless fallback.
  */
 export const speakChineseText = (text: string, event?: any) => {
   if (event) {
@@ -99,44 +198,53 @@ export const speakChineseText = (text: string, event?: any) => {
   }
 
   if (!text) return;
+
+  // Trigger sound-channel unlocking
+  unlockMobileSpeech();
+
+  // Clean the text to avoid spelling/expression remnants
+  let cleanText = text.split('(')[0].trim();
+  if (RADICAL_PRONUNCIATION_MAP[cleanText]) {
+    cleanText = RADICAL_PRONUNCIATION_MAP[cleanText];
+  }
+
+  // FORCE CLOUD AUDIO ENG FOR IN-APP WEBVIEWS (Facebook, Zalo, Messenger, built-in WebViews)
+  // because speechSynthesis is either completely stripped, blocked or voice-less in those custom client apps.
+  if (isMobileWebView()) {
+    console.log('Detected Mobile WebView (Zalo/Facebook/etc). Using robust Cloud TTS Engine...');
+    playCloudTTS(cleanText);
+    return;
+  }
+
+  // Desktop or standard mobile browsers (Chrome, Safari, Firefox)
   if (typeof window === 'undefined' || !window.speechSynthesis) {
-    console.warn('Speech synthesis not supported in this browser.');
+    console.log('speechSynthesis not available. Using robust Cloud TTS Engine...');
+    playCloudTTS(cleanText);
     return;
   }
 
   try {
-    // Mobilize: unlock sound first
-    unlockMobileSpeech();
-
-    // Cancel current cue to start cleanly
+    // Cancel any active speech synthesis cue
     window.speechSynthesis.cancel();
 
-    // Force resume if stuck/suspended on iOS / Chrome on Mobile
+    // Ensure state is un-paused
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
     }
 
-    // Clean text: strip example details, translations in parenthesis, and spaces
-    let cleanText = text.split('(')[0].trim();
-    
-    // Replace abstract/unpronounceable radical characters with perfect pronunciation homophones
-    if (RADICAL_PRONUNCIATION_MAP[cleanText]) {
-      cleanText = RADICAL_PRONUNCIATION_MAP[cleanText];
-    }
-
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'zh-CN';
-    utterance.rate = 0.85; // Slightly slower, optimal speed for non-native learners to distinguish tones
+    utterance.rate = 0.85; // Optimal speed for foreign learners to practice tones
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
 
-    // Set voice explicitly to prevent defaulting to default system locale (English) on mobile browsers
+    // Resolve voices list
     const voices = window.speechSynthesis.getVoices();
     const matchedVoice = getBestChineseVoice(voices);
+    
     if (matchedVoice) {
       utterance.voice = matchedVoice;
     } else {
-      // iOS load hack: sometimes voices are empty initially, listen for voices changed
       window.speechSynthesis.onvoiceschanged = () => {
         const liveVoices = window.speechSynthesis.getVoices();
         const liveMatched = getBestChineseVoice(liveVoices);
@@ -146,21 +254,30 @@ export const speakChineseText = (text: string, event?: any) => {
       };
     }
 
-    // Workaround for some mobile browsers that cut off speech on long sentences
-    utterance.onend = () => {
-      // Optional: Log completion
+    let isSpeakingSuccessful = false;
+
+    // If text fails to speak using the native Speech API within 350ms, play standard HTML5 fallback immediately!
+    const fallbackTimer = setTimeout(() => {
+      if (!isSpeakingSuccessful) {
+        console.warn('Native speechSynthesis is unresponsive or silent. Launching robust Cloud TTS Fallback...');
+        playCloudTTS(cleanText);
+      }
+    }, 400);
+
+    utterance.onstart = () => {
+      isSpeakingSuccessful = true;
+      clearTimeout(fallbackTimer);
     };
 
     utterance.onerror = (e) => {
-      console.warn('SpeechSynthesisUtterance error:', e);
-      // Attempt quick silent fallback to recover audio state
-      try {
-        window.speechSynthesis.resume();
-      } catch (_) {}
+      clearTimeout(fallbackTimer);
+      console.warn('Native SpeechSynthesis error, falling back to Cloud TTS...', e);
+      playCloudTTS(cleanText);
     };
 
     window.speechSynthesis.speak(utterance);
   } catch (err) {
-    console.error('Failed to trigger speech synthesis:', err);
+    console.error('Failed to speak via native SpeechSynthesis, using Cloud TTS fallback...', err);
+    playCloudTTS(cleanText);
   }
 };
