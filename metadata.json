@@ -1,0 +1,6 @@
+{
+  "name": "Hanzi Story",
+  "description": "Học tiếng Trung HSK 1-3 và 50 bộ thủ cơ bản qua câu chuyện liên tưởng và phân tách bộ thủ sinh động.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
