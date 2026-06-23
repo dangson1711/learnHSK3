@@ -42,7 +42,7 @@ export function AIAnalysisPanel({ word, onAnalysisComplete }: AIAnalysisPanelPro
     try {
       const customApiKey = localStorage.getItem('settings_gemini_api_key') || '';
       
-      const response = await fetch('/api/gemini/analyze', {
+      let response = await fetch('/api/gemini/analyze', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -52,15 +52,58 @@ export function AIAnalysisPanel({ word, onAnalysisComplete }: AIAnalysisPanelPro
       });
       
       let data;
-      const textResponse = await response.text();
+      let textResponse = await response.text();
+      
+      if (response.status === 404 || textResponse.trim().startsWith('<')) {
+         if (!customApiKey) {
+            throw new Error("Ứng dụng web tĩnh không tìm thấy máy chủ. Vui lòng nhập API Key để gọi trực tiếp!");
+         }
+         
+         const directPrompt = `Phân tích từ "${word}" thành các bộ thủ. 
+Lưu ý: Nếu "${word}" là phiên âm pinyin (chữ Latinh) hoặc nghĩa tiếng Việt, hãy tự xác định chữ Hán (Hanzi) thông dụng nhất tương ứng với từ đó và dùng chữ Hán đó để phân tích.
+Đồng thời sáng tạo một câu chuyện ngắn gọn, dễ nhớ (khoảng 2-3 câu) để liên kết các bộ thủ này lại với nhau nhằm giúp người học ghi nhớ ý nghĩa của chữ Hán này.
+Bạn cũng phải cung cấp chữ Hán thực tế (actualWord), Pinyin (phiên âm chuẩn) và Nghĩa tiếng Việt của chính chữ Hán đó.
+Cuối cùng, hãy tạo thêm một câu ví dụ đàm thoại thực tế, giao tiếp ngắn gọn (không quá dài, dễ áp dụng) sử dụng chữ Hán đó. 
+Trả về dưới dạng JSON có cấu trúc như sau:
+{
+  "actualWord": "Chữ Hán chính thức (ví dụ: 我, 你, ...)",
+  "wordPinyin": "Pinyin của chữ gốc...",
+  "wordMeaning": "Nghĩa tiếng Việt của chữ gốc...",
+  "radicals": ["Bộ 1 (Ý nghĩa)", "Bộ 2 (Ý nghĩa)", ...],
+  "story": "Câu chuyện liên tưởng...",
+  "exampleSentence": "Câu đàm thoại tiếng Trung...",
+  "examplePinyin": "Pinyin của câu đàm thoại...",
+  "exampleMeaning": "Nghĩa tiếng Việt của câu đàm thoại..."
+}
+Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạng markdown.`;
+         
+         const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${customApiKey}`, {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({
+             contents: [{ parts: [{ text: directPrompt }] }],
+             generationConfig: { responseMimeType: "application/json", temperature: 0.7 }
+           })
+         });
+
+         const geminiData = await geminiRes.json();
+         if (!geminiRes.ok) {
+            throw new Error(geminiData.error?.message || "Lỗi khi gọi API Gemini trực tiếp");
+         }
+         const geminiText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+         textResponse = geminiText || "{}";
+      } else {
+         if (!response.ok) {
+             let errMsg = 'Lỗi kết nối AI';
+             try { errMsg = JSON.parse(textResponse).error || errMsg; } catch(e){}
+             throw new Error(errMsg);
+         }
+      }
+
       try {
         data = JSON.parse(textResponse);
       } catch(e) {
-        throw new Error(response.status === 502 || response.status === 503 || response.status === 504 ? 'Máy chủ quá tải (503)' : `Lỗi hệ thống: ${response.status}`);
-      }
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Lỗi kết nối AI');
+        throw new Error(response.status === 502 || response.status === 503 || response.status === 504 ? 'Máy chủ quá tải (503)' : `Lỗi hệ thống: parse failed`);
       }
       
       setAnalysis(data);

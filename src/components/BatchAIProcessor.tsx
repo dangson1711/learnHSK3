@@ -82,22 +82,66 @@ export function BatchAIProcessor() {
             body: JSON.stringify({ words: wordsToProcess }),
           });
           
-          if (response.status === 404) {
-             throw new Error('FALLBACK_404');
+          let dataArray;
+          let textResponse = await response.text();
+
+          // Kịch bản Web tĩnh (GitHub Pages) hoặc API trả về HTML (404 Not Found)
+          if (response.status === 404 || textResponse.trim().startsWith('<')) {
+             if (!customApiKey) {
+                throw new Error("Ứng dụng đang chạy trên GitHub Pages (web tĩnh). Bạn CẦN nhập API Key trong phần Cài đặt để sử dụng tiếp!");
+             }
+             addLog(`⚠️ Đang gọi trực tiếp AI từ trình duyệt (do backend 404)...`);
+             
+             const directPrompt = `Phân tích danh sách ${wordsToProcess.length} từ tiếng Trung sau đây.
+Với mỗi từ, xác định chữ Hán thông dụng tương ứng (nếu input là pinyin hoặc nghĩa tiếng việt).
+Phân tích mỗi chữ Hán thành các bộ thủ.
+Sáng tạo CÂU CHUYỆN LIÊN TƯỞNG NGẮN (2-3 câu) liên kết các bộ thủ để dễ nhớ.
+Cung cấp VÍ DỤ GIAO TIẾP THỰC TẾ ngắn gọn chứa từ đó.
+
+Trả về duy nhất MỘT ARRAY CHỨA ${wordsToProcess.length} JSON OBJECTS, có cấu trúc chính xác (ví dụ cho chữ "我"):
+[
+  {
+    "queryWord": "từ_gốc_từ_danh_sách",
+    "actualWord": "我",
+    "wordPinyin": "wǒ",
+    "wordMeaning": "tôi, tao, mình",
+    "radicals": ["Bộ thủ 1 (Nghĩa 1)", "Bộ thủ 2 (Nghĩa 2)"],
+    "story": "Câu chuyện...",
+    "exampleSentence": "Ní hǎo, wǒ shì...",
+    "examplePinyin": "Ní hǎo, wǒ shì...",
+    "exampleMeaning": "Xin chào, tôi là..."
+  }
+]
+Danh sách từ: ${wordsToProcess.join(', ')}
+Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối không chứa markdown, không có text hướng dẫn. Phải trả đủ ${wordsToProcess.length} từ.`;
+
+             const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${customApiKey}`, {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({
+                 contents: [{ parts: [{ text: directPrompt }] }],
+                 generationConfig: { responseMimeType: "application/json", temperature: 0.2 }
+               })
+             });
+
+             const geminiData = await geminiRes.json();
+             if (!geminiRes.ok) {
+                throw new Error(geminiData.error?.message || "Lỗi khi gọi API Gemini trực tiếp");
+             }
+             const geminiText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+             textResponse = geminiText || "[]";
+          } else {
+             if (!response.ok) {
+                 throw new Error(textResponse.substring(0, 50) + "...");
+             }
           }
 
-          let dataArray;
-          const textResponse = await response.text();
           try {
             dataArray = JSON.parse(textResponse);
           } catch(e) {
-            throw new Error(response.status === 502 || response.status === 503 || response.status === 504 ? 'Máy chủ quá tải (503)' : `Lỗi ${response.status} không rõ. Nội dung: ${textResponse.substring(0,20)}`);
+            throw new Error(`Lỗi parse JSON. Nội dung: ${textResponse.substring(0,20)}...`);
           }
 
-          if (!response.ok) {
-            throw new Error(dataArray.error || 'Lỗi kết nối AI');
-          }
-          
           if (!Array.isArray(dataArray)) {
              throw new Error("Phản hồi từ AI không đúng định dạng mảng JSON");
           }
@@ -135,42 +179,6 @@ export function BatchAIProcessor() {
           await new Promise(r => setTimeout(r, 4500));
        } catch (err: any) {
           
-          if (err.message === 'FALLBACK_404') {
-             addLog(`⚠️ Máy chủ chạy bản cũ (404), tự động chuyển sang phân tích từng từ cho nhóm [${label}]...`);
-             // Fallback xử lý từng từ một cho nhóm này
-             for (const fw of wordsToProcess) {
-                if (!isRunningRef.current) break;
-                try {
-                   const fallbackRes = await fetch('/api/gemini/analyze', {
-                      method: 'POST',
-                      headers: { 
-                        'Content-Type': 'application/json',
-                        ...(localStorage.getItem('settings_gemini_api_key') && { 'x-gemini-api-key': localStorage.getItem('settings_gemini_api_key')! })
-                      },
-                      body: JSON.stringify({ word: fw }),
-                   });
-                   const fbText = await fallbackRes.text();
-                   const fbData = JSON.parse(fbText);
-                   if (!fallbackRes.ok) throw new Error(fbData.error || 'Lỗi kết nối AI');
-                   
-                   cache[fw] = fbData;
-                   if (fbData.actualWord) cache[fbData.actualWord] = fbData;
-                   localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-                   
-                   success++;
-                   setProgress(p => ({ ...p, successful: success }));
-                   addLog(`✅ Đã phân tích (fallback): ${fw}`);
-                } catch(fErr: any) {
-                   fail++;
-                   setProgress(p => ({ ...p, failed: fail }));
-                   addLog(`❌ Lỗi [${fw}] (fallback): ${fErr.message}`);
-                }
-                addLog(`⏳ Đang nghỉ 4.5 giây (fallback) để lách luật quá tải từ Gemini...`);
-                await new Promise(r => setTimeout(r, 4500));
-             }
-             continue; // Đã xử lý xong nhóm hiện tại qua fallback
-          }
-
           addLog(`❌ Lỗi nhóm [${label}]: ${err.message}`);
           
           // Thử lại nếu quá tải
