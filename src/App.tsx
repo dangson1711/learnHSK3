@@ -36,7 +36,8 @@ import {
   Calendar,
   Layers3,
   Brain,
-  Timer
+  Timer,
+  Settings
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -596,6 +597,10 @@ export default function App() {
   // Search/Parser state
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResult, setSearchResult] = useState<Vocabulary | null>(null);
+
+  // Settings API Key State
+  const [settingsModalOpen, setSettingsModalOpen] = useState<boolean>(false);
+  const [customGeminiKey, setCustomGeminiKey] = useState<string>(() => localStorage.getItem('settings_gemini_api_key') || '');
 
   // Helper to calculate exact active daily study streak from session dates
   const computeActualStreak = (history: StudySession[] | undefined, lastLearnDate: string | null): number => {
@@ -1361,6 +1366,14 @@ export default function App() {
               >
                 <Info className="w-5 h-5 text-teal-500" />
                 <span>Về Hanzi Story</span>
+              </button>
+
+              <button 
+                onClick={() => { setSettingsModalOpen(true); }}
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100"
+              >
+                <Settings className="w-5 h-5 text-slate-500" />
+                <span>Cài đặt API AI</span>
               </button>
             </div>
 
@@ -2944,6 +2957,67 @@ export default function App() {
                 </button>
               </div>
 
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Modal */}
+      {settingsModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={() => setSettingsModalOpen(false)}>
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-md border border-slate-200 overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+                <Settings className="w-5 h-5 text-indigo-500" />
+                Cài đặt Hệ thống
+              </h3>
+              <button 
+                onClick={() => setSettingsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-50 transition-colors"
+                title="Đóng"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-5">
+              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex items-start space-x-3">
+                <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-xs text-blue-800 leading-relaxed font-bold">Cấu hình API Key Cá Nhân</p>
+                  <p className="text-xs text-blue-700 leading-relaxed font-medium">
+                    Nhập API Key của Gemini AI do bạn tự tạo để phân tích từ vựng riêng. Key được lưu trên thiết bị của bạn nhằm đảm bảo quyền riêng tư.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Gemini API Key</label>
+                <input
+                  type="password"
+                  value={customGeminiKey}
+                  onChange={e => setCustomGeminiKey(e.target.value)}
+                  placeholder="AIzaSy..."
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-mono"
+                />
+                <p className="text-[10px] text-slate-400">
+                   Để trống để sử dụng key mặc định của hệ thống.
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  if (customGeminiKey.trim() !== '') {
+                    localStorage.setItem('settings_gemini_api_key', customGeminiKey.trim());
+                  } else {
+                    localStorage.removeItem('settings_gemini_api_key');
+                  }
+                  setSettingsModalOpen(false);
+                }}
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all shadow-indigo-100"
+              >
+                Lưu cấu hình
+              </button>
             </div>
           </div>
         </div>

@@ -61,9 +61,14 @@ export function BatchAIProcessor() {
        }
 
        try {
+          const customApiKey = localStorage.getItem('settings_gemini_api_key') || '';
+          
           const response = await fetch('/api/gemini/analyze', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              ...(customApiKey && { 'x-gemini-api-key': customApiKey })
+            },
             body: JSON.stringify({ word }),
           });
           const data = await response.json();

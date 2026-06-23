@@ -17,9 +17,11 @@ async function startServer() {
         return res.status(400).json({ error: "Missing word" });
       }
 
-      const apiKey = process.env.GEMINI_API_KEY;
+      const customApiKey = req.headers['x-gemini-api-key'] as string;
+      const apiKey = customApiKey || process.env.GEMINI_API_KEY;
+
       if (!apiKey) {
-        throw new Error("GEMINI_API_KEY is not configured on the server.");
+        throw new Error("Vui lòng cung cấp API Key của bạn để sử dụng chức năng này.");
       }
 
       const ai = new GoogleGenAI({
