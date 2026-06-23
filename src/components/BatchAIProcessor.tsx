@@ -87,7 +87,10 @@ export function BatchAIProcessor() {
           try {
             dataArray = JSON.parse(textResponse);
           } catch(e) {
-            throw new Error(response.status === 502 || response.status === 503 || response.status === 504 ? 'Máy chủ quá tải (503)' : `Lỗi ${response.status} không rõ`);
+            if (response.status === 404) {
+               throw new Error('Lỗi 404: Không tìm thấy API (vui lòng Share/Deploy lại app để cập nhật phiên bản mới nhất).');
+            }
+            throw new Error(response.status === 502 || response.status === 503 || response.status === 504 ? 'Máy chủ quá tải (503)' : `Lỗi ${response.status} không rõ. Nội dung: ${textResponse.substring(0,20)}`);
           }
 
           if (!response.ok) {
