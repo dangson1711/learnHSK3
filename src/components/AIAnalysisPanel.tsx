@@ -122,7 +122,11 @@ Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạn
       }
       
     } catch (err: any) {
-      setError(err.message);
+      let emsg = err.message || 'Lỗi không xác định';
+      if (emsg.toLowerCase().includes('high demand') || emsg.includes('503') || emsg.toLowerCase().includes('overloaded')) {
+          emsg = 'Hệ thống AI hiện đang quá tải do nhu cầu cao, bạn hãy thử lại sau vài giây nhé.';
+      }
+      setError(emsg);
     } finally {
       setLoading(false);
     }

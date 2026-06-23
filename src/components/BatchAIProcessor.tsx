@@ -182,11 +182,12 @@ Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối 
           addLog(`❌ Lỗi nhóm [${label}]: ${err.message}`);
           
           // Thử lại nếu quá tải
-          if (err.message?.includes('503') || err.message?.includes('quá tải') || err.message?.includes('429')) {
+          const errMsg = (err.message || '').toLowerCase();
+          if (errMsg.includes('503') || errMsg.includes('quá tải') || errMsg.includes('429') || errMsg.includes('high demand') || errMsg.includes('unavailable') || errMsg.includes('overloaded')) {
              currentBatchRetries++;
              if (currentBatchRetries <= maxRetriesPerBatch) {
-                addLog(`⚠️ Đang quá tải, chờ rồi thử lại nhóm "${label}" (Lần ${currentBatchRetries}/${maxRetriesPerBatch})...`);
-                await new Promise(r => setTimeout(r, 10000)); 
+                addLog(`⚠️ Hệ thống AI quá tải (High Demand), chờ 15 giây rồi thử lại nhóm "${label}" (Lần ${currentBatchRetries}/${maxRetriesPerBatch})...`);
+                await new Promise(r => setTimeout(r, 15000)); 
                 i -= BATCH_SIZE; // Quay lại batch này
                 continue;
              } else {
