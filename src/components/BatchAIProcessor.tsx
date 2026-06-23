@@ -43,78 +43,113 @@ export function BatchAIProcessor() {
     let fail = 0;
     let skip = 0;
 
-    const maxRetriesPerWord = 3;
-    let currentWordRetries = 0;
+    const maxRetriesPerBatch = 3;
+    let currentBatchRetries = 0;
+    const BATCH_SIZE = 20;
 
-    for (let i = 0; i < ALL_600_VOCABULARIES.length; i++) {
+    for (let i = 0; i < ALL_600_VOCABULARIES.length; i += BATCH_SIZE) {
        if (!isRunningRef.current) break;
        
-       const word = ALL_600_VOCABULARIES[i].word;
-       setCurrentWord(word);
-       setProgress(p => ({ ...p, current: i + 1 }));
+       const currentItemMax = Math.min(i + BATCH_SIZE, ALL_600_VOCABULARIES.length);
+       setProgress(p => ({ ...p, current: currentItemMax }));
 
-       if (cache[word]) {
-          skip++;
+       const batchWords = ALL_600_VOCABULARIES.slice(i, currentItemMax).map(v => v.word);
+       const wordsToProcess = batchWords.filter(w => !cache[w]);
+       
+       const skippedCount = batchWords.length - wordsToProcess.length;
+       if (skippedCount > 0) {
+          skip += skippedCount;
           setProgress(p => ({ ...p, skipped: skip }));
-          currentWordRetries = 0;
+       }
+
+       if (wordsToProcess.length === 0) {
+          currentBatchRetries = 0;
           continue;
        }
+
+       const label = wordsToProcess.length === 1 ? wordsToProcess[0] : `${wordsToProcess[0]} (+${wordsToProcess.length - 1} từ)`;
+       setCurrentWord(label);
 
        try {
           const customApiKey = localStorage.getItem('settings_gemini_api_key') || '';
           
-          const response = await fetch('/api/gemini/analyze', {
+          const response = await fetch('/api/gemini/analyze-batch', {
             method: 'POST',
             headers: { 
               'Content-Type': 'application/json',
               ...(customApiKey && { 'x-gemini-api-key': customApiKey })
             },
-            body: JSON.stringify({ word }),
+            body: JSON.stringify({ words: wordsToProcess }),
           });
-          const data = await response.json();
-          if (!response.ok) {
-            throw new Error(data.error || 'Lỗi kết nối AI');
-          }
           
-          cache[word] = data;
-          if (data.actualWord) {
-            cache[data.actualWord] = data; // Cache fallback
-          }
+          let dataArray;
+          const textResponse = await response.text();
           try {
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+            dataArray = JSON.parse(textResponse);
           } catch(e) {
-            addLog(`❌ Cảnh báo: Quá dung lượng lưu trữ cục bộ khi lưu "${word}".`);
-            setIsRunning(false);
-            break;
+            throw new Error(response.status === 502 || response.status === 503 || response.status === 504 ? 'Máy chủ quá tải (503)' : `Lỗi ${response.status} không rõ`);
           }
 
-          success++;
-          setProgress(p => ({ ...p, successful: success }));
-          addLog(`✅ Đã phân tích: ${word}`);
-          currentWordRetries = 0;
-          
-          // Nghỉ 1.5 giây để tránh rate limit
-          await new Promise(r => setTimeout(r, 1500));
-       } catch (err: any) {
-          
-          addLog(`❌ Lỗi [${word}]: ${err.message}`);
-          
-          // Nếu gặp lỗi 503 hoặc quá tải, thử lại
-          if (err.message?.includes('503') || err.message?.includes('quá tải') || err.message?.includes('429')) {
-             currentWordRetries++;
-             if (currentWordRetries <= maxRetriesPerWord) {
-                addLog(`⚠️ Đang quá tải, tạm nghỉ chờ phục hồi rồi thử lại từ "${word}" (Lần ${currentWordRetries}/${maxRetriesPerWord})...`);
-                await new Promise(r => setTimeout(r, 10000)); // Nghỉ 10s
-                i--; // Lùi lại 1 bước để vòng lặp thử lại từ này
-                continue;
-             } else {
-                addLog(`❌ Đã thử lại quá nhiều lần từ "${word}", tự động bỏ qua.`);
-             }
+          if (!response.ok) {
+            throw new Error(dataArray.error || 'Lỗi kết nối AI');
           }
           
-          fail++;
-          setProgress(p => ({ ...p, failed: fail }));
-          currentWordRetries = 0;
+          if (!Array.isArray(dataArray)) {
+             throw new Error("Phản hồi từ AI không đúng định dạng mảng JSON");
+          }
+
+          let savedInMem = false;
+          dataArray.forEach((data: any) => {
+             // Link to the requested word or actual word
+             const targetWord = data.queryWord || data.actualWord; 
+             if (targetWord) {
+                cache[targetWord] = data;
+                if (data.actualWord && data.actualWord !== targetWord) {
+                    cache[data.actualWord] = data;
+                }
+                savedInMem = true;
+             }
+          });
+
+          if (savedInMem) {
+             try {
+               localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+             } catch(e) {
+               addLog(`❌ Cảnh báo: Quá dung lượng lưu trữ cục bộ.`);
+               setIsRunning(false);
+               break;
+             }
+          }
+
+          success += wordsToProcess.length;
+          setProgress(p => ({ ...p, successful: success }));
+          addLog(`✅ Đã phân tích nhóm: ${label}`);
+          currentBatchRetries = 0;
+          
+          // Tránh rate limit
+          await new Promise(r => setTimeout(r, 2000));
+       } catch (err: any) {
+          
+          addLog(`❌ Lỗi nhóm [${label}]: ${err.message}`);
+          
+          // Thử lại nếu quá tải
+          if (err.message?.includes('503') || err.message?.includes('quá tải') || err.message?.includes('429')) {
+             currentBatchRetries++;
+             if (currentBatchRetries <= maxRetriesPerBatch) {
+                addLog(`⚠️ Đang quá tải, chờ rồi thử lại nhóm "${label}" (Lần ${currentBatchRetries}/${maxRetriesPerBatch})...`);
+                await new Promise(r => setTimeout(r, 10000)); 
+                i -= BATCH_SIZE; // Quay lại batch này
+                continue;
+             } else {
+                addLog(`❌ Hết lượt thử lại nhóm "${label}", tự động bỏ qua.`);
+                fail += wordsToProcess.length;
+                setProgress(p => ({ ...p, failed: fail }));
+             }
+          } else {
+             fail += wordsToProcess.length;
+             setProgress(p => ({ ...p, failed: fail }));
+          }
+          currentBatchRetries = 0;
           await new Promise(r => setTimeout(r, 2000));
        }
     }

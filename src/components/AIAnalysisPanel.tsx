@@ -50,7 +50,15 @@ export function AIAnalysisPanel({ word, onAnalysisComplete }: AIAnalysisPanelPro
         },
         body: JSON.stringify({ word }),
       });
-      const data = await response.json();
+      
+      let data;
+      const textResponse = await response.text();
+      try {
+        data = JSON.parse(textResponse);
+      } catch(e) {
+        throw new Error(response.status === 502 || response.status === 503 || response.status === 504 ? 'Máy chủ quá tải (503)' : `Lỗi hệ thống: ${response.status}`);
+      }
+
       if (!response.ok) {
         throw new Error(data.error || 'Lỗi kết nối AI');
       }

@@ -58,7 +58,7 @@ Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạn
       while (retries > 0) {
         try {
           response = await ai.models.generateContent({
-            model: "gemini-3.5-flash",
+            model: "gemini-2.5-flash",
             contents: prompt,
             config: {
               responseMimeType: "application/json",
@@ -90,6 +90,92 @@ Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạn
         errorMessage = "Hệ thống AI hiện đang quá tải do nhu cầu cao. Bạn vui lòng thử lại sau vài giây nhé!";
       }
 
+      res.status(500).json({ error: errorMessage });
+    }
+  });
+
+  // API Route for Batch Gemini analysis
+  app.post("/api/gemini/analyze-batch", async (req, res) => {
+    try {
+      const { words } = req.body;
+      if (!words || !Array.isArray(words)) {
+        return res.status(400).json({ error: "Missing words array" });
+      }
+
+      const customApiKey = req.headers['x-gemini-api-key'] as string;
+      const apiKey = customApiKey || process.env.GEMINI_API_KEY;
+
+      if (!apiKey) {
+        throw new Error("Vui lòng cung cấp API Key của bạn để sử dụng chức năng này.");
+      }
+
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            "User-Agent": "aistudio-build",
+          },
+        },
+      });
+
+      const prompt = `Phân tích danh sách ${words.length} từ tiếng Trung sau đây.
+Với mỗi từ, xác định chữ Hán thông dụng tương ứng (nếu input là pinyin hoặc nghĩa tiếng việt).
+Phân tích mỗi chữ Hán thành các bộ thủ.
+Sáng tạo CÂU CHUYỆN LIÊN TƯỞNG NGẮN (2-3 câu) liên kết các bộ thủ để dễ nhớ.
+Cung cấp VÍ DỤ GIAO TIẾP THỰC TẾ ngắn gọn chứa từ đó.
+
+Trả về duy nhất MỘT ARRAY CHỨA ${words.length} JSON OBJECTS, có cấu trúc chính xác (ví dụ cho chữ "我"):
+[
+  {
+    "queryWord": "từ_gốc_từ_danh_sách",
+    "actualWord": "我",
+    "wordPinyin": "wǒ",
+    "wordMeaning": "tôi, tao, mình",
+    "radicals": ["Bộ thủ 1 (Nghĩa 1)", "Bộ thủ 2 (Nghĩa 2)"],
+    "story": "Câu chuyện...",
+    "exampleSentence": "Ní hǎo, wǒ shì...",
+    "examplePinyin": "Ní hǎo, wǒ shì...",
+    "exampleMeaning": "Xin chào, tôi là..."
+  }
+]
+Danh sách từ: ${words.join(', ')}
+Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối không chứa markdown, không có text hướng dẫn. Phải trả đủ ${words.length} từ.`;
+
+      let response: any;
+      let retries = 3;
+      let delay = 2000;
+      
+      while (retries > 0) {
+        try {
+          response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            config: {
+              responseMimeType: "application/json",
+              temperature: 0.2, // Lower temperature for more consistent JSON array outputs
+            },
+          });
+          break; // Success
+        } catch (error: any) {
+          retries--;
+          console.error(`Gemini API Batch Error (retries left: ${retries}):`, error.message);
+          if (retries === 0 || (!error.message?.includes('503') && !error.message?.includes('429'))) {
+            throw error;
+          }
+          await new Promise(r => setTimeout(r, delay));
+          delay *= 2; // Exponential backoff
+        }
+      }
+
+      const text = response.text || "[]";
+      const data = JSON.parse(text);
+      res.json(data);
+    } catch (error: any) {
+      console.error("Gemini API Batch Error:", error);
+      let errorMessage = error.message || "Lỗi khi phân tích từ vựng";
+      if (errorMessage.includes("503") || errorMessage.includes("high demand") || errorMessage.includes("UNAVAILABLE")) {
+        errorMessage = "Hệ thống AI hiện đang quá tải do nhu cầu cao. Bạn vui lòng thử lại sau vài giây nhé!";
+      }
       res.status(500).json({ error: errorMessage });
     }
   });
