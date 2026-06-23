@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Sparkles, Loader2, Volume2 } from "lucide-react";
+import { Sparkles, Loader2, Volume2, Database } from "lucide-react";
 import { speakChineseText } from "../utils/speech";
+import { db } from "../lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 interface AIAnalysisPanelProps {
   word: string;
@@ -17,6 +19,7 @@ export function AIAnalysisPanel({
   const [analysis, setAnalysis] = useState<{
     radicals: string[];
     story: string;
+    actualWord?: string;
     exampleSentence?: string;
     examplePinyin?: string;
     exampleMeaning?: string;
@@ -24,8 +27,6 @@ export function AIAnalysisPanel({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check cache when word changes
-    setError(null);
     try {
       const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
       if (cache[word]) {
@@ -39,147 +40,31 @@ export function AIAnalysisPanel({
     }
   }, [word]);
 
-  const analyzeWord = async () => {
+  const loadFromDatabase = async () => {
     setLoading(true);
     setError(null);
     try {
-      const customApiKey =
-        localStorage.getItem("settings_gemini_api_key") || "";
+      const safeWord = word.trim().replace(/\//g, '-');
+      const docRef = doc(db, "vocabularies", safeWord);
+      const docSnap = await getDoc(docRef);
 
-      let response = await fetch("/api/gemini/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(customApiKey && { "x-gemini-api-key": customApiKey }),
-        },
-        body: JSON.stringify({ word }),
-      });
-
-      let data;
-      let textResponse = await response.text();
-
-      if (
-        response.status === 404 ||
-        response.status === 504 ||
-        response.status === 500 ||
-        textResponse.trim().startsWith("<") ||
-        textResponse.includes("FUNCTION_INVOCATION_TIMEOUT") ||
-        textResponse.includes("A server error has occurred")
-      ) {
-        if (!customApiKey) {
-          if (
-            textResponse.includes("FUNCTION_INVOCATION_TIMEOUT") ||
-            response.status === 504
-          ) {
-            throw new Error(
-              "Lỗi Vercel Timeout 10s. Vui lòng nhập API Key của bạn để xử lý trực tiếp!",
-            );
-          }
-          throw new Error(
-            "Không tìm thấy máy chủ hoặc phản hồi không hợp lệ. Vui lòng nhập API Key để gọi trực tiếp!",
-          );
-        }
-
-        const directPrompt = `Phân tích từ "${word}" thành các bộ thủ. 
-Lưu ý: Nếu "${word}" là phiên âm pinyin (chữ Latinh) hoặc nghĩa tiếng Việt, hãy tự xác định chữ Hán (Hanzi) thông dụng nhất tương ứng với từ đó và dùng chữ Hán đó để phân tích.
-Đồng thời sáng tạo một câu chuyện ngắn gọn, dễ nhớ (khoảng 2-3 câu) để liên kết các bộ thủ này lại với nhau nhằm giúp người học ghi nhớ ý nghĩa của chữ Hán này.
-Bạn cũng phải cung cấp chữ Hán thực tế (actualWord), Pinyin (phiên âm chuẩn) và Nghĩa tiếng Việt của chính chữ Hán đó.
-Cuối cùng, hãy tạo thêm một câu ví dụ đàm thoại thực tế, giao tiếp ngắn gọn (không quá dài, dễ áp dụng) sử dụng chữ Hán đó. 
-Trả về dưới dạng JSON có cấu trúc như sau:
-{
-  "actualWord": "Chữ Hán chính thức (ví dụ: 我, 你, ...)",
-  "wordPinyin": "Pinyin của chữ gốc...",
-  "wordMeaning": "Nghĩa tiếng Việt của chữ gốc...",
-  "radicals": ["Bộ 1 (Ý nghĩa)", "Bộ 2 (Ý nghĩa)", ...],
-  "story": "Câu chuyện liên tưởng...",
-  "exampleSentence": "Câu đàm thoại tiếng Trung...",
-  "examplePinyin": "Pinyin của câu đàm thoại...",
-  "exampleMeaning": "Nghĩa tiếng Việt của câu đàm thoại..."
-}
-Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạng markdown.`;
-
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${customApiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: directPrompt }] }],
-              generationConfig: {
-                responseMimeType: "application/json",
-                temperature: 0.7,
-              },
-            }),
-          },
-        );
-
-        const geminiTextResponse = await geminiRes.text();
-        let geminiData;
+      if (docSnap.exists()) {
+        const data = docSnap.data() as any;
+        setAnalysis(data);
+        if (onAnalysisComplete) onAnalysisComplete(data);
+        
         try {
-          geminiData = JSON.parse(geminiTextResponse);
-        } catch (e) {
-          // ignore
-        }
-        if (!geminiRes.ok) {
-          throw new Error(
-            geminiData?.error?.message ||
-              geminiTextResponse ||
-              "Lỗi khi gọi API Gemini trực tiếp",
-          );
-        }
-        const geminiText =
-          geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-        textResponse = geminiText || "{}";
+          const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
+          cache[word] = data;
+          if (data.actualWord) cache[data.actualWord] = data;
+          localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+        } catch (e) {}
+
       } else {
-        if (!response.ok) {
-          let errMsg = "Lỗi kết nối AI";
-          try {
-            const parsedErr = JSON.parse(textResponse).error;
-            errMsg =
-              parsedErr?.message ||
-              (typeof parsedErr === "string" ? parsedErr : errMsg);
-          } catch (e) {}
-          throw new Error(errMsg);
-        }
-      }
-
-      try {
-        data = JSON.parse(textResponse);
-      } catch (e) {
-        throw new Error(
-          response.status === 502 ||
-            response.status === 503 ||
-            response.status === 504
-            ? "Máy chủ quá tải (503)"
-            : `Lỗi hệ thống: parse failed`,
-        );
-      }
-
-      setAnalysis(data);
-      if (onAnalysisComplete) onAnalysisComplete(data);
-
-      // Save to cache
-      try {
-        const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
-        cache[word] = data;
-        if (data.actualWord) {
-          cache[data.actualWord] = data;
-        }
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-      } catch (e) {
-        console.error("Failed to save AI analysis to cache", e);
+         setError(`Từ '${word}' chưa có trong Database. Hãy chạy kịch bản cục bộ 'npm run seed'.`);
       }
     } catch (err: any) {
-      let emsg = err.message || "Lỗi không xác định";
-      if (
-        emsg.toLowerCase().includes("high demand") ||
-        emsg.includes("503") ||
-        emsg.toLowerCase().includes("overloaded")
-      ) {
-        emsg =
-          "Hệ thống AI hiện đang quá tải do nhu cầu cao, bạn hãy thử lại sau vài giây nhé.";
-      }
-      setError(emsg);
+      setError(err.message || "Lỗi tải Database. Kiểm tra kết nối mạng.");
     } finally {
       setLoading(false);
     }
@@ -189,17 +74,17 @@ Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạn
     <div className="bg-slate-50/50 rounded-2xl border border-indigo-100 p-4 space-y-3 mt-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2 text-indigo-700">
-          <Sparkles className="w-4 h-4" />
+          <Database className="w-4 h-4" />
           <span className="text-xs font-bold uppercase tracking-widest">
-            Phân tích AI thông minh
+            Phân tích từ vựng (Từ Database)
           </span>
         </div>
         {!analysis && !loading && (
           <button
-            onClick={analyzeWord}
+            onClick={loadFromDatabase}
             className="text-[10px] bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer"
           >
-            Tạo phân tích AI
+            Tải dữ liệu
           </button>
         )}
       </div>
@@ -207,7 +92,7 @@ Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạn
       {loading && (
         <div className="flex items-center space-x-2 text-slate-500 text-xs py-2">
           <Loader2 className="w-4 h-4 animate-spin" />
-          <span>Gemini đang phân tích bộ thủ và sáng tạo câu chuyện...</span>
+          <span>Đang lấy dữ liệu từ Cơ sở dữ liệu...</span>
         </div>
       )}
 

@@ -16,7 +16,6 @@ import {
   Heart,
   Globe,
   TrendingUp,
-  SearchIcon,
   HelpCircle,
   Eye,
   EyeOff,
@@ -34,7 +33,6 @@ import {
   UserCheck,
   Activity,
   Calendar,
-  Layers3,
   Brain,
   Timer,
   Settings,
@@ -62,7 +60,7 @@ import { StrokeOrderVisualizer } from "./components/StrokeOrderVisualizer";
 import { VocabularyReview } from "./components/VocabularyReview";
 import { AIAnalysisPanel } from "./components/AIAnalysisPanel";
 import { AuthModal } from "./components/AuthModal";
-import { BatchAIProcessor } from "./components/BatchAIProcessor";
+import { AdminSeeder } from "./components/AdminSeeder";
 import { speakChineseText } from "./utils/speech";
 import {
   auth,
@@ -1249,9 +1247,6 @@ export default function App() {
 
   // Settings API Key State
   const [settingsModalOpen, setSettingsModalOpen] = useState<boolean>(false);
-  const [customGeminiKey, setCustomGeminiKey] = useState<string>(
-    () => localStorage.getItem("settings_gemini_api_key") || "",
-  );
 
   // Helper to calculate exact active daily study streak from session dates
   const computeActualStreak = (
@@ -1352,10 +1347,12 @@ export default function App() {
             if (hasCorrection) {
               await setDoc(userRef, correctedData);
               setProgress(correctedData);
-              localStorage.setItem(
-                "hanzi_story_progress",
-                JSON.stringify(correctedData),
-              );
+              try {
+                localStorage.setItem(
+                  "hanzi_story_progress",
+                  JSON.stringify(correctedData),
+                );
+              } catch(e) {}
             } else {
               setProgress(correctedData);
             }
@@ -1371,17 +1368,24 @@ export default function App() {
             };
             await setDoc(userRef, newProgress);
             setProgress(newProgress);
-            localStorage.setItem(
-              "hanzi_story_progress",
-              JSON.stringify(newProgress),
-            );
+            try {
+              localStorage.setItem(
+                "hanzi_story_progress",
+                JSON.stringify(newProgress),
+              );
+            } catch(e) {}
           }
         } catch (dbErr) {
           console.error("Error fetching Firestore record user", dbErr);
         }
       } else {
         // Fallback or guest mode: load progress from LocalStorage
-        const saved = localStorage.getItem("hanzi_story_progress");
+        let saved: string | null = null;
+        try {
+          saved = localStorage.getItem("hanzi_story_progress");
+        } catch (e) {
+          console.warn("Storage access restricted");
+        }
         if (saved) {
           try {
             let parsed = JSON.parse(saved) as UserProgress;
@@ -1414,10 +1418,12 @@ export default function App() {
             }
 
             if (hasCorrection) {
-              localStorage.setItem(
-                "hanzi_story_progress",
-                JSON.stringify(parsed),
-              );
+              try {
+                localStorage.setItem(
+                  "hanzi_story_progress",
+                  JSON.stringify(parsed),
+                );
+              } catch(e) {}
             }
             setProgress(parsed);
           } catch (e) {
@@ -1434,10 +1440,12 @@ export default function App() {
             srsVocabulary: {},
           };
           setProgress(initialOffline);
-          localStorage.setItem(
-            "hanzi_story_progress",
-            JSON.stringify(initialOffline),
-          );
+          try {
+            localStorage.setItem(
+              "hanzi_story_progress",
+              JSON.stringify(initialOffline),
+            );
+          } catch(e) {}
         }
       }
       setAuthLoading(false);
@@ -3117,7 +3125,7 @@ export default function App() {
                             maxLength={10}
                             className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/15 focus:border-blue-500"
                           />
-                          <SearchIcon className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
+                          <Search className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
                         </div>
                         <button
                           type="submit"
@@ -3930,7 +3938,7 @@ export default function App() {
       )}
 
       {/* -- BATCH AI PROCESSOR UTILITY -- */}
-      <BatchAIProcessor />
+      {/* BatchAIProcessor has been removed in favor of local seed script */}
 
       {/* -- DETAILS MODAL 1: Radical detail -- */}
       {selectedRadical && (
@@ -4270,7 +4278,7 @@ export default function App() {
           onClick={() => setSettingsModalOpen(false)}
         >
           <div
-            className="bg-white rounded-3xl shadow-xl w-full max-w-md border border-slate-200 overflow-hidden"
+            className="bg-white rounded-3xl shadow-xl w-full max-w-2xl border border-slate-200 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
@@ -4287,52 +4295,18 @@ export default function App() {
               </button>
             </div>
 
-            <div className="p-6 space-y-5">
-              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex items-start space-x-3">
-                <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-                <div className="space-y-1">
-                  <p className="text-xs text-blue-800 leading-relaxed font-bold">
-                    Cấu hình API Key Cá Nhân
-                  </p>
-                  <p className="text-xs text-blue-700 leading-relaxed font-medium">
-                    Nhập API Key của Gemini AI do bạn tự tạo để phân tích từ
-                    vựng riêng. Key được lưu trên thiết bị của bạn nhằm đảm bảo
-                    quyền riêng tư.
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Gemini API Key
-                </label>
-                <input
-                  type="password"
-                  value={customGeminiKey}
-                  onChange={(e) => setCustomGeminiKey(e.target.value)}
-                  placeholder="AIzaSy..."
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-mono"
-                />
-                <p className="text-[10px] text-slate-400">
-                  Để trống để sử dụng key mặc định của hệ thống.
-                </p>
+            <div className="p-6 space-y-5 flex flex-col items-center">
+              <div className="w-full">
+                <AdminSeeder />
               </div>
 
               <button
                 onClick={() => {
-                  if (customGeminiKey.trim() !== "") {
-                    localStorage.setItem(
-                      "settings_gemini_api_key",
-                      customGeminiKey.trim(),
-                    );
-                  } else {
-                    localStorage.removeItem("settings_gemini_api_key");
-                  }
                   setSettingsModalOpen(false);
                 }}
-                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all shadow-indigo-100"
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all shadow-indigo-100 mt-4"
               >
-                Lưu cấu hình
+                Đóng Menu
               </button>
             </div>
           </div>

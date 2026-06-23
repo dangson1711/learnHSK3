@@ -1,94 +1,36 @@
 import express from "express";
 import path from "path";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type, Schema } from "@google/genai";
 
 const app = express();
 app.use(express.json());
 
-// API Route for Gemini analysis
-app.post("/api/gemini/analyze", async (req, res) => {
-  try {
-    const { word } = req.body;
-    if (!word) {
-      return res.status(400).json({ error: "Missing word" });
-    }
-
-    const customApiKey = req.headers['x-gemini-api-key'] as string;
-    const apiKey = customApiKey || process.env.GEMINI_API_KEY;
-
-    if (!apiKey) {
-      throw new Error("Vui lòng cung cấp API Key của bạn để sử dụng chức năng này.");
-    }
-
-    const ai = new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
-        },
-      },
-    });
-
-    const prompt = `Phân tích từ "${word}" thành các bộ thủ. 
-Lưu ý: Nếu "${word}" là phiên âm pinyin (chữ Latinh) hoặc nghĩa tiếng Việt, hãy tự xác định chữ Hán (Hanzi) thông dụng nhất tương ứng với từ đó và dùng chữ Hán đó để phân tích.
-Đồng thời sáng tạo một câu chuyện ngắn gọn, dễ nhớ (khoảng 2-3 câu) để liên kết các bộ thủ này lại với nhau nhằm giúp người học ghi nhớ ý nghĩa của chữ Hán này.
-Bạn cũng phải cung cấp chữ Hán thực tế (actualWord), Pinyin (phiên âm chuẩn) và Nghĩa tiếng Việt của chính chữ Hán đó.
-Cuối cùng, hãy tạo thêm một câu ví dụ đàm thoại thực tế, giao tiếp ngắn gọn (không quá dài, dễ áp dụng) sử dụng chữ Hán đó. 
-Trả về dưới dạng JSON có cấu trúc như sau:
-{
-  "actualWord": "Chữ Hán chính thức (ví dụ: 我, 你, ...)",
-  "wordPinyin": "Pinyin của chữ gốc...",
-  "wordMeaning": "Nghĩa tiếng Việt của chữ gốc...",
-  "radicals": ["Bộ 1 (Ý nghĩa)", "Bộ 2 (Ý nghĩa)", ...],
-  "story": "Câu chuyện liên tưởng...",
-  "exampleSentence": "Câu đàm thoại tiếng Trung...",
-  "examplePinyin": "Pinyin của câu đàm thoại...",
-  "exampleMeaning": "Nghĩa tiếng Việt của câu đàm thoại..."
-}
-Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạng markdown.`;
-
-    let response: any;
-    let retries = 3;
-    let delay = 2000;
-    
-    while (retries > 0) {
-      try {
-        response = await ai.models.generateContent({
-          model: "gemini-2.5-flash-lite",
-          contents: prompt,
-          config: {
-            responseMimeType: "application/json",
-            temperature: 0.7,
+const responseSchema: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    results: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          word: { type: Type.STRING },
+          pinyin: { type: Type.STRING },
+          meaning: { type: Type.STRING },
+          radicals: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
           },
-        });
-        break; // Success
-      } catch (error: any) {
-        retries--;
-        console.error(`Gemini API Error (retries left: ${retries}):`, error.message);
-        if (retries === 0 || (!error.message?.includes('503') && !error.message?.includes('429'))) {
-          throw error;
-        }
-        await new Promise(r => setTimeout(r, delay));
-        delay *= 2; // Exponential backoff
-      }
-    }
-
-    const text = response.text || "{}";
-    const data = JSON.parse(text);
-    res.json(data);
-  } catch (error: any) {
-    console.error("Gemini API Error:", error);
-    
-    let errorMessage = error.message || "Lỗi khi phân tích từ vựng";
-    
-    // Xử lý lỗi hệ thống quá tải từ Gemini
-    if (errorMessage.includes("503") || errorMessage.includes("high demand") || errorMessage.includes("UNAVAILABLE")) {
-      errorMessage = "Hệ thống AI hiện đang quá tải do nhu cầu cao. Bạn vui lòng thử lại sau vài giây nhé!";
-    }
-
-    res.status(500).json({ error: errorMessage });
-  }
-});
+          story: { type: Type.STRING },
+          actualWord: { type: Type.STRING },
+          exampleSentence: { type: Type.STRING },
+          examplePinyin: { type: Type.STRING },
+          exampleMeaning: { type: Type.STRING },
+        },
+        required: ["word", "pinyin", "meaning", "radicals", "story", "actualWord"],
+      },
+    },
+  },
+};
 
 // API Route for Batch Gemini analysis
 app.post("/api/gemini/analyze-batch", async (req, res) => {
@@ -98,21 +40,13 @@ app.post("/api/gemini/analyze-batch", async (req, res) => {
       return res.status(400).json({ error: "Missing words array" });
     }
 
-    const customApiKey = req.headers['x-gemini-api-key'] as string;
-    const apiKey = customApiKey || process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      throw new Error("Vui lòng cung cấp API Key của bạn để sử dụng chức năng này.");
+      throw new Error("GEMINI_API_KEY không tồn tại trên server.");
     }
 
-    const ai = new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
-        },
-      },
-    });
+    const ai = new GoogleGenAI({ apiKey });
 
     const prompt = `Phân tích danh sách ${words.length} từ tiếng Trung sau đây.
 Với mỗi từ, xác định chữ Hán thông dụng tương ứng (nếu input là pinyin hoặc nghĩa tiếng việt).
@@ -120,22 +54,7 @@ Phân tích mỗi chữ Hán thành các bộ thủ.
 Sáng tạo CÂU CHUYỆN LIÊN TƯỞNG NGẮN (2-3 câu) liên kết các bộ thủ để dễ nhớ.
 Cung cấp VÍ DỤ GIAO TIẾP THỰC TẾ ngắn gọn chứa từ đó.
 
-Trả về duy nhất MỘT ARRAY CHỨA ${words.length} JSON OBJECTS, có cấu trúc chính xác (ví dụ cho chữ "我"):
-[
-  {
-    "queryWord": "từ_gốc_từ_danh_sách",
-    "actualWord": "我",
-    "wordPinyin": "wǒ",
-    "wordMeaning": "tôi, tao, mình",
-    "radicals": ["Bộ thủ 1 (Nghĩa 1)", "Bộ thủ 2 (Nghĩa 2)"],
-    "story": "Câu chuyện...",
-    "exampleSentence": "Ní hǎo, wǒ shì...",
-    "examplePinyin": "Ní hǎo, wǒ shì...",
-    "exampleMeaning": "Xin chào, tôi là..."
-  }
-]
-Danh sách từ: ${words.join(', ')}
-Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối không chứa markdown, không có text hướng dẫn. Phải trả đủ ${words.length} từ.`;
+Danh sách từ: ${words.join(', ')}`;
 
     let response: any;
     let retries = 3;
@@ -143,14 +62,16 @@ Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối 
     
     while (retries > 0) {
       try {
-        response = await ai.models.generateContent({
-          model: "gemini-2.5-flash-lite",
+         const genResponse = await ai.models.generateContent({
+          model: "gemini-3.1-flash-lite",
           contents: prompt,
           config: {
+            temperature: 0.2,
             responseMimeType: "application/json",
-            temperature: 0.2, // Lower temperature for more consistent JSON array outputs
+            responseSchema: responseSchema,
           },
         });
+        response = genResponse;
         break; // Success
       } catch (error: any) {
         retries--;
@@ -163,14 +84,33 @@ Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối 
       }
     }
 
-    const text = response.text || "[]";
-    const data = JSON.parse(text);
+    let text = response.text || '{"results":[]}';
+    if (text.startsWith("```json")) {
+      text = text.replace(/^```json\n/, "").replace(/\n```$/, "");
+    } else if (text.startsWith("```")) {
+      text = text.replace(/^```\n/, "").replace(/\n```$/, "");
+    }
+    
+    let data;
+    try {
+      data = JSON.parse(text);
+      if (data.results && Array.isArray(data.results)) {
+        data = data.results;
+      } else if (!Array.isArray(data)) {
+        data = [];
+      }
+    } catch (e) {
+       data = [];
+    }
+    
     res.json(data);
   } catch (error: any) {
     console.error("Gemini API Batch Error:", error);
     let errorMessage = error.message || "Lỗi khi phân tích từ vựng";
-    if (errorMessage.includes("503") || errorMessage.includes("high demand") || errorMessage.includes("UNAVAILABLE")) {
+    if (errorMessage.includes("503") || errorMessage.includes("high demand") || errorMessage.includes("UNAVAILABLE") || errorMessage.includes("overloaded")) {
       errorMessage = "Hệ thống AI hiện đang quá tải do nhu cầu cao. Bạn vui lòng thử lại sau vài giây nhé!";
+      res.status(503).json({ error: errorMessage });
+      return;
     }
     res.status(500).json({ error: errorMessage });
   }

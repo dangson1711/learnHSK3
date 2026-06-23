@@ -274,7 +274,7 @@ export function getVocabularyDetail(word: string, fallbackTopicId: string = 'top
     meaning: targetMeaning,
     radicals: detectedRadicals,
     // Câu chuyện và câu ví dụ mặc định ngắn gọn. 
-    // Mọi nội dung phân tích sâu sắc sẽ do Gemini API / Database đảm nhiệm thời gian thực!
+    // Mọi nội dung phân tích sâu sắc sẽ do DeepSeek API / Database đảm nhiệm thời gian thực!
     story: `Cổ nhân xưa lồng ghép các nét vẽ tượng hình này lại để tạo nên ý nghĩa liên hệ bổ trợ sinh động cho "${word}".`,
     exampleSentence: `${word}。`,
     examplePinyin: pinyin(`${word}。`),

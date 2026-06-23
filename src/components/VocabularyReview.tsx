@@ -23,7 +23,6 @@ import {
   Brain,
   Timer,
   Calendar,
-  Layers3,
   TrendingUp,
   AlertCircle
 } from 'lucide-react';
@@ -248,7 +247,7 @@ export function VocabularyReview({
                   : 'text-slate-600 hover:text-slate-800'
               }`}
             >
-              <Layers3 className="w-3.5 h-3.5" />
+              <Layers className="w-3.5 h-3.5" />
               Tổng ({srsBinnedVocabularies.all.length})
             </button>
           </div>
