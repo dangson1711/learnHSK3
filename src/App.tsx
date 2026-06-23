@@ -42,10 +42,12 @@ import { motion, AnimatePresence } from 'motion/react';
 
 import { Radical, Topic, Vocabulary, UserProgress, StudySession, SrsItem } from './types';
 import { RADICALS_DATA } from './data/radicals';
-import { TOPICS_DATA, VOCABULARY_DATA, getVocabularyDetail, get1000HskWords, getVocabulariesForTopic, ALL_1000_VOCABULARIES } from './data/vocabulary';
+import { TOPICS_DATA, VOCABULARY_DATA, getVocabularyDetail, get600HskWords, getVocabulariesForTopic, ALL_600_VOCABULARIES } from './data/vocabulary';
 import { StrokeOrderVisualizer } from './components/StrokeOrderVisualizer';
 import { VocabularyReview } from './components/VocabularyReview';
+import { AIAnalysisPanel } from './components/AIAnalysisPanel';
 import { AuthModal } from './components/AuthModal';
+import { BatchAIProcessor } from './components/BatchAIProcessor';
 import { speakChineseText } from './utils/speech';
 import { auth, db, onAuthStateChanged, signOut, FirebaseUser } from './lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -586,8 +588,8 @@ export default function App() {
   const [quizCompleted, setQuizCompleted] = useState<boolean>(false);
   const [activeLessonTab, setActiveLessonTab] = useState<'details' | 'strokes'>('details');
 
-  // Roadmap list View tab: 'topics' | 'library1000'
-  const [roadmapViewTab, setRoadmapViewTab] = useState<'topics' | 'library1000'>('topics');
+  // Roadmap list View tab: 'topics' | 'library600'
+  const [roadmapViewTab, setRoadmapViewTab] = useState<'topics' | 'library600'>('topics');
   const [librarySelectedTopicIdx, setLibrarySelectedTopicIdx] = useState<number>(1);
   const [librarySearchQuery, setLibrarySearchQuery] = useState<string>('');
 
@@ -889,15 +891,26 @@ export default function App() {
   };
 
   // Toggle vocabulary mastered status
-  const toggleVocabLearned = (id: string) => {
-    const isLearned = progress.learnedVocabulary.includes(id);
+  const toggleVocabLearned = (id: string, customVocabObj?: Vocabulary) => {
+    // Handle old string formats where the word was saved directly instead of ID
+    const isLearned = progress.learnedVocabulary.includes(id) || (customVocabObj && progress.learnedVocabulary.includes(customVocabObj.word));
     let newList: string[];
+    let targetToRemove = isLearned && customVocabObj && progress.learnedVocabulary.includes(customVocabObj.word) ? customVocabObj.word : id;
+
     if (isLearned) {
-      newList = progress.learnedVocabulary.filter(item => item !== id);
+      newList = progress.learnedVocabulary.filter(item => item !== targetToRemove && item !== id);
     } else {
       newList = [...progress.learnedVocabulary, id];
     }
-    let updated = { ...progress, learnedVocabulary: newList };
+
+    let customList = [...(progress.customVocabularies || [])];
+    if (customVocabObj && (customVocabObj.topicId === 'custom' || customVocabObj.topicId === 'custom_ai')) {
+      if (!isLearned && !customList.find(v => v.id === id)) {
+        customList.push(customVocabObj);
+      }
+    }
+
+    let updated = { ...progress, learnedVocabulary: newList, customVocabularies: customList };
     updated = getStreakUpdatedProgress(updated);
     saveProgress(updated);
   };
@@ -962,7 +975,7 @@ export default function App() {
   }, [progress.studyHistory, studyTimeSeconds]);
 
   // Progress metrics
-  const totalMasteryGoal = 1000;
+  const totalMasteryGoal = 600;
   const masteredVocabCount = useMemo(() => {
     return progress.learnedVocabulary.length;
   }, [progress.learnedVocabulary]);
@@ -1016,9 +1029,9 @@ export default function App() {
     };
   }, [activeLevelTab, progress.learnedVocabulary]);
 
-  // Load the 1000 words list for active level & sub-topic
-  const list1000WordsForTab = useMemo(() => {
-    const all = get1000HskWords(activeLevelTab, librarySelectedTopicIdx);
+  // Load the 600 words list for active level & sub-topic
+  const list600WordsForTab = useMemo(() => {
+    const all = get600HskWords(activeLevelTab, librarySelectedTopicIdx);
     if (!librarySearchQuery.trim()) return all;
     return all.filter(
       w => 
@@ -1028,8 +1041,8 @@ export default function App() {
     );
   }, [activeLevelTab, librarySelectedTopicIdx, librarySearchQuery]);
 
-  // Topics for the active level to display inside 1000 dictionary selector
-  const topicsForActive1000Tab = useMemo(() => {
+  // Topics for the active level to display inside 600 dictionary selector
+  const topicsForActive600Tab = useMemo(() => {
     return TOPICS_DATA.filter(t => t.hskLevel === activeLevelTab);
   }, [activeLevelTab]);
 
@@ -1075,15 +1088,66 @@ export default function App() {
   // Execute word search lookup
   const handleSearch = (e?: React.FormEvent, manualQuery?: string) => {
     if (e) e.preventDefault();
-    const query = manualQuery || searchQuery;
-    if (!query.trim()) return;
-    const result = getVocabularyDetail(query.trim());
-    setSearchResult(result);
+    const query = (manualQuery || searchQuery).trim();
+    if (!query) return;
+
+    const normalizedQuery = query.toLowerCase();
+    const removeTones = (str: string) => {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
+    const isMatch = (v: Vocabulary) => {
+      if (v.word === query) return true;
+      if (v.pinyin && v.pinyin.toLowerCase().includes(normalizedQuery)) return true;
+      if (v.pinyin && removeTones(v.pinyin.toLowerCase()).includes(removeTones(normalizedQuery))) return true;
+      if (v.meaning && v.meaning.toLowerCase().includes(normalizedQuery)) return true;
+      return false;
+    };
+
+    // Check if word exists in local vocab library
+    let foundWord = VOCABULARY_DATA.find(isMatch);
+    
+    // Check custom vocabularies
+    if (!foundWord && progress.customVocabularies) {
+      foundWord = progress.customVocabularies.find(isMatch);
+    }
+
+    if (foundWord) {
+      setSearchResult(foundWord);
+    } else {
+      // Create a temporary object for AI fallback
+      const tempResult = getVocabularyDetail(query, 'custom', 3, 'Đang chờ phân tích AI...');
+      tempResult.pinyin = 'Đang tra cứu...';
+      setSearchResult(tempResult);
+    }
+    
     // If searched for, let's open search view
     if (!manualQuery) {
       setCurrentView('search');
     }
   };
+
+  const handleAIAnalysisComplete = (data: any) => {
+    if (searchResult && data) {
+      if (data.wordMeaning || data.wordPinyin || data.actualWord) {
+         setSearchResult(prev => {
+            if (!prev) return prev;
+            const updatedWord = data.actualWord || prev.word;
+            return {
+              ...prev,
+              id: updatedWord,
+              word: updatedWord,
+              meaning: data.wordMeaning || prev.meaning,
+              pinyin: data.wordPinyin || prev.pinyin,
+              exampleSentence: data.exampleSentence || prev.exampleSentence,
+              examplePinyin: data.examplePinyin || prev.examplePinyin,
+              exampleMeaning: data.exampleMeaning || prev.exampleMeaning,
+            };
+         });
+      }
+    }
+  };
+
 
   // Generate dynamic quiz options for a vocabulary word
   const quizQuestions = useMemo(() => {
@@ -1162,7 +1226,7 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-lg font-bold tracking-tight text-slate-900">Hanzi Story</h1>
-              <p className="text-[10px] text-slate-500 tracking-wider uppercase font-mono">Bẻ khóa 1000 từ vựng HSK 1-3 & Bộ Thủ</p>
+              <p className="text-[10px] text-slate-500 tracking-wider uppercase font-mono">Bẻ khóa 600 từ vựng HSK 1-3 & Bộ Thủ</p>
             </div>
           </div>
 
@@ -1180,11 +1244,11 @@ export default function App() {
               <span className="text-xs font-bold font-mono">{progress.streak} ngày</span>
             </div>
 
-            {/* Target 1000 level progress */}
+            {/* Target 600 level progress */}
             <div className="hidden sm:flex flex-col items-end">
               <span className="text-[9px] text-slate-400 font-bold uppercase font-mono">HSK 1-3 Tiến độ</span>
               <span className="text-xs font-bold text-slate-800 font-mono">
-                {masteredVocabCount} / 1000 từ
+                {masteredVocabCount} / 600 từ
               </span>
             </div>
 
@@ -1248,7 +1312,7 @@ export default function App() {
                 }`}
               >
                 <Layers className="w-5 h-5 text-indigo-500" />
-                <span>Lộ trình HSK 1-3 (1000 Từ)</span>
+                <span>Lộ trình HSK 1-3 (600 Từ)</span>
               </button>
 
               <button 
@@ -1308,7 +1372,7 @@ export default function App() {
                 </span>
                 <Award className="w-5 h-5 text-yellow-400" />
               </div>
-              <h3 className="text-sm font-bold">Chinh phục 1000 từ</h3>
+              <h3 className="text-sm font-bold">Chinh phục 600 từ</h3>
               <p className="text-xs text-slate-300 mt-1 mb-4 leading-relaxed">
                 Nắm vững chữ Hán từ bộ thủ nền tảng cổ xưa tới câu ví dụ thực chiến!
               </p>
@@ -1325,7 +1389,7 @@ export default function App() {
                   />
                 </div>
                 <p className="text-[10px] text-right text-slate-400">
-                  Đã thuộc {masteredVocabCount} / 1000 từ HSK 1-3
+                  Đã thuộc {masteredVocabCount} / 600 từ HSK 1-3
                 </p>
               </div>
             </div>
@@ -1363,7 +1427,7 @@ export default function App() {
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Học từ vựng từ bản chất gốc chữ Hán</h2>
                         <p className="text-sm text-indigo-100 max-w-md">
-                          Đi sâu thâu tóm 50 bộ thủ cổ sơ, liên kết câu chuyện, rồi áp dụng thực chiến lộ trình 1000 từ vựng.
+                          Đi sâu thâu tóm 50 bộ thủ cổ sơ, liên kết câu chuyện, rồi áp dụng thực chiến lộ trình 600 từ vựng.
                         </p>
                       </div>
                       
@@ -1416,11 +1480,11 @@ export default function App() {
                           <p className="text-xs text-slate-500 font-semibold tracking-wide uppercase">Đã mastered từ</p>
                           <div className="flex items-baseline justify-between mt-0.5">
                             <h4 className="text-xl font-bold text-slate-800 font-mono">{masteredVocabCount} từ</h4>
-                            <span className="text-[10px] text-indigo-500 font-semibold">Mục tiêu 1000</span>
+                            <span className="text-[10px] text-indigo-500 font-semibold">Mục tiêu 600</span>
                           </div>
                           
                           <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-1">
-                            <div className="bg-indigo-500 h-full" style={{ width: `${(masteredVocabCount/1000)*100}%` }}></div>
+                            <div className="bg-indigo-500 h-full" style={{ width: `${(masteredVocabCount/600)*100}%` }}></div>
                           </div>
                         </div>
                       </div>
@@ -1577,7 +1641,7 @@ export default function App() {
 
                         <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200">
                           <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm mb-2.5">3</div>
-                          <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">Thư Viện 1000 Từ HSK</h5>
+                          <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">Thư Viện 600 Từ HSK</h5>
                           <p className="text-[11px] text-slate-500">Tra cứu nhanh, xem trước móng nền tảng bạt ngàn từ vựng HSK 1, 2, 3 phân bài học khoa học.</p>
                         </div>
                       </div>
@@ -1744,7 +1808,7 @@ export default function App() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="text-left">
                           <h2 className="text-xl font-bold text-slate-900">Lộ Trình Học HSK 1-3 Bài Bản</h2>
-                          <p className="text-xs text-slate-500 mt-0.5">Mái chèo bạt ngàn 1000 từ vựng cốt lõi phân chia theo giáo trình.</p>
+                          <p className="text-xs text-slate-500 mt-0.5">Mái chèo bạt ngàn 600 từ vựng cốt lõi phân chia theo giáo trình.</p>
                         </div>
 
                         {/* Level Switch Tabs */}
@@ -1778,14 +1842,14 @@ export default function App() {
                           Bài học theo chủ đề ({topicsForActiveLevel.length} bài)
                         </button>
                         <button
-                          onClick={() => setRoadmapViewTab('library1000')}
+                          onClick={() => setRoadmapViewTab('library600')}
                           className={`py-2 px-4 text-xs font-bold focus:outline-none border-b-2 transition-colors ${
-                            roadmapViewTab === 'library1000'
+                            roadmapViewTab === 'library600'
                               ? 'border-blue-600 text-blue-600'
                               : 'border-transparent text-slate-500 hover:text-slate-800'
                           }`}
                         >
-                          Xem nhanh thư viện 1000 từ HSK {activeLevelTab}
+                          Xem nhanh thư viện 600 từ HSK {activeLevelTab}
                         </button>
                       </div>
                     </div>
@@ -1857,8 +1921,8 @@ export default function App() {
                       </div>
                     )}
 
-                    {/* MODE B: 1000 Words preview library dictionary */}
-                    {roadmapViewTab === 'library1000' && (
+                    {/* MODE B: 600 Words preview library dictionary */}
+                    {roadmapViewTab === 'library600' && (
                       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6 text-left">
                         
                         {/* Selector and Search Bar */}
@@ -1870,7 +1934,7 @@ export default function App() {
                               onChange={(e) => setLibrarySelectedTopicIdx(Number(e.target.value))}
                               className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 px-3 text-slate-800 text-xs focus:ring-2 focus:ring-blue-500/10 focus:outline-none"
                             >
-                              {topicsForActive1000Tab.map((topic, i) => (
+                              {topicsForActive600Tab.map((topic, i) => (
                                 <option key={topic.id} value={topic.order}>
                                   Bài {i + 1}: {topic.title}
                                 </option>
@@ -1879,7 +1943,7 @@ export default function App() {
                           </div>
 
                           <div className="flex flex-col space-y-1 md:col-span-2">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tìm kiếm nhanh trong 1000 từ</label>
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tìm kiếm nhanh trong 600 từ</label>
                             <div className="relative">
                               <input
                                 type="text"
@@ -1906,8 +1970,8 @@ export default function App() {
                               </tr>
                             </thead>
                             <tbody>
-                              {list1000WordsForTab.length > 0 ? (
-                                list1000WordsForTab.map((wordItem, idx) => {
+                              {list600WordsForTab.length > 0 ? (
+                                list600WordsForTab.map((wordItem, idx) => {
                                   const isLearnedWord = progress.learnedVocabulary.includes(wordItem.word) || progress.learnedVocabulary.some(v => v.includes(wordItem.word));
                                   return (
                                     <tr 
@@ -2071,32 +2135,8 @@ export default function App() {
                         </div>
 
                         {/* Story */}
-                        <div className="space-y-2">
-                          <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                            Câu chuyện dệt chữ nhớ lâu
-                          </h4>
-                          <p className="text-sm text-slate-700 leading-relaxed bg-blue-50/40 p-4 rounded-xl border border-blue-100">
-                            {searchResult.story}
-                          </p>
-                        </div>
-
-                        {/* Example with Audio Play option */}
-                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                          <div className="flex justify-between items-center border-b border-slate-200/50 pb-2">
-                            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cú pháp ví dụ đàm thoại</h4>
-                            <button
-                              onClick={() => speakChinese(searchResult.exampleSentence)}
-                              className="p-1 px-2.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center space-x-1"
-                              title="Nghe giọng nói đàm thoại"
-                            >
-                              <Volume2 className="w-3 h-3" />
-                              <span>Nghe mẫu thoại</span>
-                            </button>
-                          </div>
-                          <p className="text-lg font-serif text-slate-800 font-bold">{searchResult.exampleSentence}</p>
-                          <p className="text-xs text-blue-600 font-mono italic">{searchResult.examplePinyin}</p>
-                          <p className="text-xs text-slate-600 font-medium">{searchResult.exampleMeaning}</p>
-                        </div>
+                        {/* AI Story and Radicals */}
+                        <AIAnalysisPanel word={searchResult.word} onAnalysisComplete={handleAIAnalysisComplete} />
 
                         {/* Notebook toggle action */}
                         <div className="pt-2 flex justify-between items-center">
@@ -2104,15 +2144,15 @@ export default function App() {
                           
                           <button
                             onClick={() => {
-                              toggleVocabLearned(searchResult.word);
+                              toggleVocabLearned(searchResult.id, searchResult);
                             }}
                             className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors ${
-                              progress.learnedVocabulary.includes(searchResult.word) || progress.learnedVocabulary.some(v => v.includes(searchResult.word))
+                              progress.learnedVocabulary.includes(searchResult.id) || progress.learnedVocabulary.some(v => v === searchResult.word)
                                 ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
                                 : 'bg-slate-900 text-white hover:bg-slate-800'
                             }`}
                           >
-                            {progress.learnedVocabulary.includes(searchResult.word) || progress.learnedVocabulary.some(v => v.includes(searchResult.word)) ? (
+                            {progress.learnedVocabulary.includes(searchResult.id) || progress.learnedVocabulary.some(v => v === searchResult.word) ? (
                               <>
                                 <Check className="w-3.5 h-3.5" />
                                 <span>Đã Mastered</span>
@@ -2143,7 +2183,7 @@ export default function App() {
                   >
                     <VocabularyReview 
                       learnedWordIds={progress.learnedVocabulary}
-                      allVocabularies={ALL_1000_VOCABULARIES}
+                      allVocabularies={[...ALL_600_VOCABULARIES, ...(progress.customVocabularies || [])]}
                       onToggleWordLearned={(id) => {
                         toggleVocabLearned(id);
                       }}
@@ -2187,7 +2227,7 @@ export default function App() {
                           <div className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">Bộ thủ sơ bản</div>
                         </div>
                         <div>
-                          <div className="text-2xl md:text-3xl font-black text-blue-400">1000+</div>
+                          <div className="text-2xl md:text-3xl font-black text-blue-400">600+</div>
                           <div className="text-[10px] md:text-xs text-slate-400 font-semibold uppercase tracking-wider">Từ vựng HSK 1-3</div>
                         </div>
                         <div>
@@ -2302,7 +2342,7 @@ export default function App() {
                               <div className="space-y-0.5">
                                 <h4 className="text-sm font-bold text-slate-800">Lộ Trình Chuẩn HSK 1 - 3</h4>
                                 <p className="text-xs text-slate-500 leading-relaxed">
-                                  Hệ thống hóa khoa học theo chủ điểm giao tiếp sinh động, tự tin chinh phục mốc lộ trình <strong>1000 từ vựng cốt lõi</strong>.
+                                  Hệ thống hóa khoa học theo chủ điểm giao tiếp sinh động, tự tin chinh phục mốc lộ trình <strong>600 từ vựng cốt lõi</strong>.
                                 </p>
                               </div>
                             </div>
@@ -2357,7 +2397,7 @@ export default function App() {
                               className="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                             >
                               <Layers className="w-3.5 h-3.5" />
-                              Lộ trình 1000 từ
+                              Lộ trình 600 từ
                             </button>
                           </div>
                         </div>
@@ -2592,64 +2632,8 @@ export default function App() {
                         </div>
 
                         {/* Story explanation */}
-                        <div className="p-6 space-y-2.5">
-                          <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
-                            Câu chuyện liên tưởng khơi dậy trí nhớ
-                          </span>
-                          <p className="text-xs text-slate-700 leading-relaxed bg-blue-50/45 p-4 rounded-2xl border border-blue-100">
-                            {activeTopicVocabularies[lessonWordIndex]?.story}
-                          </p>
-                        </div>
-
-                        {/* Dialogue sentence with visibility trigger and Speaker Trigger */}
-                        <div className="px-6 py-5 bg-slate-50 border-t border-slate-100 space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
-                              Câu đàm thoại mẫu văn
-                            </span>
-                            
-                            <button
-                              onClick={() => speakChinese(activeTopicVocabularies[lessonWordIndex]?.exampleSentence)}
-                              className="p-1 px-2.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center space-x-1"
-                            >
-                              <Volume2 className="w-3.5 h-3.5" />
-                              <span>Nghe phát âm</span>
-                            </button>
-                          </div>
-
-                          <p className="text-base font-serif text-slate-900 tracking-wide font-bold">
-                            {activeTopicVocabularies[lessonWordIndex]?.exampleSentence}
-                          </p>
-                          
-                          <p className="text-xs text-blue-600 font-mono font-medium">
-                            {activeTopicVocabularies[lessonWordIndex]?.examplePinyin}
-                          </p>
-
-                          <div className="pt-1.5">
-                            {showExampleTranslation ? (
-                              <div className="flex items-start justify-between bg-white px-3 py-2.5 rounded-xl border border-slate-200">
-                                <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                                  {activeTopicVocabularies[lessonWordIndex]?.exampleMeaning}
-                                </p>
-                                <button 
-                                  onClick={() => setShowExampleTranslation(false)}
-                                  className="text-[10px] text-slate-400 hover:text-slate-600 ml-2 font-bold"
-                                >
-                                  Ẩn
-                                </button>
-                              </div>
-                            ) : (
-                              <button
-                                onClick={() => setShowExampleTranslation(true)}
-                                className="text-xs text-indigo-600 font-bold hover:underline flex items-center space-x-1"
-                              >
-                                <span className="flex items-center gap-1">
-                                  <Eye className="w-3.5 h-3.5" />
-                                  Xem nghĩa dịch tiếng Việt
-                                </span>
-                              </button>
-                            )}
-                          </div>
+                        <div className="p-6 pt-0 space-y-2.5">
+                          <AIAnalysisPanel word={activeTopicVocabularies[lessonWordIndex]?.word} />
                         </div>
                       </>
                     ) : (
@@ -2686,7 +2670,7 @@ export default function App() {
       {/* FOOTER */}
       <footer className="bg-white border-t border-slate-200 py-6 mt-12 text-slate-400 text-xs text-center">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 Hanzi Story. Khắc tạc 1000 từ vựng và 50 bộ thủ liên cốt sinh động.</p>
+          <p>© 2026 Hanzi Story. Khắc tạc 600 từ vựng và 50 bộ thủ liên cốt sinh động.</p>
           <div className="flex space-x-4">
             <span className="hover:text-slate-600">Thành quả HSK 1-3</span>
             <span>•</span>
@@ -2704,6 +2688,9 @@ export default function App() {
           }} 
         />
       )}
+
+      {/* -- BATCH AI PROCESSOR UTILITY -- */}
+      <BatchAIProcessor />
 
       {/* -- DETAILS MODAL 1: Radical detail -- */}
       {selectedRadical && (
@@ -2931,65 +2918,7 @@ export default function App() {
                 <StrokeOrderVisualizer text={selectedVocabDetail.word} />
               </div>
 
-              {/* Radical Decomposition */}
-              <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-150 space-y-2.5">
-                <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">🧩 Phân rã bóc tách bộ thủ cấu thành</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedVocabDetail.radicals.map((radChar, i) => {
-                    const cleanChar = radChar.split('/')[0].trim();
-                    const foundRad = findRadicalByChar(cleanChar);
-                    return (
-                      <button
-                        key={i}
-                        onClick={() => {
-                          if (foundRad) {
-                            setSelectedRadicalInModal(foundRad);
-                          }
-                        }}
-                        className="flex items-center space-x-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-blue-400 rounded-full text-slate-700 hover:text-blue-750 font-medium text-xs transition-all shadow-xs"
-                      >
-                        <span className="font-serif font-bold text-sm text-indigo-600">{cleanChar}</span>
-                        {foundRad ? (
-                          <span className="text-[10px] text-slate-500 font-bold">
-                            (Bộ {foundRad.vietnameseName})
-                          </span>
-                        ) : (
-                          <span className="text-[10px] text-slate-400 font-bold">({radChar})</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="text-[11px] text-slate-400 italic">Mẹo: Click vào bong bóng bộ thủ để học độc lập ý nghĩa & lịch sử riêng bộ đó.</p>
-              </div>
-
-              {/* story */}
-              <div className="p-4 bg-blue-50/40 rounded-2xl border border-blue-100/50 space-y-1">
-                <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest block">Câu chuyện dệt chữ nhớ lâu</span>
-                <p className="text-xs text-slate-850 leading-relaxed font-semibold text-slate-800">
-                  {selectedVocabDetail.story}
-                </p>
-              </div>
-
-              {/* examples */}
-              {selectedVocabDetail.exampleSentence && (
-                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left space-y-1 text-slate-800">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cú pháp ví dụ đàm thoại</span>
-                    <button
-                      onClick={() => speakChinese(selectedVocabDetail.exampleSentence)}
-                      className="p-1 px-2.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-[10px] font-bold text-slate-600 transition-colors flex items-center space-x-1"
-                      title="Phát âm câu ví dụ mẫu"
-                    >
-                      <Volume2 className="w-3 h-3" />
-                      <span>Nghe mẫu</span>
-                    </button>
-                  </div>
-                  <p className="text-base font-serif font-bold text-slate-800 tracking-wide">{selectedVocabDetail.exampleSentence}</p>
-                  <p className="text-[11px] font-mono font-semibold text-blue-600">{selectedVocabDetail.examplePinyin}</p>
-                  <p className="text-xs font-semibold text-slate-500 italic mt-1">Dịch nghĩa: {selectedVocabDetail.exampleMeaning}</p>
-                </div>
-              )}
+              <AIAnalysisPanel word={selectedVocabDetail.word} />
 
               {/* Actions study ledger */}
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between">

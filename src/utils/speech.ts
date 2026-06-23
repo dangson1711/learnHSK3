@@ -1,5 +1,5 @@
 import { Howl } from 'howler';
-import { VOCABULARY_DATA, HSK_1_WORDS_LIST, HSK_2_WORDS_LIST, HSK_3_WORDS_LIST, TOPICS_DATA, get1000HskWords, getVocabularyDetail } from '../data/vocabulary';
+import { VOCABULARY_DATA, HSK_1_WORDS_LIST, HSK_2_WORDS_LIST, HSK_3_WORDS_LIST, TOPICS_DATA, get600HskWords, getVocabularyDetail } from '../data/vocabulary';
 import { RADICALS_DATA } from '../data/radicals';
 
 // Mapping of abstract/rare stroke-only radicals to common homophones
@@ -81,10 +81,10 @@ RADICALS_DATA.forEach(r => {
   }
 });
 
-// Also add all 1000 HSK words generated procedurally along with their dynamic example sentences
+// Also add all 600 HSK words generated procedurally along with their dynamic example sentences
 TOPICS_DATA.forEach(t => {
   try {
-    const hskWords = get1000HskWords(t.hskLevel, t.order);
+    const hskWords = get600HskWords(t.hskLevel, t.order);
     hskWords.forEach(w => {
       if (w.word) {
         const c = cleanTextForSet(w.word);

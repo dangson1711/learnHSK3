@@ -43,6 +43,7 @@ export interface Vocabulary {
 export interface UserProgress {
   learnedRadicals: string[]; // Array of Radical IDs
   learnedVocabulary: string[]; // Array of Vocabulary IDs
+  customVocabularies?: Vocabulary[]; // Array of Custom AI-searched vocabularies
   streak: number;
   lastLearnDate: string | null; // YYYY-MM-DD
   studyHistory?: StudySession[]; // Daily minutes

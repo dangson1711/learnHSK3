@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { VOCABULARY_DATA, HSK_1_WORDS_LIST, HSK_2_WORDS_LIST, HSK_3_WORDS_LIST, TOPICS_DATA, get1000HskWords, getVocabularyDetail } from '../src/data/vocabulary.js';
+import { VOCABULARY_DATA, HSK_1_WORDS_LIST, HSK_2_WORDS_LIST, HSK_3_WORDS_LIST, TOPICS_DATA, get600HskWords, getVocabularyDetail } from '../src/data/vocabulary.js';
 import { RADICALS_DATA } from '../src/data/radicals.js';
 
 // Get current directory in ESM
@@ -143,7 +143,7 @@ async function main() {
 
   TOPICS_DATA.forEach(t => {
     try {
-      get1000HskWords(t.hskLevel, t.order).forEach(w => {
+      get600HskWords(t.hskLevel, t.order).forEach(w => {
         addText(w.word);
         const detail = getVocabularyDetail(w.word, t.id, t.hskLevel);
         if (detail && detail.exampleSentence) {

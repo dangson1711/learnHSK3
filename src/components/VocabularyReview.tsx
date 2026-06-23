@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Vocabulary, SrsItem } from '../types';
 import { StrokeOrderVisualizer } from './StrokeOrderVisualizer';
+import { AIAnalysisPanel } from './AIAnalysisPanel';
 import { calculateSrs } from '../lib/srs';
 import { speakChineseText } from '../utils/speech';
 import { 
@@ -320,7 +321,7 @@ export function VocabularyReview({
                 const isLearned = learnedWordIds.includes(vocab.id) || learnedWordIds.includes(vocab.word);
                 return (
                   <div 
-                    key={vocab.id || idx}
+                    key={`${vocab.id}-${idx}`}
                     className="bg-white p-4.5 rounded-2xl border border-slate-200/60 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4"
                   >
                     <div>
@@ -436,21 +437,9 @@ export function VocabularyReview({
                     </span>
                   </div>
 
-                  <div className="p-3 bg-slate-50 rounded-2xl text-left border border-slate-200">
-                    <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">Câu chuyện liên tưởng:</span>
-                    <p className="text-xs text-slate-600 leading-relaxed font-sans font-medium mt-1">
-                      {activeList[flashcardIndex].story}
-                    </p>
+                  <div className="text-left w-full">
+                    <AIAnalysisPanel word={activeList[flashcardIndex].word} />
                   </div>
-
-                  {activeList[flashcardIndex].exampleSentence && (
-                    <div className="p-3 bg-blue-50/40 rounded-2xl text-left border border-blue-100/30">
-                      <span className="text-[9px] font-bold text-blue-400 tracking-wider uppercase block">Ví dụ thực tế:</span>
-                      <p className="text-xs font-serif font-bold text-slate-800 mt-1">{activeList[flashcardIndex].exampleSentence}</p>
-                      <p className="text-[10px] text-indigo-650 text-indigo-500 font-mono">{activeList[flashcardIndex].examplePinyin}</p>
-                      <p className="text-[11px] text-slate-500 italic mt-0.5">Nghĩa Việt: {activeList[flashcardIndex].exampleMeaning}</p>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
