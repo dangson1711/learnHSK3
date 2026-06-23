@@ -73,7 +73,7 @@ export function BatchAIProcessor() {
        try {
           const customApiKey = localStorage.getItem('settings_gemini_api_key') || '';
           
-          const response = await fetch('/api/gemini/analyze-batch', {
+          let response = await fetch('/api/gemini/analyze-batch', {
             method: 'POST',
             headers: { 
               'Content-Type': 'application/json',
@@ -82,14 +82,15 @@ export function BatchAIProcessor() {
             body: JSON.stringify({ words: wordsToProcess }),
           });
           
+          if (response.status === 404) {
+             throw new Error('FALLBACK_404');
+          }
+
           let dataArray;
           const textResponse = await response.text();
           try {
             dataArray = JSON.parse(textResponse);
           } catch(e) {
-            if (response.status === 404) {
-               throw new Error('Lỗi 404: Không tìm thấy API (vui lòng Share/Deploy lại app để cập nhật phiên bản mới nhất).');
-            }
             throw new Error(response.status === 502 || response.status === 503 || response.status === 504 ? 'Máy chủ quá tải (503)' : `Lỗi ${response.status} không rõ. Nội dung: ${textResponse.substring(0,20)}`);
           }
 
@@ -130,9 +131,46 @@ export function BatchAIProcessor() {
           currentBatchRetries = 0;
           
           // Tránh rate limit
-          await new Promise(r => setTimeout(r, 2000));
+          addLog(`⏳ Đang nghỉ 4.5 giây để lách luật quá tải từ Gemini...`);
+          await new Promise(r => setTimeout(r, 4500));
        } catch (err: any) {
           
+          if (err.message === 'FALLBACK_404') {
+             addLog(`⚠️ Máy chủ chạy bản cũ (404), tự động chuyển sang phân tích từng từ cho nhóm [${label}]...`);
+             // Fallback xử lý từng từ một cho nhóm này
+             for (const fw of wordsToProcess) {
+                if (!isRunningRef.current) break;
+                try {
+                   const fallbackRes = await fetch('/api/gemini/analyze', {
+                      method: 'POST',
+                      headers: { 
+                        'Content-Type': 'application/json',
+                        ...(localStorage.getItem('settings_gemini_api_key') && { 'x-gemini-api-key': localStorage.getItem('settings_gemini_api_key')! })
+                      },
+                      body: JSON.stringify({ word: fw }),
+                   });
+                   const fbText = await fallbackRes.text();
+                   const fbData = JSON.parse(fbText);
+                   if (!fallbackRes.ok) throw new Error(fbData.error || 'Lỗi kết nối AI');
+                   
+                   cache[fw] = fbData;
+                   if (fbData.actualWord) cache[fbData.actualWord] = fbData;
+                   localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+                   
+                   success++;
+                   setProgress(p => ({ ...p, successful: success }));
+                   addLog(`✅ Đã phân tích (fallback): ${fw}`);
+                } catch(fErr: any) {
+                   fail++;
+                   setProgress(p => ({ ...p, failed: fail }));
+                   addLog(`❌ Lỗi [${fw}] (fallback): ${fErr.message}`);
+                }
+                addLog(`⏳ Đang nghỉ 4.5 giây (fallback) để lách luật quá tải từ Gemini...`);
+                await new Promise(r => setTimeout(r, 4500));
+             }
+             continue; // Đã xử lý xong nhóm hiện tại qua fallback
+          }
+
           addLog(`❌ Lỗi nhóm [${label}]: ${err.message}`);
           
           // Thử lại nếu quá tải
@@ -153,7 +191,8 @@ export function BatchAIProcessor() {
              setProgress(p => ({ ...p, failed: fail }));
           }
           currentBatchRetries = 0;
-          await new Promise(r => setTimeout(r, 2000));
+          addLog(`⏳ Đang nghỉ 4.5 giây để lách luật quá tải từ Gemini...`);
+          await new Promise(r => setTimeout(r, 4500));
        }
     }
     
