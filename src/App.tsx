@@ -3170,41 +3170,6 @@ export default function App() {
                             </span>
                           </div>
                         </div>
-
-                        {/* Radical Breakdown */}
-                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                          <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                            Bộ thủ cấu thành chi tiết
-                          </h4>
-                          <div className="flex flex-wrap gap-2">
-                            {searchResult.radicals.map((radChar, i) => {
-                              const foundRad = findRadicalByChar(radChar);
-                              return (
-                                <button
-                                  key={i}
-                                  onClick={() =>
-                                    foundRad && setSelectedRadical(foundRad)
-                                  }
-                                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-blue-500 rounded-full text-slate-700 hover:text-blue-700 text-xs transition-all shadow-sm"
-                                >
-                                  <span className="font-serif font-bold text-base text-indigo-600">
-                                    {radChar}
-                                  </span>
-                                  {foundRad && (
-                                    <span className="text-[10px] text-slate-400 font-semibold">
-                                      ({foundRad.vietnameseName})
-                                    </span>
-                                  )}
-                                </button>
-                              );
-                            })}
-                          </div>
-                          <p className="text-[11px] text-slate-400 italic">
-                            Mẹo: Click vào bong bóng để giải cấu trúc nguyên tố
-                            bộ thủ.
-                          </p>
-                        </div>
-
                         {/* Story */}
                         {/* AI Story and Radicals */}
                         <AIAnalysisPanel
