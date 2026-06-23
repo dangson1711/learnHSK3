@@ -54,9 +54,12 @@ export function AIAnalysisPanel({ word, onAnalysisComplete }: AIAnalysisPanelPro
       let data;
       let textResponse = await response.text();
       
-      if (response.status === 404 || textResponse.trim().startsWith('<')) {
+      if (response.status === 404 || response.status === 504 || response.status === 500 || textResponse.trim().startsWith('<') || textResponse.includes('FUNCTION_INVOCATION_TIMEOUT') || textResponse.includes('A server error has occurred')) {
          if (!customApiKey) {
-            throw new Error("Ứng dụng web tĩnh không tìm thấy máy chủ. Vui lòng nhập API Key để gọi trực tiếp!");
+            if (textResponse.includes('FUNCTION_INVOCATION_TIMEOUT') || response.status === 504) {
+               throw new Error("Lỗi Vercel Timeout 10s. Vui lòng nhập API Key của bạn để xử lý trực tiếp!");
+            }
+            throw new Error("Không tìm thấy máy chủ hoặc phản hồi không hợp lệ. Vui lòng nhập API Key để gọi trực tiếp!");
          }
          
          const directPrompt = `Phân tích từ "${word}" thành các bộ thủ. 

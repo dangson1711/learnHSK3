@@ -85,12 +85,15 @@ export function BatchAIProcessor() {
           let dataArray;
           let textResponse = await response.text();
 
-          // Kịch bản Web tĩnh (GitHub Pages) hoặc API trả về HTML (404 Not Found)
-          if (response.status === 404 || textResponse.trim().startsWith('<')) {
+          // Kịch bản Web tĩnh (GitHub Pages), Vercel Timeout (504), lỗi server (500) hoặc API trả về HTML (404 Not Found)
+          if (response.status === 404 || response.status === 504 || response.status === 500 || textResponse.trim().startsWith('<') || textResponse.includes('FUNCTION_INVOCATION_TIMEOUT') || textResponse.includes('A server error has occurred')) {
              if (!customApiKey) {
-                throw new Error("Ứng dụng đang chạy trên GitHub Pages (web tĩnh). Bạn CẦN nhập API Key trong phần Cài đặt để sử dụng tiếp!");
+                if (textResponse.includes('FUNCTION_INVOCATION_TIMEOUT') || response.status === 504) {
+                   throw new Error("Máy chủ Vercel bị quá thời gian xử lý (Timeout). Vui lòng vào Cài đặt để nhập API Key của bạn để tiếp tục xử lý!");
+                }
+                throw new Error("Không thể kết nối máy chủ hoặc máy chủ bị lỗi. Bạn CẦN nhập API Key trong phần Cài đặt để sử dụng tính năng này!");
              }
-             addLog(`⚠️ Đang gọi trực tiếp AI từ trình duyệt (do backend 404)...`);
+             addLog(`⚠️ Gặp lỗi từ máy chủ (${response.status}), tự động chuyển sang gọi trực tiếp AI từ trình duyệt...`);
              
              const directPrompt = `Phân tích danh sách ${wordsToProcess.length} từ tiếng Trung sau đây.
 Với mỗi từ, xác định chữ Hán thông dụng tương ứng (nếu input là pinyin hoặc nghĩa tiếng việt).
