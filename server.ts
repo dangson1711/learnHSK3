@@ -54,7 +54,7 @@ Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạn
     while (retries > 0) {
       try {
         response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
+          model: "gemini-2.5-flash-lite",
           contents: prompt,
           config: {
             responseMimeType: "application/json",
@@ -144,7 +144,7 @@ Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối 
     while (retries > 0) {
       try {
         response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
+          model: "gemini-2.5-flash-lite",
           contents: prompt,
           config: {
             responseMimeType: "application/json",

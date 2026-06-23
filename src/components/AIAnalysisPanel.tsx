@@ -77,7 +77,7 @@ Trả về dưới dạng JSON có cấu trúc như sau:
 }
 Lưu ý: Chỉ trả về chuỗi JSON thuần túy, không chứa định dạng markdown.`;
          
-         const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${customApiKey}`, {
+         const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${customApiKey}`, {
            method: 'POST',
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify({

@@ -45,7 +45,7 @@ export function BatchAIProcessor() {
 
     const maxRetriesPerBatch = 3;
     let currentBatchRetries = 0;
-    const BATCH_SIZE = 20;
+    const BATCH_SIZE = 30;
 
     for (let i = 0; i < ALL_600_VOCABULARIES.length; i += BATCH_SIZE) {
        if (!isRunningRef.current) break;
@@ -115,7 +115,7 @@ Trả về duy nhất MỘT ARRAY CHỨA ${wordsToProcess.length} JSON OBJECTS, 
 Danh sách từ: ${wordsToProcess.join(', ')}
 Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối không chứa markdown, không có text hướng dẫn. Phải trả đủ ${wordsToProcess.length} từ.`;
 
-             const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${customApiKey}`, {
+             const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${customApiKey}`, {
                method: 'POST',
                headers: { 'Content-Type': 'application/json' },
                body: JSON.stringify({
@@ -175,8 +175,8 @@ Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối 
           currentBatchRetries = 0;
           
           // Tránh rate limit
-          addLog(`⏳ Đang nghỉ 4.5 giây để lách luật quá tải từ Gemini...`);
-          await new Promise(r => setTimeout(r, 4500));
+          addLog(`⏳ Đang nghỉ 15 giây để lách luật quá tải từ Gemini...`);
+          await new Promise(r => setTimeout(r, 15000));
        } catch (err: any) {
           
           addLog(`❌ Lỗi nhóm [${label}]: ${err.message}`);
@@ -200,8 +200,8 @@ Lưu ý quan trọng: Chỉ trả về mảng JSON thuần túy, tuyệt đối 
              setProgress(p => ({ ...p, failed: fail }));
           }
           currentBatchRetries = 0;
-          addLog(`⏳ Đang nghỉ 4.5 giây để lách luật quá tải từ Gemini...`);
-          await new Promise(r => setTimeout(r, 4500));
+          addLog(`⏳ Đang nghỉ 15 giây để lách luật quá tải từ Gemini...`);
+          await new Promise(r => setTimeout(r, 15000));
        }
     }
     
