@@ -3928,31 +3928,33 @@ export default function App() {
                 <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
                   Chữ Hán ghép phổ biến chứa bộ này
                 </span>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col gap-2">
                   {selectedRadical.commonCharacters.map((item, index) => (
                     <div
                       key={index}
-                      onClick={() => handleSearch(undefined, item.character)}
+                      onClick={(e) => {
+                        speakChinese(item.character, e);
+                      }}
                       className="flex items-center justify-between p-2.5 bg-slate-50 hover:bg-blue-50/40 rounded-xl border border-slate-150 hover:border-blue-100 transition-colors cursor-pointer group"
-                      title="Bấm vào để tra bóc tách chữ này"
+                      title="Nhấp để nghe phát âm"
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
+                      <div className="flex-1 min-w-0 pr-2">
+                        <div className="flex items-center gap-2">
                           <span className="text-base font-serif font-bold text-slate-850 group-hover:text-blue-700 transition-colors">
                             {item.character}
                           </span>
-                          <span className="text-[11px] font-mono font-semibold text-slate-400">
+                          <span className="text-xs font-mono font-bold text-slate-500">
                             {item.pinyin}
                           </span>
                         </div>
-                        <div className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                        <div className="text-xs text-slate-600 font-medium mt-0.5">
                           {item.meaning}
                         </div>
                       </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          speakChinese(item.character);
+                          speakChinese(item.character, e);
                         }}
                         className="p-1.5 bg-white hover:bg-blue-100 text-slate-400 hover:text-blue-600 rounded-lg border border-slate-150 hover:border-blue-200 shadow-sm transition-all flex items-center justify-center shrink-0"
                         title="Nghe phát âm"
@@ -4055,39 +4057,39 @@ export default function App() {
                 <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
                   Chữ Hán ghép chứa bộ này
                 </span>
-                <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pr-1">
+                <div className="flex flex-col gap-2 max-h-44 overflow-y-auto pr-1">
                   {selectedRadicalInModal.commonCharacters.map(
                     (item, index) => (
                       <div
                         key={index}
-                        onClick={() => {
-                          handleSearch(undefined, item.character);
-                          setSelectedRadicalInModal(null);
+                        onClick={(e) => {
+                          speakChinese(item.character, e);
                         }}
-                        className="flex items-center justify-between p-2 bg-slate-50 hover:bg-blue-50/40 rounded-xl border border-slate-150 hover:border-blue-100 transition-colors cursor-pointer group"
-                        title="Bấm vào để tra bóc tách chữ này"
+                        className="flex items-center justify-between p-2.5 bg-slate-50 hover:bg-blue-50/40 rounded-xl border border-slate-150 hover:border-blue-100 transition-colors cursor-pointer group"
+                        title="Nhấp để nghe phát âm"
                       >
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1">
-                            <span className="text-sm font-serif font-bold text-slate-800 group-hover:text-blue-700 transition-colors">
+                        <div className="flex-1 min-w-0 pr-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-base font-serif font-bold text-slate-800 group-hover:text-blue-700 transition-colors">
                               {item.character}
                             </span>
-                            <span className="text-[10px] font-mono text-slate-400 font-bold">
+                            <span className="text-xs font-mono text-slate-500 font-bold">
                               {item.pinyin}
                             </span>
                           </div>
-                          <div className="text-[10px] text-slate-500 font-medium truncate mt-0.5">
+                          <div className="text-xs text-slate-600 font-medium mt-0.5">
                             {item.meaning}
                           </div>
                         </div>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            speakChinese(item.character);
+                            speakChinese(item.character, e);
                           }}
-                          className="p-1 bg-white hover:bg-blue-100 text-slate-400 hover:text-blue-600 rounded-lg border border-slate-150 hover:border-blue-200 transition-all flex items-center justify-center shrink-0"
+                          className="p-1.5 bg-white hover:bg-blue-100 text-slate-400 hover:text-blue-600 rounded-lg border border-slate-150 hover:border-blue-200 transition-all flex items-center justify-center shrink-0"
+                          title="Phát âm"
                         >
-                          <Volume2 className="w-3 h-3" />
+                          <Volume2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ),
