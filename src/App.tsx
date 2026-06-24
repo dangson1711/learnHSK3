@@ -1249,6 +1249,14 @@ export default function App() {
   // Settings API Key State
   const [settingsModalOpen, setSettingsModalOpen] = useState<boolean>(false);
 
+  // Helper to get local date string YYYY-MM-DD
+  const getLocalDateString = (d: Date = new Date()) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   // Helper to calculate exact active daily study streak from session dates
   const computeActualStreak = (
     history: StudySession[] | undefined,
@@ -1257,7 +1265,7 @@ export default function App() {
     if (!history || history.length === 0) {
       return lastLearnDate ? 1 : 0;
     }
-    const todayStr = new Date().toISOString().split("T")[0];
+    const todayStr = getLocalDateString();
     const uniqueDates = Array.from(
       new Set(history.map((h) => h.date).filter(Boolean)),
     ).sort();
@@ -1267,7 +1275,7 @@ export default function App() {
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split("T")[0];
+    const yesterdayStr = getLocalDateString(yesterday);
 
     const lastSessionDate = uniqueDates[uniqueDates.length - 1];
     // If last session wasn't today or yesterday, streak is broken
@@ -1276,11 +1284,13 @@ export default function App() {
     }
 
     let streakCount = 0;
-    let checkDate = new Date(lastSessionDate);
+    // Fix: parse lastSessionDate as local date to prevent timezone shift
+    const [year, month, day] = lastSessionDate.split('-').map(Number);
+    let checkDate = new Date(year, month - 1, day);
     let protection = 0;
     while (protection < 365) {
       protection++;
-      const checkStr = checkDate.toISOString().split("T")[0];
+      const checkStr = getLocalDateString(checkDate);
       if (uniqueDates.includes(checkStr)) {
         streakCount++;
         checkDate.setDate(checkDate.getDate() - 1);
@@ -1314,34 +1324,12 @@ export default function App() {
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
             const data = userSnap.data() as UserProgress;
-            // Handle correcting legacy default seed "streak: 3" and "learnedRadicals/Vocabulary" to absolute 0
-            let correctedData = { ...data };
+            // Run streak calibration
+            const calibrated = calibrateProgress(data);
+            let correctedData = calibrated;
             let hasCorrection = false;
 
-            // Check if user has the legacy seed and needs a clean reset to 0
-            if (
-              (data.streak === 3 &&
-                data.learnedVocabulary?.includes("voc_001") &&
-                data.learnedVocabulary?.includes("voc_002")) ||
-              (data.streak === 3 &&
-                (!data.studyHistory || data.studyHistory.length === 0) &&
-                (!data.learnedVocabulary || data.learnedVocabulary.length <= 2))
-            ) {
-              correctedData = {
-                learnedRadicals: [],
-                learnedVocabulary: [],
-                streak: 0,
-                lastLearnDate: null,
-                studyHistory: [],
-                srsVocabulary: {},
-              };
-              hasCorrection = true;
-            }
-
-            // Run streak calibration
-            const calibrated = calibrateProgress(correctedData);
-            if (calibrated.streak !== correctedData.streak) {
-              correctedData = calibrated;
+            if (calibrated.streak !== data.streak) {
               hasCorrection = true;
             }
 
@@ -1390,29 +1378,9 @@ export default function App() {
         if (saved) {
           try {
             let parsed = JSON.parse(saved) as UserProgress;
-            // Correct the offline legacy seed "streak: 3" to absolute 0
-            let hasCorrection = false;
-            if (
-              (parsed.streak === 3 &&
-                parsed.learnedVocabulary?.includes("voc_001") &&
-                parsed.learnedVocabulary?.includes("voc_002")) ||
-              (parsed.streak === 3 &&
-                (!parsed.studyHistory || parsed.studyHistory.length === 0) &&
-                (!parsed.learnedVocabulary ||
-                  parsed.learnedVocabulary.length <= 2))
-            ) {
-              parsed = {
-                learnedRadicals: [],
-                learnedVocabulary: [],
-                streak: 0,
-                lastLearnDate: null,
-                studyHistory: [],
-                srsVocabulary: {},
-              };
-              hasCorrection = true;
-            }
-
             const calibrated = calibrateProgress(parsed);
+            let hasCorrection = false;
+            
             if (calibrated.streak !== parsed.streak) {
               parsed = calibrated;
               hasCorrection = true;
@@ -1469,7 +1437,7 @@ export default function App() {
   }, [progress, currentUser]);
 
   const addStudyMinutes = async (seconds: number) => {
-    const todayStr = new Date().toISOString().split("T")[0];
+    const todayStr = getLocalDateString();
     let currentHistory: StudySession[] = progress.studyHistory
       ? [...progress.studyHistory]
       : [];
@@ -1503,7 +1471,7 @@ export default function App() {
   const getStreakUpdatedProgress = (
     currProgress: UserProgress,
   ): UserProgress => {
-    const todayStr = new Date().toISOString().split("T")[0];
+    const todayStr = getLocalDateString();
 
     // Ensure we have a session today in studyHistory so streak counts it
     let currentHistory = currProgress.studyHistory
@@ -1684,7 +1652,7 @@ export default function App() {
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(today.getDate() - i);
-      const dateStr = d.toISOString().split("T")[0];
+      const dateStr = getLocalDateString(d);
 
       let mins = historyMap[dateStr];
       if (mins === undefined) {
@@ -2387,7 +2355,7 @@ export default function App() {
                               (progress.studyHistory?.find(
                                 (s) =>
                                   s.date ===
-                                  new Date().toISOString().split("T")[0],
+                                  getLocalDateString(),
                               )?.minutes || 0) +
                               studyTimeSeconds / 60
                             ).toFixed(1)}{" "}
