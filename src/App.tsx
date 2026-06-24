@@ -59,6 +59,7 @@ import {
 import { StrokeOrderVisualizer } from "./components/StrokeOrderVisualizer";
 import { VocabularyReview } from "./components/VocabularyReview";
 import { AIAnalysisPanel } from "./components/AIAnalysisPanel";
+import { findRadicalByChar } from "./utils/radicals";
 import { AuthModal } from "./components/AuthModal";
 import { AdminSeeder } from "./components/AdminSeeder";
 import { speakChineseText } from "./utils/speech";
@@ -1837,11 +1838,7 @@ export default function App() {
   };
 
   // Find radical detail to display dynamically
-  const findRadicalByChar = (char: string): Radical | undefined => {
-    return RADICALS_DATA.find(
-      (r) => r.character.includes(char) || char.includes(r.character),
-    );
-  };
+  // Imported from utils/radicals.ts
 
   // Execute word search lookup
   const handleSearch = (e?: React.FormEvent, manualQuery?: string) => {
@@ -2183,7 +2180,7 @@ export default function App() {
                 className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-slate-600 hover:bg-slate-100"
               >
                 <Settings className="w-5 h-5 text-slate-500" />
-                <span>Cài đặt API AI</span>
+                <span>Cài đặt</span>
               </button>
             </div>
 
@@ -3175,6 +3172,12 @@ export default function App() {
                         <AIAnalysisPanel
                           word={searchResult.word}
                           onAnalysisComplete={handleAIAnalysisComplete}
+                          onRadicalClick={(radChar) => {
+                            const foundRad = findRadicalByChar(radChar);
+                            if (foundRad) {
+                              setSelectedRadicalInModal(foundRad);
+                            }
+                          }}
                         />
 
                         {/* Notebook toggle action */}
@@ -3246,6 +3249,12 @@ export default function App() {
                       }}
                       srsVocabulary={progress.srsVocabulary || {}}
                       onUpdateSrs={handleUpdateSrs}
+                      onRadicalClick={(radChar) => {
+                        const foundRad = findRadicalByChar(radChar);
+                        if (foundRad) {
+                          setSelectedRadicalInModal(foundRad);
+                        }
+                      }}
                     />
                   </motion.div>
                 )}
@@ -3794,51 +3803,18 @@ export default function App() {
 
                     {activeLessonTab === "details" ? (
                       <>
-                        {/* Radicals parsing section */}
-                        <div className="p-5 bg-slate-50/60 border-b border-slate-100 space-y-3">
-                          <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
-                            Phân tích cấu trúc gốc bộ thủ
-                          </span>
-
-                          <div className="flex flex-wrap gap-2">
-                            {activeTopicVocabularies[
-                              lessonWordIndex
-                            ]?.radicals.map((radChar, idx) => {
-                              const foundRad = findRadicalByChar(radChar);
-                              return (
-                                <button
-                                  key={idx}
-                                  onClick={() => {
-                                    if (foundRad) {
-                                      setSelectedRadicalInModal(foundRad);
-                                    }
-                                  }}
-                                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-indigo-500 rounded-full text-slate-700 hover:text-indigo-600 text-xs font-bold transition-colors shadow-sm"
-                                >
-                                  <span className="font-serif text-sm font-bold text-indigo-650 text-indigo-600">
-                                    {radChar}
-                                  </span>
-                                  {foundRad && (
-                                    <span className="text-[10px] text-slate-400 font-medium">
-                                      ({foundRad.vietnameseName})
-                                    </span>
-                                  )}
-                                </button>
-                              );
-                            })}
-                          </div>
-                          <p className="text-[10px] text-slate-400 italic">
-                            Mẹo: Tap vào bong bóng để giải mã ý niệm của bộ thủ
-                            cấu tạo chữ.
-                          </p>
-                        </div>
-
                         {/* Story explanation */}
                         <div className="p-6 pt-0 space-y-2.5">
                           <AIAnalysisPanel
                             word={
                               activeTopicVocabularies[lessonWordIndex]?.word
                             }
+                            onRadicalClick={(radChar) => {
+                              const foundRad = findRadicalByChar(radChar);
+                              if (foundRad) {
+                                setSelectedRadicalInModal(foundRad);
+                              }
+                            }}
                           />
                         </div>
                       </>
@@ -4200,7 +4176,15 @@ export default function App() {
                 <StrokeOrderVisualizer text={selectedVocabDetail.word} />
               </div>
 
-              <AIAnalysisPanel word={selectedVocabDetail.word} />
+              <AIAnalysisPanel
+                word={selectedVocabDetail.word}
+                onRadicalClick={(radChar) => {
+                  const foundRad = findRadicalByChar(radChar);
+                  if (foundRad) {
+                    setSelectedRadicalInModal(foundRad);
+                  }
+                }}
+              />
 
               {/* Actions study ledger */}
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
@@ -4243,10 +4227,10 @@ export default function App() {
           onClick={() => setSettingsModalOpen(false)}
         >
           <div
-            className="bg-white rounded-3xl shadow-xl w-full max-w-2xl border border-slate-200 overflow-hidden"
+            className="bg-white rounded-3xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-slate-200 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+            <div className="px-4 py-3 md:px-6 md:py-5 border-b border-slate-100 flex items-center justify-between shrink-0">
               <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
                 <Settings className="w-5 h-5 text-indigo-500" />
                 Cài đặt Hệ thống
@@ -4260,16 +4244,18 @@ export default function App() {
               </button>
             </div>
 
-            <div className="p-6 space-y-5 flex flex-col items-center">
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
               <div className="w-full">
                 <AdminSeeder />
               </div>
-
+            </div>
+            
+            <div className="p-4 md:p-6 border-t border-slate-100 shrink-0">
               <button
                 onClick={() => {
                   setSettingsModalOpen(false);
                 }}
-                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all shadow-indigo-100 mt-4"
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm transition-all shadow-indigo-100"
               >
                 Đóng Menu
               </button>

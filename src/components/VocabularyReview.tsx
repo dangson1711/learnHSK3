@@ -33,6 +33,7 @@ interface VocabularyReviewProps {
   onToggleWordLearned?: (wordId: string) => void;
   srsVocabulary?: Record<string, SrsItem>;
   onUpdateSrs: (word: string, grade: 1 | 2 | 3 | 4) => void;
+  onRadicalClick?: (radicalChar: string) => void;
 }
 
 export function VocabularyReview({ 
@@ -40,7 +41,8 @@ export function VocabularyReview({
   allVocabularies, 
   onToggleWordLearned,
   srsVocabulary = {},
-  onUpdateSrs
+  onUpdateSrs,
+  onRadicalClick
 }: VocabularyReviewProps) {
   
   // Speak Chinese pronunciation helper using Web Speech API
@@ -418,7 +420,6 @@ export function VocabularyReview({
 
               {!isCardFlipped ? (
                 <div className="space-y-3">
-                  <span className="text-2xl select-none leading-none opacity-40">🎴</span>
                   <h2 className="text-7xl font-serif font-black text-slate-800 tracking-tight">
                     {activeList[flashcardIndex].word}
                   </h2>
@@ -437,7 +438,10 @@ export function VocabularyReview({
                   </div>
 
                   <div className="text-left w-full">
-                    <AIAnalysisPanel word={activeList[flashcardIndex].word} />
+                    <AIAnalysisPanel 
+                      word={activeList[flashcardIndex].word} 
+                      onRadicalClick={onRadicalClick}
+                    />
                   </div>
                 </div>
               )}

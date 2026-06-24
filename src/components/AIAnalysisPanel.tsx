@@ -3,10 +3,12 @@ import { Sparkles, Loader2, Volume2, Database } from "lucide-react";
 import { speakChineseText } from "../utils/speech";
 import { db } from "../lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { findRadicalByChar } from "../utils/radicals";
 
 interface AIAnalysisPanelProps {
   word: string;
   onAnalysisComplete?: (data: any) => void;
+  onRadicalClick?: (radicalChar: string) => void;
 }
 
 const CACHE_KEY = "hanzi_ai_analysis_cache";
@@ -14,6 +16,7 @@ const CACHE_KEY = "hanzi_ai_analysis_cache";
 export function AIAnalysisPanel({
   word,
   onAnalysisComplete,
+  onRadicalClick
 }: AIAnalysisPanelProps) {
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<{
@@ -76,12 +79,15 @@ export function AIAnalysisPanel({
         <div className="flex items-center space-x-2 text-indigo-700">
           <Database className="w-4 h-4" />
           <span className="text-xs font-bold uppercase tracking-widest">
-            Phân tích từ vựng (Từ Database)
+            Phân tích từ vựng
           </span>
         </div>
         {!analysis && !loading && (
           <button
-            onClick={loadFromDatabase}
+            onClick={(e) => {
+              e.stopPropagation();
+              loadFromDatabase();
+            }}
             className="text-[10px] bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer"
           >
             Tải dữ liệu
@@ -109,15 +115,27 @@ export function AIAnalysisPanel({
               Bộ thủ cấu thành
             </span>
             <div className="flex flex-wrap gap-2">
-              {analysis.radicals &&
-                analysis.radicals.map((rad, idx) => (
-                  <span
-                    key={idx}
-                    className="bg-white border border-indigo-100 text-indigo-700 text-xs px-2.5 py-1 rounded-lg font-medium shadow-sm"
-                  >
-                    {rad}
-                  </span>
-                ))}
+              {Array.isArray(analysis.radicals) &&
+                analysis.radicals.filter(rad => {
+                  return !!findRadicalByChar(rad);
+                }).map((rad, idx) => {
+                  const foundRad = findRadicalByChar(rad);
+                  return (
+                    <button
+                      key={idx}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRadicalClick && onRadicalClick(rad);
+                      }}
+                      className="bg-white border border-indigo-100 text-indigo-700 hover:bg-indigo-50 text-xs px-2.5 py-1 rounded-lg font-medium shadow-sm transition-colors cursor-pointer flex items-center space-x-1"
+                    >
+                      <span className="font-bold">{rad}</span>
+                      {foundRad && rad !== foundRad.character && !rad.includes(foundRad.character) && (
+                        <span className="text-[10px] opacity-70">({foundRad.character})</span>
+                      )}
+                    </button>
+                  );
+                })}
             </div>
           </div>
           <div className="space-y-1 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
@@ -135,7 +153,10 @@ export function AIAnalysisPanel({
                   Cú pháp ví dụ đàm thoại
                 </span>
                 <button
-                  onClick={() => speakChineseText(analysis.exampleSentence!)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    speakChineseText(analysis.exampleSentence!);
+                  }}
                   className="p-1 px-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center space-x-1 cursor-pointer"
                   title="Nghe giọng nói đàm thoại"
                 >

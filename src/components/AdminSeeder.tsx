@@ -135,7 +135,7 @@ export function AdminSeeder() {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 max-w-xl mx-auto my-8">
+    <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100 max-w-xl mx-auto my-2">
       <div className="flex items-center space-x-4 mb-6 pb-6 border-b border-slate-100">
         <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
           <Database className="w-6 h-6" />
