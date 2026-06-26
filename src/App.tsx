@@ -1436,35 +1436,33 @@ export default function App() {
     return () => clearInterval(timer);
   }, [progress, currentUser]);
 
-  const addStudyMinutes = async (seconds: number) => {
-    const todayStr = getLocalDateString();
-    let currentHistory: StudySession[] = progress.studyHistory
-      ? [...progress.studyHistory]
-      : [];
-    const existingIdx = currentHistory.findIndex((s) => s.date === todayStr);
+  const addStudyMinutes = (seconds: number) => {
+    updateProgress((prev) => {
+      const todayStr = getLocalDateString();
+      let currentHistory: StudySession[] = prev.studyHistory ? [...prev.studyHistory] : [];
+      const existingIdx = currentHistory.findIndex((s) => s.date === todayStr);
 
-    if (existingIdx !== -1) {
-      const existing = currentHistory[existingIdx];
-      const totalSec = (existing.seconds || existing.minutes * 60) + seconds;
-      currentHistory[existingIdx] = {
-        date: todayStr,
-        seconds: totalSec,
-        minutes: parseFloat((totalSec / 60).toFixed(2)),
+      if (existingIdx !== -1) {
+        const existing = currentHistory[existingIdx];
+        const totalSec = (existing.seconds || existing.minutes * 60) + seconds;
+        currentHistory[existingIdx] = {
+          date: todayStr,
+          seconds: totalSec,
+          minutes: parseFloat((totalSec / 60).toFixed(2)),
+        };
+      } else {
+        currentHistory.push({
+          date: todayStr,
+          seconds: seconds,
+          minutes: parseFloat((seconds / 60).toFixed(2)),
+        });
+      }
+
+      return {
+        ...prev,
+        studyHistory: currentHistory,
       };
-    } else {
-      currentHistory.push({
-        date: todayStr,
-        seconds: seconds,
-        minutes: parseFloat((seconds / 60).toFixed(2)),
-      });
-    }
-
-    let updated = {
-      ...progress,
-      studyHistory: currentHistory,
-    };
-    updated = getStreakUpdatedProgress(updated);
-    await saveProgress(updated);
+    });
   };
 
   // Helper to safely calculate streak updates without state races
@@ -1500,131 +1498,135 @@ export default function App() {
   };
 
   // Sync state to LocalStorage and remote Firestore Database if logged in
-  const saveProgress = async (newProgress: UserProgress) => {
-    setProgress(newProgress);
+  const syncProgress = (newProgress: UserProgress) => {
     try {
       localStorage.setItem("hanzi_story_progress", JSON.stringify(newProgress));
     } catch (e) {
       console.warn("localStorage quota exceeded");
     }
 
-    if (currentUser) {
+    if (auth.currentUser) {
       try {
-        const userRef = doc(db, "users", currentUser.uid);
-        await setDoc(userRef, newProgress);
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        setDoc(userRef, newProgress).catch((e) => console.error("Error writing data cloud sync", e));
       } catch (e) {
         console.error("Error writing data cloud sync", e);
       }
     }
   };
 
+  const updateProgress = (updater: (prev: UserProgress) => UserProgress) => {
+    setProgress((prev) => {
+      let next = updater(prev);
+      next = getStreakUpdatedProgress(next);
+      syncProgress(next);
+      return next;
+    });
+  };
+
   // Space repetition system review rating handler (SM-2)
-  const handleUpdateSrs = async (wordOrChar: string, grade: 1 | 2 | 3 | 4, isRadical: boolean = false) => {
-    if (isRadical) {
-      const currentSrs = progress.srsRadicals?.[wordOrChar];
-      const srsItem = calculateSrs(wordOrChar, grade, currentSrs);
+  const handleUpdateSrs = (wordOrChar: string, grade: 1 | 2 | 3 | 4, isRadical: boolean = false) => {
+    updateProgress((prev) => {
+      if (isRadical) {
+        const currentSrs = prev.srsRadicals?.[wordOrChar];
+        const srsItem = calculateSrs(wordOrChar, grade, currentSrs);
 
-      const updatedSrsMap = progress.srsRadicals ? { ...progress.srsRadicals } : {};
-      updatedSrsMap[wordOrChar] = srsItem;
+        const updatedSrsMap = prev.srsRadicals ? { ...prev.srsRadicals } : {};
+        updatedSrsMap[wordOrChar] = srsItem;
 
-      const foundRadical = RADICALS_DATA.find((r) => r.character === wordOrChar);
-      const radicalId = foundRadical ? foundRadical.id : wordOrChar;
+        const foundRadical = RADICALS_DATA.find((r) => r.character === wordOrChar);
+        const radicalId = foundRadical ? foundRadical.id : wordOrChar;
 
-      let newList = [...progress.learnedRadicals];
-      if (!newList.includes(radicalId) && !newList.includes(wordOrChar)) {
-        newList.push(radicalId);
+        let newList = [...prev.learnedRadicals];
+        if (!newList.includes(radicalId) && !newList.includes(wordOrChar)) {
+          newList.push(radicalId);
+        }
+
+        return {
+          ...prev,
+          learnedRadicals: newList,
+          srsRadicals: updatedSrsMap,
+        };
+      } else {
+        const currentSrs = prev.srsVocabulary?.[wordOrChar];
+        const srsItem = calculateSrs(wordOrChar, grade, currentSrs);
+
+        const updatedSrsMap = prev.srsVocabulary ? { ...prev.srsVocabulary } : {};
+        updatedSrsMap[wordOrChar] = srsItem;
+
+        // Also secure that this word counts as learned in overall progression tracking
+        const foundVocab = VOCABULARY_DATA.find((v) => v.word === wordOrChar);
+        const vocabId = foundVocab ? foundVocab.id : wordOrChar;
+
+        let newList = [...prev.learnedVocabulary];
+        if (!newList.includes(vocabId) && !newList.includes(wordOrChar)) {
+          newList.push(vocabId);
+        }
+
+        return {
+          ...prev,
+          learnedVocabulary: newList,
+          srsVocabulary: updatedSrsMap,
+        };
       }
-
-      let updatedProgress = {
-        ...progress,
-        learnedRadicals: newList,
-        srsRadicals: updatedSrsMap,
-      };
-
-      updatedProgress = getStreakUpdatedProgress(updatedProgress);
-      await saveProgress(updatedProgress);
-    } else {
-      const currentSrs = progress.srsVocabulary?.[wordOrChar];
-      const srsItem = calculateSrs(wordOrChar, grade, currentSrs);
-
-      const updatedSrsMap = progress.srsVocabulary ? { ...progress.srsVocabulary } : {};
-      updatedSrsMap[wordOrChar] = srsItem;
-
-      // Also secure that this word counts as learned in overall progression tracking
-      const foundVocab = VOCABULARY_DATA.find((v) => v.word === wordOrChar);
-      const vocabId = foundVocab ? foundVocab.id : wordOrChar;
-
-      let newList = [...progress.learnedVocabulary];
-      if (!newList.includes(vocabId) && !newList.includes(wordOrChar)) {
-        newList.push(vocabId);
-      }
-
-      let updatedProgress = {
-        ...progress,
-        learnedVocabulary: newList,
-        srsVocabulary: updatedSrsMap,
-      };
-
-      updatedProgress = getStreakUpdatedProgress(updatedProgress);
-      await saveProgress(updatedProgress);
-    }
+    });
   };
 
   // Toggle radical mastered status
   const toggleRadicalLearned = (id: string) => {
-    const isLearned = progress.learnedRadicals.includes(id);
-    let newList: string[];
-    if (isLearned) {
-      newList = progress.learnedRadicals.filter((item) => item !== id);
-    } else {
-      newList = [...progress.learnedRadicals, id];
-    }
-    let updated = { ...progress, learnedRadicals: newList };
-    updated = getStreakUpdatedProgress(updated);
-    saveProgress(updated);
+    updateProgress((prev) => {
+      const isLearned = prev.learnedRadicals.includes(id);
+      let newList: string[];
+      if (isLearned) {
+        newList = prev.learnedRadicals.filter((item) => item !== id);
+      } else {
+        newList = [...prev.learnedRadicals, id];
+      }
+      return { ...prev, learnedRadicals: newList };
+    });
   };
 
   // Toggle vocabulary mastered status
   const toggleVocabLearned = (id: string, customVocabObj?: Vocabulary) => {
-    // Handle old string formats where the word was saved directly instead of ID
-    const isLearned =
-      progress.learnedVocabulary.includes(id) ||
-      (customVocabObj &&
-        progress.learnedVocabulary.includes(customVocabObj.word));
-    let newList: string[];
-    let targetToRemove =
-      isLearned &&
-      customVocabObj &&
-      progress.learnedVocabulary.includes(customVocabObj.word)
-        ? customVocabObj.word
-        : id;
+    updateProgress((prev) => {
+      // Handle old string formats where the word was saved directly instead of ID
+      const isLearned =
+        prev.learnedVocabulary.includes(id) ||
+        (customVocabObj &&
+          prev.learnedVocabulary.includes(customVocabObj.word));
+      let newList: string[];
+      let targetToRemove =
+        isLearned &&
+        customVocabObj &&
+        prev.learnedVocabulary.includes(customVocabObj.word)
+          ? customVocabObj.word
+          : id;
 
-    if (isLearned) {
-      newList = progress.learnedVocabulary.filter(
-        (item) => item !== targetToRemove && item !== id,
-      );
-    } else {
-      newList = [...progress.learnedVocabulary, id];
-    }
-
-    let customList = [...(progress.customVocabularies || [])];
-    if (
-      customVocabObj &&
-      (customVocabObj.topicId === "custom" ||
-        customVocabObj.topicId === "custom_ai")
-    ) {
-      if (!isLearned && !customList.find((v) => v.id === id)) {
-        customList.push(customVocabObj);
+      if (isLearned) {
+        newList = prev.learnedVocabulary.filter(
+          (item) => item !== targetToRemove && item !== id,
+        );
+      } else {
+        newList = [...prev.learnedVocabulary, id];
       }
-    }
 
-    let updated = {
-      ...progress,
-      learnedVocabulary: newList,
-      customVocabularies: customList,
-    };
-    updated = getStreakUpdatedProgress(updated);
-    saveProgress(updated);
+      let customList = [...(prev.customVocabularies || [])];
+      if (
+        customVocabObj &&
+        (customVocabObj.topicId === "custom" ||
+          customVocabObj.topicId === "custom_ai")
+      ) {
+        if (!isLearned && !customList.find((v) => v.id === id)) {
+          customList.push(customVocabObj);
+        }
+      }
+
+      return {
+        ...prev,
+        learnedVocabulary: newList,
+        customVocabularies: customList,
+      };
+    });
   };
 
   const handleResetAll = () => {
@@ -1633,15 +1635,15 @@ export default function App() {
         "Bạn có chắc chắn muốn đặt lại lộ trình học tập này? Mọi câu chuyện đã lưu sẽ quay về mốc đầu.",
       )
     ) {
-      const reseted = {
+      updateProgress((prev) => ({
         learnedRadicals: [],
         learnedVocabulary: [],
         streak: 0,
         lastLearnDate: null,
         studyHistory: [],
         srsVocabulary: {},
-      };
-      saveProgress(reseted);
+        srsRadicals: {},
+      }));
     }
   };
 
@@ -1810,8 +1812,7 @@ export default function App() {
     if (!progress.learnedVocabulary.includes(vocabId)) {
       toggleVocabLearned(vocabId);
     } else {
-      const updated = getStreakUpdatedProgress(progress);
-      saveProgress(updated);
+      updateProgress((prev) => prev);
     }
 
     // Proceed to next
@@ -1945,18 +1946,18 @@ export default function App() {
     } else {
       setQuizCompleted(true);
       // Give some mastery rewards to user's vocabulary list
-      const updatedVocabList = [...progress.learnedVocabulary];
-      activeTopicVocabularies.forEach((v) => {
-        if (!updatedVocabList.includes(v.id)) {
-          updatedVocabList.push(v.id);
-        }
+      updateProgress((prev) => {
+        const updatedVocabList = [...prev.learnedVocabulary];
+        activeTopicVocabularies.forEach((v) => {
+          if (!updatedVocabList.includes(v.id)) {
+            updatedVocabList.push(v.id);
+          }
+        });
+        return {
+          ...prev,
+          learnedVocabulary: updatedVocabList,
+        };
       });
-      let updated = {
-        ...progress,
-        learnedVocabulary: updatedVocabList,
-      };
-      updated = getStreakUpdatedProgress(updated);
-      saveProgress(updated);
     }
   };
 
