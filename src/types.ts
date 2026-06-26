@@ -48,6 +48,7 @@ export interface UserProgress {
   lastLearnDate: string | null; // YYYY-MM-DD
   studyHistory?: StudySession[]; // Daily minutes
   srsVocabulary?: Record<string, SrsItem>; // SRS vocabulary data
+  srsRadicals?: Record<string, SrsItem>; // SRS radical data
 }
 
 export interface StudySession {

@@ -1519,32 +1519,55 @@ export default function App() {
   };
 
   // Space repetition system review rating handler (SM-2)
-  const handleUpdateSrs = async (word: string, grade: 1 | 2 | 3 | 4) => {
-    const currentSrs = progress.srsVocabulary?.[word];
-    const srsItem = calculateSrs(word, grade, currentSrs);
+  const handleUpdateSrs = async (wordOrChar: string, grade: 1 | 2 | 3 | 4, isRadical: boolean = false) => {
+    if (isRadical) {
+      const currentSrs = progress.srsRadicals?.[wordOrChar];
+      const srsItem = calculateSrs(wordOrChar, grade, currentSrs);
 
-    const updatedSrsMap = progress.srsVocabulary
-      ? { ...progress.srsVocabulary }
-      : {};
-    updatedSrsMap[word] = srsItem;
+      const updatedSrsMap = progress.srsRadicals ? { ...progress.srsRadicals } : {};
+      updatedSrsMap[wordOrChar] = srsItem;
 
-    // Also secure that this word counts as learned in overall progression tracking
-    const foundVocab = VOCABULARY_DATA.find((v) => v.word === word);
-    const vocabId = foundVocab ? foundVocab.id : word;
+      const foundRadical = RADICALS_DATA.find((r) => r.character === wordOrChar);
+      const radicalId = foundRadical ? foundRadical.id : wordOrChar;
 
-    let newList = [...progress.learnedVocabulary];
-    if (!newList.includes(vocabId) && !newList.includes(word)) {
-      newList.push(vocabId);
+      let newList = [...progress.learnedRadicals];
+      if (!newList.includes(radicalId) && !newList.includes(wordOrChar)) {
+        newList.push(radicalId);
+      }
+
+      let updatedProgress = {
+        ...progress,
+        learnedRadicals: newList,
+        srsRadicals: updatedSrsMap,
+      };
+
+      updatedProgress = getStreakUpdatedProgress(updatedProgress);
+      await saveProgress(updatedProgress);
+    } else {
+      const currentSrs = progress.srsVocabulary?.[wordOrChar];
+      const srsItem = calculateSrs(wordOrChar, grade, currentSrs);
+
+      const updatedSrsMap = progress.srsVocabulary ? { ...progress.srsVocabulary } : {};
+      updatedSrsMap[wordOrChar] = srsItem;
+
+      // Also secure that this word counts as learned in overall progression tracking
+      const foundVocab = VOCABULARY_DATA.find((v) => v.word === wordOrChar);
+      const vocabId = foundVocab ? foundVocab.id : wordOrChar;
+
+      let newList = [...progress.learnedVocabulary];
+      if (!newList.includes(vocabId) && !newList.includes(wordOrChar)) {
+        newList.push(vocabId);
+      }
+
+      let updatedProgress = {
+        ...progress,
+        learnedVocabulary: newList,
+        srsVocabulary: updatedSrsMap,
+      };
+
+      updatedProgress = getStreakUpdatedProgress(updatedProgress);
+      await saveProgress(updatedProgress);
     }
-
-    let updatedProgress = {
-      ...progress,
-      learnedVocabulary: newList,
-      srsVocabulary: updatedSrsMap,
-    };
-
-    updatedProgress = getStreakUpdatedProgress(updatedProgress);
-    await saveProgress(updatedProgress);
   };
 
   // Toggle radical mastered status
@@ -3212,6 +3235,9 @@ export default function App() {
                         ...ALL_600_VOCABULARIES,
                         ...(progress.customVocabularies || []),
                       ]}
+                      learnedRadicalIds={progress.learnedRadicals}
+                      allRadicals={RADICALS_DATA}
+                      srsRadicals={progress.srsRadicals || {}}
                       onToggleWordLearned={(id) => {
                         toggleVocabLearned(id);
                       }}

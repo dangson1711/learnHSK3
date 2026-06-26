@@ -58,6 +58,7 @@ export function StrokeOrderVisualizer({ text, className = '' }: StrokeOrderVisua
         highlightColor: '#10b981', // Emerald-500 for matching strokes
         strokeAnimationSpeed: 1.2,
         delayBetweenStrokes: 150,
+        renderer: 'canvas',
       });
 
       setIsLoading(false);
@@ -174,22 +175,6 @@ export function StrokeOrderVisualizer({ text, className = '' }: StrokeOrderVisua
 
       {/* Main Grid Card Canvas */}
       <div className="relative w-48 h-48 bg-white border-2 border-red-200 rounded-2xl shadow-sm flex items-center justify-center">
-        
-        {/* Style block to patch WebKit SVG masking bugs securely without breaking coordinates */}
-        <style>{`
-          .hanzi-writer-svg-wrap {
-            isolation: isolate !important;
-            transform: translateZ(0) !important;
-            -webkit-transform: translateZ(0) !important;
-          }
-          .hanzi-writer-svg-wrap svg {
-            isolation: isolate !important;
-          }
-          /* This is the key fix for Safari clipPath rendering artifacts */
-          .hanzi-writer-svg-wrap clipPath, .hanzi-writer-svg-wrap mask {
-            isolation: isolate !important;
-          }
-        `}</style>
 
         {/* Calligraphy Red Rice Grid Background "Ô kẻ mễ" (米字格) wrapped in a separate safe overflow-hidden container */}
         <div className="absolute inset-0 w-full h-full rounded-2xl overflow-hidden pointer-events-none">
@@ -206,7 +191,7 @@ export function StrokeOrderVisualizer({ text, className = '' }: StrokeOrderVisua
         </div>
 
         {/* HanziWriter Container is outside of outer overflow-hidden context to prevent WebKit GPU clipping issues */}
-        <div ref={containerRef} className="z-10 w-[180px] h-[180px] hanzi-writer-svg-wrap" />
+        <div ref={containerRef} className="z-10 w-[180px] h-[180px]" />
 
         {/* Loading Spinner */}
         {isLoading && (
