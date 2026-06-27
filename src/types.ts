@@ -19,7 +19,7 @@ export interface Radical {
 
 export interface Topic {
   id: string;
-  hskLevel: 1 | 2 | 3;
+  hskLevel: number | string;
   title: string;
   vietnameseTitle: string;
   description: string;
@@ -29,7 +29,7 @@ export interface Topic {
 export interface Vocabulary {
   id: string;
   topicId: string;
-  hskLevel: 1 | 2 | 3;
+  hskLevel: number | string;
   word: string; // Chữ Hán
   pinyin: string; // Phiên âm
   meaning: string; // Nghĩa tiếng Việt

@@ -1,8 +1,9 @@
 import { Topic, Vocabulary } from '../types';
 import { pinyin } from 'pinyin-pro';
 import { RADICALS_DATA } from './radicals';
+import { AUTOMATION_TOPICS, AUTOMATION_WORDS } from './automation';
 
-// 1. ĐỊNH NGHĨA 22 CHỦ ĐỀ CHUẨN GIÁO TRÌNH HSK 1 - HSK 3
+// 1. ĐỊNH NGHĨA 22 CHỦ ĐỀ CHUẨN GIÁO TRÌNH HSK 1 - HSK 3 VÀ TỰ ĐỘNG HÓA
 export const TOPICS_DATA: Topic[] = [
   { id: 'top_hsk1_01', hskLevel: 1, title: 'Chào hỏi & Làm quen', vietnameseTitle: '问候与结识', description: 'Học cách chào hỏi xã giao, xin lỗi, cảm ơn, tạm biệt.', order: 1 },
   { id: 'top_hsk1_02', hskLevel: 1, title: 'Thông tin cá nhân', vietnameseTitle: '个人信息', description: 'Tự giới thiệu danh tính, tên tuổi, quốc tịch, quê quán.', order: 2 },
@@ -27,7 +28,8 @@ export const TOPICS_DATA: Topic[] = [
   { id: 'top_hsk3_04', hskLevel: 3, title: 'Công việc & Học tập', vietnameseTitle: '工作与功课学业', description: 'Lao động tại cơ sở, thi cử gắt gao, xin việc làm.', order: 4 },
   { id: 'top_hsk3_05', hskLevel: 3, title: 'Thói quen & Lối sống', vietnameseTitle: '生活习惯与方式', description: 'Phong cách dạo chơi, giữ gìn cơ thể sảng khoái.', order: 5 },
   { id: 'top_hsk3_06', hskLevel: 3, title: 'Môi trường & Đất nước', vietnameseTitle: '环境与国家', description: 'Sùng bái thánh tích, địa lý, động vật.', order: 6 },
-  { id: 'top_hsk3_07', hskLevel: 3, title: 'Bày tỏ quan điểm', vietnameseTitle: '发表观点与论证', description: 'Nói thẳng nói thật chính kiến phân minh.', order: 7 }
+  { id: 'top_hsk3_07', hskLevel: 3, title: 'Bày tỏ quan điểm', vietnameseTitle: '发表观点与论证', description: 'Nói thẳng nói thật chính kiến phân minh.', order: 7 },
+  ...AUTOMATION_TOPICS
 ];
 
 // 2. KHO TỪ VỰNG HSK 1 (150 TỪ CỐT LÕI)
@@ -239,18 +241,29 @@ export const HSK_3_WORDS_LIST = [
 ];
 
 // 5. HÀM TRÍCH XUẤT TỪ VỰNG THEO LỘ TRÌNH (TỐI ƯU GỌN GÀNG)
-export function get600HskWords(hskLevel: 1 | 2 | 3, topicOrder: number) {
-  let baseList = hskLevel === 1 ? HSK_1_WORDS_LIST : hskLevel === 2 ? HSK_2_WORDS_LIST : HSK_3_WORDS_LIST;
+export function get600HskWords(hskLevel: number | string, topicOrder: number) {
+  let baseList = hskLevel === 1 ? HSK_1_WORDS_LIST : hskLevel === 2 ? HSK_2_WORDS_LIST : hskLevel === 'automation' ? AUTOMATION_WORDS : HSK_3_WORDS_LIST;
   return baseList.filter(item => item.topicIdx === topicOrder);
 }
 
-export function getVocabulariesForTopic(hskLevel: 1 | 2 | 3, topicId: string, topicOrder: number): Vocabulary[] {
+export function getVocabulariesForTopic(hskLevel: number | string, topicId: string, topicOrder: number): Vocabulary[] {
   const baseWords = get600HskWords(hskLevel, topicOrder);
-  return baseWords.map(item => getVocabularyDetail(item.word, topicId, hskLevel, item.meaning));
+  return baseWords.map(item => getVocabularyDetail(item.word, topicId, hskLevel, item.meaning, {
+    story: (item as any).story,
+    exampleSentence: (item as any).exampleSentence,
+    examplePinyin: (item as any).examplePinyin,
+    exampleMeaning: (item as any).exampleMeaning
+  }));
 }
 
 // 6. HÀM PHÂN TÍCH VÀ BẺ KHÓA BỘ THỦ CHUẨN XÁC
-export function getVocabularyDetail(word: string, fallbackTopicId: string = 'top_hsk1_01', level: 1 | 2 | 3 = 1, overrideMeaning?: string): Vocabulary {
+export function getVocabularyDetail(
+  word: string, 
+  fallbackTopicId: string = 'top_hsk1_01', 
+  level: number | string = 1, 
+  overrideMeaning?: string,
+  extraData?: { story?: string; exampleSentence?: string; examplePinyin?: string; exampleMeaning?: string }
+): Vocabulary {
   let targetMeaning = overrideMeaning || 'Từ vựng tiếng Hán thực chiến';
   
   const chars = Array.from(word);
@@ -273,19 +286,18 @@ export function getVocabularyDetail(word: string, fallbackTopicId: string = 'top
     pinyin: pinyin(word),
     meaning: targetMeaning,
     radicals: detectedRadicals,
-    // Câu chuyện và câu ví dụ mặc định ngắn gọn. 
-    // Mọi nội dung phân tích sâu sắc sẽ do DeepSeek API / Database đảm nhiệm thời gian thực!
-    story: `Cổ nhân xưa lồng ghép các nét vẽ tượng hình này lại để tạo nên ý nghĩa liên hệ bổ trợ sinh động cho "${word}".`,
-    exampleSentence: `${word}。`,
-    examplePinyin: pinyin(`${word}。`),
-    exampleMeaning: targetMeaning
+    // Câu chuyện và câu ví dụ
+    story: extraData?.story || `Cổ nhân xưa lồng ghép các nét vẽ tượng hình này lại để tạo nên ý nghĩa liên hệ bổ trợ sinh động cho "${word}".`,
+    exampleSentence: extraData?.exampleSentence || `${word}。`,
+    examplePinyin: extraData?.examplePinyin || pinyin(`${word}。`),
+    exampleMeaning: extraData?.exampleMeaning || targetMeaning
   };
 }
 
 export const ALL_600_VOCABULARIES: Vocabulary[] = (() => {
   const result: Vocabulary[] = [];
   TOPICS_DATA.forEach(t => {
-    result.push(...getVocabulariesForTopic(t.hskLevel as 1|2|3, t.id, t.order));
+    result.push(...getVocabulariesForTopic(t.hskLevel, t.id, t.order));
   });
   return result;
 })();

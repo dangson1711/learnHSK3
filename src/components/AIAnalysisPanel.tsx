@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Sparkles, Loader2, Volume2, Database } from "lucide-react";
 import { speakChineseText } from "../utils/speech";
 import { db } from "../lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { findRadicalByChar } from "../utils/radicals";
 
 interface AIAnalysisPanelProps {
@@ -64,7 +64,45 @@ export function AIAnalysisPanel({
         } catch (e) {}
 
       } else {
-         setError(`Từ '${word}' chưa có trong Database. Hãy chạy kịch bản cục bộ 'npm run seed'.`);
+        // Tự động gọi AI API nếu chưa có trong Database
+        const res = await fetch("/api/gemini/analyze-batch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ words: [word] }),
+        });
+
+        if (!res.ok) {
+          try {
+            const errBody = await res.json();
+            throw new Error(errBody.error || "Không thể tạo dữ liệu mới từ AI.");
+          } catch (e: any) {
+            throw new Error(e.message || "Không thể tạo dữ liệu mới từ AI.");
+          }
+        }
+
+        const results = await res.json();
+        
+        if (Array.isArray(results) && results.length > 0 && results[0].word) {
+          const item = results[0];
+          item.word = item.word.trim();
+          item.actualWord = item.word;
+          const safeWord = item.word.replace(/\//g, '-');
+          
+          const newDocRef = doc(db, 'vocabularies', safeWord);
+          await setDoc(newDocRef, item);
+
+          setAnalysis(item);
+          if (onAnalysisComplete) onAnalysisComplete(item);
+
+          try {
+            const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
+            cache[word] = item;
+            cache[item.actualWord] = item;
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+          } catch (e) {}
+        } else {
+          setError(`Không thể phân tích từ '${word}'. Vui lòng sử dụng tính năng 'Database Seeder (Admin)' ở dưới cùng trang để bơm dữ liệu.`);
+        }
       }
     } catch (err: any) {
       setError(err.message || "Lỗi tải Database. Kiểm tra kết nối mạng.");

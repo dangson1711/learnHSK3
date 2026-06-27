@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Database, Loader2 } from "lucide-react";
 import { HSK_1_WORDS_LIST, HSK_2_WORDS_LIST, HSK_3_WORDS_LIST } from "../data/vocabulary";
+import { AUTOMATION_WORDS } from "../data/automation";
 import { db } from "../lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 
@@ -14,7 +15,8 @@ export function AdminSeeder() {
   const allWords = [
     ...HSK_1_WORDS_LIST.map(w => w.word),
     ...HSK_2_WORDS_LIST.map(w => w.word),
-    ...HSK_3_WORDS_LIST.map(w => w.word)
+    ...HSK_3_WORDS_LIST.map(w => w.word),
+    ...AUTOMATION_WORDS.map(w => w.word)
   ];
 
   const BATCH_SIZE = 30;

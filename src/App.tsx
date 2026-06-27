@@ -1213,7 +1213,7 @@ export default function App() {
   const [selectedRadical, setSelectedRadical] = useState<Radical | null>(null);
   const [selectedVocabDetail, setSelectedVocabDetail] =
     useState<Vocabulary | null>(null);
-  const [activeLevelTab, setActiveLevelTab] = useState<1 | 2 | 3>(1);
+  const [activeLevelTab, setActiveLevelTab] = useState<number | string>(1);
   const [radicalCategoryFilter, setRadicalCategoryFilter] =
     useState<string>("all");
 
@@ -1701,7 +1701,7 @@ export default function App() {
   }, [progress.studyHistory, studyTimeSeconds]);
 
   // Progress metrics
-  const totalMasteryGoal = 600;
+  const totalMasteryGoal = 700;
   const masteredVocabCount = useMemo(() => {
     return progress.learnedVocabulary.length;
   }, [progress.learnedVocabulary]);
@@ -2001,7 +2001,7 @@ export default function App() {
                 Hanzi Story
               </h1>
               <p className="text-[10px] text-slate-500 tracking-wider uppercase font-mono">
-                Bẻ khóa 600 từ vựng HSK 1-3 & Bộ Thủ
+                Bẻ khóa 700 từ vựng HSK 1-3 & Tự Động Hóa
               </p>
             </div>
           </div>
@@ -2204,7 +2204,7 @@ export default function App() {
                   />
                 </div>
                 <p className="text-[10px] text-right text-slate-400">
-                  Đã thuộc {masteredVocabCount} / 600 từ HSK 1-3
+                  Đã thuộc {masteredVocabCount} / 700 từ vựng
                 </p>
               </div>
             </div>
@@ -2570,11 +2570,11 @@ export default function App() {
                             3
                           </div>
                           <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">
-                            Thư Viện 600 Từ HSK
+                            Thư Viện Từ Vựng
                           </h5>
                           <p className="text-[11px] text-slate-500">
                             Tra cứu nhanh, xem trước móng nền tảng bạt ngàn từ
-                            vựng HSK 1, 2, 3 phân bài học khoa học.
+                            vựng HSK và chuyên ngành.
                           </p>
                         </div>
                       </div>
@@ -2797,12 +2797,12 @@ export default function App() {
                         </div>
 
                         {/* Level Switch Tabs */}
-                        <div className="flex space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start sm:self-center">
-                          {[1, 2, 3].map((lv) => (
+                        <div className="flex space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start sm:self-center overflow-x-auto whitespace-nowrap">
+                          {[1, 2, 3, 'automation'].map((lv) => (
                             <button
                               key={lv}
                               onClick={() => {
-                                setActiveLevelTab(lv as 1 | 2 | 3);
+                                setActiveLevelTab(lv);
                               }}
                               className={`text-xs px-4 py-2 font-bold rounded-lg transition-all ${
                                 activeLevelTab === lv
@@ -2810,7 +2810,7 @@ export default function App() {
                                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                               }`}
                             >
-                              HSK {lv}
+                              {lv === 'automation' ? 'Tự Động Hóa' : `HSK ${lv}`}
                             </button>
                           ))}
                         </div>
@@ -2837,7 +2837,7 @@ export default function App() {
                               : "border-transparent text-slate-500 hover:text-slate-800"
                           }`}
                         >
-                          Xem nhanh thư viện 600 từ HSK {activeLevelTab}
+                          Xem nhanh thư viện từ vựng {activeLevelTab === 'automation' ? 'Tự Động Hóa' : `HSK ${activeLevelTab}`}
                         </button>
                       </div>
                     </div>
@@ -3002,7 +3002,7 @@ export default function App() {
                                         setSelectedVocabDetail(
                                           getVocabularyDetail(
                                             wordItem.word,
-                                            "top_hsk" + activeLevelTab + "_01",
+                                            activeLevelTab === 'automation' ? 'top_auto_01' : `top_hsk${activeLevelTab}_01`,
                                             activeLevelTab,
                                             wordItem.meaning,
                                           ),
@@ -3582,7 +3582,7 @@ export default function App() {
 
                   <div className="text-center">
                     <span className="text-xs font-bold text-slate-400 tracking-wider">
-                      HSK {activeLevelTab}
+                      {activeLevelTab === 'automation' ? 'TỰ ĐỘNG HÓA' : `HSK ${activeLevelTab}`}
                     </span>
                     <h3 className="text-sm font-bold text-slate-900">
                       {activeTopic.title}
@@ -3744,7 +3744,7 @@ export default function App() {
                     {/* Active Word main detail */}
                     <div className="p-6 text-center border-b border-slate-100 flex flex-col items-center space-y-2.5">
                       <span className="text-[10px] font-black text-indigo-500 tracking-wider">
-                        HSK {activeLevelTab} - CHỦ ĐỀ CỐT LÕI
+                        {activeLevelTab === 'automation' ? 'TỰ ĐỘNG HÓA' : `HSK ${activeLevelTab}`} - CHỦ ĐỀ CỐT LÕI
                       </span>
 
                       <span className="text-7xl font-semibold text-slate-900 font-serif py-4 flex items-center justify-center gap-3">

@@ -63,7 +63,7 @@ Danh sách từ: ${words.join(', ')}`;
     while (retries > 0) {
       try {
          const genResponse = await ai.models.generateContent({
-          model: "gemini-3.1-flash-lite",
+          model: "gemini-2.5-flash",
           contents: prompt,
           config: {
             temperature: 0.2,
