@@ -1,0 +1,3794 @@
+[
+  {
+    "lessonNumber": 1,
+    "vocabulary": [
+      {
+        "word": "打算",
+        "pinyin": "dǎsuàn",
+        "meaning": "dự định, kế hoạch"
+      },
+      {
+        "word": "啊",
+        "pinyin": "a",
+        "meaning": "à, ơ (trợ từ ngữ khí)"
+      },
+      {
+        "word": "跟",
+        "pinyin": "gēn",
+        "meaning": "cùng, với"
+      },
+      {
+        "word": "一直",
+        "pinyin": "yìzhí",
+        "meaning": "suốt, liên tục, luôn"
+      },
+      {
+        "word": "游戏",
+        "pinyin": "yóuxì",
+        "meaning": "trò chơi, game"
+      },
+      {
+        "word": "作业",
+        "pinyin": "zuòyè",
+        "meaning": "bài tập về nhà"
+      },
+      {
+        "word": "着急",
+        "pinyin": "zháojí",
+        "meaning": "lo lắng, sốt ruột"
+      },
+      {
+        "word": "复习",
+        "pinyin": "fùxí",
+        "meaning": "ôn tập"
+      },
+      {
+        "word": "南方",
+        "pinyin": "nánfāng",
+        "meaning": "miền Nam"
+      },
+      {
+        "word": "北方",
+        "pinyin": "běifāng",
+        "meaning": "miền Bắc"
+      },
+      {
+        "word": "面包",
+        "pinyin": "miànbāo",
+        "meaning": "bánh mì"
+      },
+      {
+        "word": "带",
+        "pinyin": "dài",
+        "meaning": "mang theo, dẫn đi"
+      },
+      {
+        "word": "地图",
+        "pinyin": "dìtú",
+        "meaning": "bản đồ"
+      },
+      {
+        "word": "搬",
+        "pinyin": "bān",
+        "meaning": "dọn, chuyển (đồ)"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "谈周末打算 (Nói về dự định cuối tuần)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "周末你有什么打算？",
+            "pinyin": "Zhōumò nǐ yǒu shénme dǎsuàn?",
+            "vietnamese": "Cuối tuần bạn có dự định gì không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我早就想好了，请你吃饭、看电影、喝咖啡。",
+            "pinyin": "Wǒ zǎo jiù xiǎng hǎo le, qǐng nǐ chīfàn, kàn diànyǐng, hē kāfēi.",
+            "vietnamese": "Tớ nghĩ xong từ lâu rồi, mời cậu ăn cơm, xem phim, uống cà phê."
+          },
+          {
+            "speaker": "A",
+            "chinese": "请我？你复习完功课了吗？",
+            "pinyin": "Qǐng wǒ? Nǐ fùxí wán gōngkè le ma?",
+            "vietnamese": "Mời tớ sao? Cậu đã ôn tập xong bài vở chưa?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "作业我已经写完了，考试也复习好了。",
+            "pinyin": "Zuòyè wǒ yǐjīng xiě wán le, kǎoshì yě fùxí hǎo le.",
+            "vietnamese": "Bài tập tớ làm xong rồi, thi cử cũng ôn tập xong rồi."
+          }
+        ]
+      },
+      {
+        "title": "谈准备去旅游 (Nói về chuẩn bị đi du lịch)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "下个星期我们要去南方旅游了。",
+            "pinyin": "Xià gè xīngqī wǒmen yào qù nánfāng lǚyóu le.",
+            "vietnamese": "Tuần sau chúng ta sắp đi du lịch miền Nam rồi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "南方太热了，去北方怎么样？",
+            "pinyin": "Nánfāng tài rè le, qù běifāng zěnmeyàng?",
+            "vietnamese": "Miền Nam nóng lắm, đi miền Bắc thì sao?"
+          },
+          {
+            "speaker": "A",
+            "chinese": "北方我也去过。我们要带什么东西？",
+            "pinyin": "Běifāng wǒ yě qù guo. Wǒmen yào dài shénme dōngxi?",
+            "vietnamese": "Miền Bắc tớ cũng đi rồi. Chúng ta cần mang đồ gì?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "带几件衣服，还有地图和水果。",
+            "pinyin": "Dài jǐ jiàn yīfu, hái yǒu dìtú hé shuǐguǒ.",
+            "vietnamese": "Mang vài bộ quần áo, còn có cả bản đồ và hoa quả nữa."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Bổ ngữ kết quả \"好\" (biểu thị hành động đã hoàn thành và đạt kết quả hài lòng)",
+        "examples": [
+          {
+            "chinese": "我早就想好了，这个周末去旅游。",
+            "pinyin": "Wǒ zǎo jiù xiǎng hǎo le, zhè gè zhōumò qù lǚyóu.",
+            "vietnamese": "Tôi đã tính xong từ lâu rồi, cuối tuần này đi du lịch."
+          },
+          {
+            "chinese": "下周考试的东西我都准备好了。",
+            "pinyin": "Xià zhōu kǎoshì de dōngxi wǒ dōu zhǔnbèi hǎo le.",
+            "vietnamese": "Đồ chuẩn bị cho kỳ thi tuần sau tôi đã chuẩn bị xong hết rồi."
+          },
+          {
+            "chinese": "我和小刚已经商量好了。",
+            "pinyin": "Wǒ hé Xiǎogāng yǐjīng shāngliang hǎo le.",
+            "vietnamese": "Tôi và Tiểu Cương đã bàn bạc xong xuôi rồi."
+          }
+        ]
+      },
+      {
+        "title": "Phó từ biểu thị sự diễn ra liên tục \"一直\" (suốt, luôn)",
+        "examples": [
+          {
+            "chinese": "你不能一直玩电脑游戏。",
+            "pinyin": "Nǐ bù néng yìzhí wán diànnǎo yóuxì.",
+            "vietnamese": "Bạn không thể chơi game máy tính suốt như thế được."
+          },
+          {
+            "chinese": "这个周末一直在下雨。",
+            "pinyin": "Zhè gè zhōumò yìzhí zài xià yǔ.",
+            "vietnamese": "Cuối tuần này trời cứ mưa suốt."
+          },
+          {
+            "chinese": "我一直在找我的地图。",
+            "pinyin": "Wǒ yìzhí zài zhǎo wǒ de dìtú.",
+            "vietnamese": "Tôi cứ tìm quyển bản đồ của mình suốt từ nãy đến giờ."
+          }
+        ]
+      },
+      {
+        "title": "Liên từ biểu thị sự chuyển tiếp hoặc đưa ra kết luận \"那\" (vậy, vậy thì)",
+        "examples": [
+          {
+            "chinese": "我不喜欢吃面条。——那我给你做米饭。",
+            "pinyin": "Wǒ bù xǐhuan chī miàntiáo. -- Nà wǒ gěi nǐ zuò mǐfàn.",
+            "vietnamese": "Tôi không thích ăn mì. —— Vậy thì tôi nấu cơm cho bạn."
+          },
+          {
+            "chinese": "我不下棋。——那你想干什么？",
+            "pinyin": "Wǒ bù xià qí. -- Nà nǐ xiǎng gàn shénme?",
+            "vietnamese": "Tôi không chơi cờ. —— Vậy bạn muốn làm gì?"
+          },
+          {
+            "chinese": "我不去北方。——那我们就去南方吧。",
+            "pinyin": "Wǒ bù qù běifāng. -- Nà wǒmen jiù qù nánfāng ba.",
+            "vietnamese": "Tôi không đi miền Bắc. —— Vậy chúng ta đi miền Nam đi."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 2,
+    "vocabulary": [
+      {
+        "word": "腿",
+        "pinyin": "tuǐ",
+        "meaning": "chân, đùi"
+      },
+      {
+        "word": "疼",
+        "pinyin": "téng",
+        "meaning": "đau"
+      },
+      {
+        "word": "脚",
+        "pinyin": "jiǎo",
+        "meaning": "bàn chân"
+      },
+      {
+        "word": "树",
+        "pinyin": "shù",
+        "meaning": "cây"
+      },
+      {
+        "word": "容易",
+        "pinyin": "róngyì",
+        "meaning": "dễ dàng"
+      },
+      {
+        "word": "难",
+        "pinyin": "nán",
+        "meaning": "khó"
+      },
+      {
+        "word": "太太",
+        "pinyin": "tàitai",
+        "meaning": "vợ, bà xáng"
+      },
+      {
+        "word": "秘书",
+        "pinyin": "mìshū",
+        "meaning": "thư ký"
+      },
+      {
+        "word": "经理",
+        "pinyin": "jīnglǐ",
+        "meaning": "giám đốc, quản lý"
+      },
+      {
+        "word": "办公室",
+        "pinyin": "bàngōngshì",
+        "meaning": "văn phòng làm việc"
+      },
+      {
+        "word": "辆",
+        "pinyin": "liàng",
+        "meaning": "chiếc, cái (lượng từ dùng cho xe)"
+      },
+      {
+        "word": "楼",
+        "pinyin": "lóu",
+        "meaning": "tòa nhà, tầng/lầu"
+      },
+      {
+        "word": "拿",
+        "pinyin": "ná",
+        "meaning": "cầm, nắm, lấy"
+      },
+      {
+        "word": "把",
+        "pinyin": "bǎ",
+        "meaning": "cái, chiếc (lượng từ cho vật có tay cầm như ô, ghế)"
+      },
+      {
+        "word": "伞",
+        "pinyin": "sǎn",
+        "meaning": "cái ô, cái dù"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "谈打电话和下楼 (Nói về gọi điện thoại và xuống lầu)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "周经理在办公室吗？",
+            "pinyin": "Zhōu jīnglǐ zài bàngōngshì ma?",
+            "vietnamese": "Giám đốc Chu có ở văn phòng không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "他出去了，可能一个小时后回来。",
+            "pinyin": "Tā chūqù le, kěnéng yí gè xiǎoshí hòu huílái.",
+            "vietnamese": "Ông ấy đi ra ngoài rồi, có thể một tiếng nữa sẽ quay về."
+          },
+          {
+            "speaker": "A",
+            "chinese": "回来以后请让他给我打个电话。",
+            "pinyin": "Huílái yǐhòu qǐng ràng tā gěi wǒ dǎ gè diànhuà.",
+            "vietnamese": "Sau khi về nhờ cô bảo ông ấy gọi điện cho tôi nhé."
+          },
+          {
+            "speaker": "B",
+            "chinese": "好的，他一回来我就告诉他。",
+            "pinyin": "Hǎo de, tā yì huílái wǒ jiù gàosu tā.",
+            "vietnamese": "Vâng, ông ấy vừa về là tôi sẽ báo ngay."
+          }
+        ]
+      },
+      {
+        "title": "谈腿疼和爬山 (Nói về đau chân và leo núi)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你的腿怎么了？",
+            "pinyin": "Nǐ de tuǐ zěnme le?",
+            "vietnamese": "Chân của bạn làm sao thế?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "昨天爬山爬得太久了，有点儿疼。",
+            "pinyin": "Zuótiān páshān pá de tài jiǔ le, yǒudǐanr téng.",
+            "vietnamese": "Hôm qua leo núi lâu quá, hơi đau một chút."
+          },
+          {
+            "speaker": "A",
+            "chinese": "上山容易下山难，你不知道吗？",
+            "pinyin": "Shàng shān róngyì xià shān nán, nǐ bù zhīdào ma?",
+            "vietnamese": "Lên núi thì dễ xuống núi mới khó, bạn không biết sao?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "现在知道了，我们坐电梯下去吧。",
+            "pinyin": "Xiànzài zhīdào le, wǒmen zuò diàntī xiàqù ba.",
+            "vietnamese": "Bây giờ biết rồi, chúng ta đi thang máy xuống đi."
+          }
+        ]
+      },
+      {
+        "title": "谈 mang theo ô (Nói về mang theo ô)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "外面下雨了，你带伞了吗？",
+            "pinyin": "Wàimiàn xià yǔ le, nǐ dài sǎn le ma?",
+            "vietnamese": "Bên ngoài mưa rồi, bạn có mang ô không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "没带，我拿一把公司的伞吧。",
+            "pinyin": "Méi dài, wǒ ná yì bǎ gōngsī de sǎn ba.",
+            "vietnamese": "Không mang, tớ lấy một chiếc ô của công ty vậy."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那你快上去拿吧，我在下面等你。",
+            "pinyin": "Nà nǐ kuài shàngqù ná ba, wǒ zài xiàmiàn děng nǐ.",
+            "vietnamese": "Vậy bạn nhanh lên lầu lấy đi, tớ ở dưới này đợi bạn."
+          },
+          {
+            "speaker": "B",
+            "chinese": "好，我拿了伞就下来。",
+            "pinyin": "Hǎo, wǒ ná le sǎn jiù xiàlái.",
+            "vietnamese": "Ừ, tớ lấy ô xong sẽ xuống ngay."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Bổ ngữ xu hướng đơn: Động từ + 来 / 去 (lái / qù)",
+        "examples": [
+          {
+            "chinese": "你在楼上等我，我上去找你。",
+            "pinyin": "Nǐ zài lóushàng děng wǒ, wǒ shàngqù zhǎo nǐ.",
+            "vietnamese": "Bạn ở trên lầu đợi tôi, tôi đi lên tìm bạn."
+          },
+          {
+            "chinese": "周经理出去了，他一会儿回来。",
+            "pinyin": "Zhōu jīnglǐ chūqù le, tā yíhuìr huílái.",
+            "vietnamese": "Giám đốc Chu đi ra ngoài rồi, một lúc nữa ông ấy quay về."
+          },
+          {
+            "chinese": "外面下雨了，快进房间来吧。",
+            "pinyin": "Wàimiàn xià yǔ le, kuài jìn fángjiān lái ba.",
+            "vietnamese": "Bên ngoài mưa rồi, mau vào phòng đi."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc diễn tả hai hành động liên tiếp: Động từ 1 + 了 ... 就 + Động từ 2 ...",
+        "examples": [
+          {
+            "chinese": "我下了课就去打球。",
+            "pinyin": "Wǒ xià le kè jiù qù dǎqiú.",
+            "vietnamese": "Tôi tan học xong là đi đánh bóng ngay."
+          },
+          {
+            "chinese": "妈妈做了饭我们就吃。",
+            "pinyin": "Māma zuò le fàn wǒmen jiù chī.",
+            "vietnamese": "Mẹ nấu cơm xong là chúng tôi ăn liền."
+          },
+          {
+            "chinese": "周经理回来了我就告诉他。",
+            "pinyin": "Zhōu jīnglǐ huílái le wǒ jiù gàosu tā.",
+            "vietnamese": "Giám đốc Chu về là tôi sẽ nói với ông ấy ngay."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc câu hỏi phản vấn với \"能...吗？\" (Có thể... sao?)",
+        "examples": [
+          {
+            "chinese": "你天天不运动，身体能好吗？",
+            "pinyin": "Nǐ tiāntiān bù yùndòng, shēntǐ néng hǎo ma?",
+            "vietnamese": "Ngày nào bạn cũng không tập thể thao, sức khỏe sao mà tốt được?"
+          },
+          {
+            "chinese": "你没复习，能考好吗？",
+            "pinyin": "Nǐ méi fùxí, néng kǎo hǎo ma?",
+            "vietnamese": "Bạn không ôn tập, sao mà thi tốt được?"
+          },
+          {
+            "chinese": "爬山爬了四个小时，腿能不疼吗？",
+            "pinyin": "Páshān pá le sì gè xiǎoshí, tuǐ néng bù téng ma?",
+            "vietnamese": "Leo núi tận bốn tiếng đồng hồ, chân sao mà không đau cho được?"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 3,
+    "vocabulary": [
+      {
+        "word": "桌子",
+        "pinyin": "zhuōzi",
+        "meaning": "cái bàn"
+      },
+      {
+        "word": "饮料",
+        "pinyin": "yǐnliào",
+        "meaning": "thức uống, đồ uống"
+      },
+      {
+        "word": "花",
+        "pinyin": "huā",
+        "meaning": "hoa"
+      },
+      {
+        "word": "茶",
+        "pinyin": "chá",
+        "meaning": "trà"
+      },
+      {
+        "word": "绿茶",
+        "pinyin": "lǜchá",
+        "meaning": "trà xanh"
+      },
+      {
+        "word": "苹果",
+        "pinyin": "píngguǒ",
+        "meaning": "quả táo"
+      },
+      {
+        "word": "西瓜",
+        "pinyin": "xīguā",
+        "meaning": "dưa hấu"
+      },
+      {
+        "word": "条",
+        "pinyin": "tiáo",
+        "meaning": "chiếc, con, sợi (lượng từ cho quần, sông, cá...)"
+      },
+      {
+        "word": "裤子",
+        "pinyin": "kùzi",
+        "meaning": "quần"
+      },
+      {
+        "word": "衬衫",
+        "pinyin": "chènshān",
+        "meaning": "áo sơ mi"
+      },
+      {
+        "word": "记得",
+        "pinyin": "jìde",
+        "meaning": "nhớ, còn nhớ"
+      },
+      {
+        "word": "新鲜",
+        "pinyin": "xīnxiān",
+        "meaning": "tươi, tươi mới"
+      },
+      {
+        "word": "甜",
+        "pinyin": "tián",
+        "meaning": "ngọt"
+      },
+      {
+        "word": "只",
+        "pinyin": "zhǐ",
+        "meaning": "chỉ (phó từ)"
+      },
+      {
+        "word": "放",
+        "pinyin": "fàng",
+        "meaning": "đặt, để"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "谈选购饮料 (Nói về chọn mua đồ uống)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "桌子上放着很多饮料，你想喝什么？",
+            "pinyin": "Zhuōzi shàng fàng zhe hěn duō yǐnliào, nǐ xiǎng hē shénme?",
+            "vietnamese": "Trên bàn đang đặt rất nhiều đồ uống, bạn muốn uống gì?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "茶或者咖啡都可以。你呢？",
+            "pinyin": "Chá huòzhě kāfēi dōu kěyǐ. Nǐ ne?",
+            "vietnamese": "Trà hoặc cà phê đều được. Còn bạn?"
+          },
+          {
+            "speaker": "A",
+            "chinese": "我喝绿茶，夏天喝绿茶很舒服。",
+            "pinyin": "Wǒ hē lǜchá, xiàtiān hē lǜchá hěn shūfu.",
+            "vietnamese": "Tôi uống trà xanh, mùa hè uống trà xanh rất dễ chịu."
+          },
+          {
+            "speaker": "B",
+            "chinese": "那我跟你一样，也喝绿茶吧。",
+            "pinyin": "Nà wǒ gēn nǐ yíyàng, yě hē lǜchá ba.",
+            "vietnamese": "Vậy tôi giống bạn, cũng uống trà xanh vậy."
+          }
+        ]
+      },
+      {
+        "title": "谈买衣服 (Nói về mua quần áo)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你看，这条裤子怎么样？",
+            "pinyin": "Nǐ kàn, zhè tiáo kùzi zěnmeyàng?",
+            "vietnamese": "Bạn xem, chiếc quần này thế nào?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我记得你已经有一条这样的裤子了。",
+            "pinyin": "Wǒ jìde nǐ yǐjīng yǒu yì tiáo zhèyàng de kùzi le.",
+            "vietnamese": "Tớ nhớ cậu đã có một cái quần như thế này rồi mà."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那我们再去看看衬衫吧。",
+            "pinyin": "Nà wǒmen zài qù kànkan chènshān ba.",
+            "vietnamese": "Vậy chúng ta lại sang xem áo sơ mi đi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "这件红色的又好看又便宜，买这件吧。",
+            "pinyin": "Zhè jiàn hóngsè de yòu hǎokàn yòu piányi, mǎi zhè jiàn ba.",
+            "vietnamese": "Cái màu đỏ này vừa đẹp vừa rẻ, mua cái này đi."
+          }
+        ]
+      },
+      {
+        "title": "谈买水果 (Nói về mua hoa quả)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "这些西瓜新鲜吗？",
+            "pinyin": "Zhèxiē xīguā xīnxiān ma?",
+            "vietnamese": "Mấy quả dưa hấu này có tươi không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "非常新鲜，而且又大又甜。",
+            "pinyin": "Fēicháng xīnxiān, érqiě yòu dà yòu tián.",
+            "vietnamese": "Rất tươi, mà lại còn vừa to vừa ngọt nữa."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那买一个吧，再买几个苹果。",
+            "pinyin": "Nà mǎi yí gè ba, zài mǎi jǐ gè píngguǒ.",
+            "vietnamese": "Vậy mua một quả đi, mua thêm vài quả táo nữa."
+          },
+          {
+            "speaker": "B",
+            "chinese": "桌子上已经放着很多苹果了，只买西瓜吧。",
+            "pinyin": "Zhuōzi shàng yǐjīng fàng zhe hěn duō píngguǒ le, zhǐ mǎi xīguā ba.",
+            "vietnamese": "Trên bàn đã đặt rất nhiều táo rồi, chỉ mua dưa hấu thôi."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Trợ từ động thái \"着\" biểu thị sự duy trì của trạng thái: Động từ + 着",
+        "examples": [
+          {
+            "chinese": "门开着呢，请进。",
+            "pinyin": "Mén kāi zhe ne, qǐng jìn.",
+            "vietnamese": "Cửa đang mở đấy, mời vào."
+          },
+          {
+            "chinese": "桌子上放着一本书。",
+            "pinyin": "Zhuōzi shàng fàng zhe yì běn shū.",
+            "vietnamese": "Trên bàn đang đặt một cuốn sách."
+          },
+          {
+            "chinese": "他手里拿着一把伞。",
+            "pinyin": "Tā shǒulǐ ná zhe yì bǎ sǎn.",
+            "vietnamese": "Trong tay anh ấy đang cầm một chiếc ô."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc câu hỏi phản vấn dùng \"不是...吗？\" (Chẳng phải... sao?)",
+        "examples": [
+          {
+            "chinese": "你不是喜欢喝茶吗？怎么喝起咖啡来了？",
+            "pinyin": "Nǐ bú shì xǐhuan hē chá ma? Zěnme hē qǐ kāfēi lái le?",
+            "vietnamese": "Chẳng phải bạn thích uống trà sao? Sao lại chuyển sang uống cà phê rồi?"
+          },
+          {
+            "chinese": "他不是你哥哥吗？",
+            "pinyin": "Tā bú shì nǐ gēge ma?",
+            "vietnamese": "Anh ấy chẳng phải là anh trai bạn sao?"
+          },
+          {
+            "chinese": "你不是已经买了一条裤子吗？",
+            "pinyin": "Nǐ bú shì yǐjīng mǎi le yì tiáo kùzi ma?",
+            "vietnamese": "Chẳng phải bạn đã mua một cái quần rồi sao?"
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc biểu thị hai đặc điểm cùng tồn tại: \"又...又...\" (Vừa... vừa...)",
+        "examples": [
+          {
+            "chinese": "这个西瓜又大又甜。",
+            "pinyin": "Zhè gè xīguā yòu dà yòu tián.",
+            "vietnamese": "Quả dưa hấu này vừa to vừa ngọt."
+          },
+          {
+            "chinese": "这件衣服又好看又便宜。",
+            "pinyin": "Zhè jiàn yīfu yòu hǎokàn yòu piányi.",
+            "vietnamese": "Bộ quần áo này vừa đẹp vừa rẻ."
+          },
+          {
+            "chinese": "苹果苹果又新鲜又好吃。",
+            "pinyin": "Píngguǒ yòu xīnxiān yòu hǎochī.",
+            "vietnamese": "Táo vừa tươi lại vừa ngon."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 4,
+    "vocabulary": [
+      {
+        "word": "比赛",
+        "pinyin": "bǐsài",
+        "meaning": "trận đấu, cuộc thi"
+      },
+      {
+        "word": "照片",
+        "pinyin": "zhàopiàn",
+        "meaning": "bức ảnh"
+      },
+      {
+        "word": "年青",
+        "pinyin": "niánqīng",
+        "meaning": "trẻ tuổi, thanh xuân"
+      },
+      {
+        "word": "总是",
+        "pinyin": "zǒngshì",
+        "meaning": "luôn luôn"
+      },
+      {
+        "word": "客人",
+        "pinyin": "kèrén",
+        "meaning": "khách, khách hàng"
+      },
+      {
+        "word": "敢",
+        "pinyin": "gǎn",
+        "meaning": "dám"
+      },
+      {
+        "word": "放心",
+        "pinyin": "fàngxīn",
+        "meaning": "an tâm, yên tâm"
+      },
+      {
+        "word": "适合",
+        "pinyin": "shìhé",
+        "meaning": "thích hợp, phù hợp"
+      },
+      {
+        "word": "聪明",
+        "pinyin": "cōngmíng",
+        "meaning": "thông minh"
+      },
+      {
+        "word": "热情",
+        "pinyin": "rèqíng",
+        "meaning": "nhiệt tình"
+      },
+      {
+        "word": "努力",
+        "pinyin": "nǔlì",
+        "meaning": "nỗ lực, cố gắng"
+      },
+      {
+        "word": "回答",
+        "pinyin": "huídá",
+        "meaning": "trả lời"
+      },
+      {
+        "word": "站",
+        "pinyin": "zhàn",
+        "meaning": "đứng"
+      },
+      {
+        "word": "饿",
+        "pinyin": "è",
+        "meaning": "đói"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "谈工作和对客人的态度 (Nói về công việc và thái độ với khách hàng)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "那个笑着跟客人说话的女孩是谁？",
+            "pinyin": "Nà gè xiào zhe gēn kèrén shuōhuà de nǚhái shì shéi?",
+            "vietnamese": "Cô gái đang mỉm cười nói chuyện với khách kia là ai thế?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "那是新来的服务员，她工作很努力。",
+            "pinyin": "Nà shì xīn lái de fúwùyuán, tā gōngzuò hěn nǔlì.",
+            "vietnamese": "Đó là nhân viên phục vụ mới đến, cô ấy làm việc rất chăm chỉ."
+          },
+          {
+            "speaker": "A",
+            "chinese": "她总是笑着说话，让人感觉很热情。",
+            "pinyin": "Tā zǒngshì xiào zhe shuōhuà, ràng rén gǎnjué hěn rèqíng.",
+            "vietnamese": "Cô ấy luôn mỉm cười khi nói chuyện, làm cho người ta cảm thấy rất nhiệt tình."
+          },
+          {
+            "speaker": "B",
+            "chinese": "是的，客人 rich 也很喜欢她。",
+            "pinyin": "Shì de, kèrén yě hěn xǐhuan tā.",
+            "vietnamese": "Đúng thế, khách hàng cũng rất thích cô ấy."
+          }
+        ]
+      },
+      {
+        "title": "谈照片和比赛 (Nói về bức ảnh và cuộc thi)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "这张照片是你比赛时照的吗？",
+            "pinyin": "Zhè zhāng zhàopiàn shì nǐ bǐsài shí zhào de ma?",
+            "vietnamese": "Bức ảnh này là bạn chụp lúc thi đấu à?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "是的，你看，我站在中间，笑得开心吧？",
+            "pinyin": "Shì de, nǐ kàn, wǒ zhàn zài zhōngjiān, xiào de kāixīn ba?",
+            "vietnamese": "Đúng vậy, bạn xem, tớ đứng ở giữa, cười vui vẻ chưa?"
+          },
+          {
+            "speaker": "A",
+            "chinese": "你拿着拿奖杯的样子真帅！",
+            "pinyin": "Nǐ ná zhe jiǎngbēi de yàngzi zhēn shuài!",
+            "vietnamese": "Dáng vẻ bạn cầm chiếc cúp vô địch thật là ngầu!"
+          },
+          {
+            "speaker": "B",
+            "chinese": "大家都很努力，所以拿了第一名。",
+            "pinyin": "Dàjiā dōu hěn nǔlì, suǒyǐ ná le dì-yī míng.",
+            "vietnamese": "Mọi người đều rất cố gắng nên mới giành được giải nhất."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Cấu trúc biểu thị hai hành động xảy ra đồng thời: Động từ 1 + 着 + (Tân ngữ 1) + Động từ 2",
+        "examples": [
+          {
+            "chinese": "她总是笑着跟客人说话。",
+            "pinyin": "Tā zǒngshì xiào zhe gēn kèrén shuōhuà.",
+            "vietnamese": "Cô ấy luôn luôn mỉm cười khi nói chuyện với khách hàng."
+          },
+          {
+            "chinese": "同学们站着听老师讲课。",
+            "pinyin": "Tóngxuémen zhàn zhe tīng lǎoshī jiǎngkè.",
+            "vietnamese": "Các học sinh đứng nghe thầy cô giảng bài."
+          },
+          {
+            "chinese": "他喜欢躺着看书。",
+            "pinyin": "Tā xǐhuan tǎng zhe kàn shū.",
+            "vietnamese": "Anh ấy thích nằm đọc sách."
+          }
+        ]
+      },
+      {
+        "title": "Phó từ biểu thị tính thường xuyên, không thay đổi: \"总是\" (luôn luôn)",
+        "examples": [
+          {
+            "chinese": "他总是第一个到教室。",
+            "pinyin": "Tā zǒngshì dì-yī gè dào jiàoshì.",
+            "vietnamese": "Anh ấy luôn là người đầu tiên đến lớp học."
+          },
+          {
+            "chinese": "你怎么总是感到饿？",
+            "pinyin": "Nǐ zěnme zǒngshì gǎndào è?",
+            "vietnamese": "Sao lúc nào bạn cũng cảm thấy đói thế?"
+          },
+          {
+            "chinese": "她对客人总是很热情。",
+            "pinyin": "Tā duì kèrén zǒngshì hěn rèqíng.",
+            "vietnamese": "Cô ấy đối với khách hàng lúc nào cũng rất nhiệt tình."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 5,
+    "vocabulary": [
+      {
+        "word": "运动",
+        "pinyin": "yùndòng",
+        "meaning": "vận động, thể thao"
+      },
+      {
+        "word": "跑步",
+        "pinyin": "pǎobù",
+        "meaning": "chạy bộ"
+      },
+      {
+        "word": "身体",
+        "pinyin": "shēntǐ",
+        "meaning": "thân thể, sức khỏe"
+      },
+      {
+        "word": "胖",
+        "pinyin": "pàng",
+        "meaning": "béo, mập"
+      },
+      {
+        "word": "瘦",
+        "pinyin": "shòu",
+        "meaning": "gầy, ốm"
+      },
+      {
+        "word": "简单",
+        "pinyin": "jiǎndān",
+        "meaning": "đơn giản"
+      },
+      {
+        "word": "越来越",
+        "pinyin": "yuè lái yuè",
+        "meaning": "ngày càng..."
+      },
+      {
+        "word": "提高",
+        "pinyin": "tígāo",
+        "meaning": "nâng cao, cải thiện"
+      },
+      {
+        "word": "体育",
+        "pinyin": "tǐyù",
+        "meaning": "thể dục, thể thao"
+      },
+      {
+        "word": "文章",
+        "pinyin": "wénzhāng",
+        "meaning": "bài báo, bài văn"
+      },
+      {
+        "word": "极了",
+        "pinyin": "jí le",
+        "meaning": "cực kỳ, hết sức"
+      },
+      {
+        "word": "菜单",
+        "pinyin": "càidān",
+        "meaning": "thực đơn"
+      },
+      {
+        "word": "了解",
+        "pinyin": "liǎojiě",
+        "meaning": "tìm hiểu, hiểu rõ"
+      },
+      {
+        "word": "经常",
+        "pinyin": "jīngcháng",
+        "meaning": "thường xuyên"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "谈运动与减肥 (Nói về tập thể thao và giảm cân)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "我最近越来越胖了。",
+            "pinyin": "Wǒ zuìjìn yuè lái yuè pàng le.",
+            "vietnamese": "Dạo này tớ ngày càng béo lên rồi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "你每天晚上吃完饭就睡觉，能不胖吗？",
+            "pinyin": "Nǐ měitiān wǎnshang chī wán fàn jiù shuìjiào, néng bù pàng ma?",
+            "vietnamese": "Mỗi tối cậu ăn cơm xong là đi ngủ ngay, sao mà không béo được?"
+          },
+          {
+            "speaker": "A",
+            "chinese": "那我以后每天去跑步吧。",
+            "pinyin": "Nà wǒ yǐhòu měitiān qù pǎobù ba.",
+            "vietnamese": "Vậy từ nay về sau mỗi ngày tớ đi chạy bộ nhé."
+          },
+          {
+            "speaker": "B",
+            "chinese": "运动对身体很好，坚持下去就会瘦的。",
+            "pinyin": "Yùndòng duì shēntǐ hěn hǎo, jiānchí xiàqù jiù huì shòu de.",
+            "vietnamese": "Vận động rất tốt cho sức khỏe, kiên trì thì sẽ gầy đi thôi."
+          }
+        ]
+      },
+      {
+        "title": "谈身体与饮食 (Nói về sức khỏe và thói quen ăn uống)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你中文现在说得越来越好了！",
+            "pinyin": "Nǐ Zhōngwén xiànzài shuō de yuè lái yuè hǎo le!",
+            "vietnamese": "Tiếng Trung của bạn bây giờ nói ngày càng tốt rồi đấy!"
+          },
+          {
+            "speaker": "B",
+            "chinese": "哪里，我还需要多看文章。",
+            "pinyin": "Nǎli, wǒ hái xūyào duō kàn wénzhāng.",
+            "vietnamese": "Đâu có, tớ còn cần phải đọc thêm nhiều bài viết nữa."
+          },
+          {
+            "speaker": "A",
+            "chinese": "这家餐馆的菜好吃极了，我们看看菜单吧。",
+            "pinyin": "Zhè jiā cānguǎn de cài hǎochī jí le, wǒmen kànkan càidān ba.",
+            "vietnamese": "Món ăn ở nhà hàng này ngon cực kỳ, chúng ta xem thực đơn đi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "好，为了身体健康，少吃甜食吧。",
+            "pinyin": "Hǎo, wèile shēntǐ jiànkāng, shǎo chī tiánshí ba.",
+            "vietnamese": "Được, vì sức khỏe, hãy ăn ít đồ ngọt thôi nhé."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Cấu trúc biểu thị sự thay đổi theo thời gian: \"越来越...\" (Ngày càng...)",
+        "examples": [
+          {
+            "chinese": "我最近越来越胖了。",
+            "pinyin": "Wǒ zuìjìn yuè lái yuè pàng le.",
+            "vietnamese": "Dạo này tôi ngày càng béo lên rồi."
+          },
+          {
+            "chinese": "你的汉语说得越来越流利了。",
+            "pinyin": "Nǐ de Hànyǔ shuō de yuè lái yuè liúlì le.",
+            "vietnamese": "Tiếng Trung của bạn nói ngày càng lưu loát rồi."
+          },
+          {
+            "chinese": "天气越来越冷了。",
+            "pinyin": "Tiānqì yuè lái yuè lěng le.",
+            "vietnamese": "Thời tiết ngày càng lạnh hơn rồi."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc biểu thị mức độ cao: Tính từ + \"极了\" (Cực kỳ... / Rất...)",
+        "examples": [
+          {
+            "chinese": "这个瓜甜极了！",
+            "pinyin": "Zhè gè guā tián jí le!",
+            "vietnamese": "Quả dưa này ngọt cực kỳ!"
+          },
+          {
+            "chinese": "她高兴极了，因为考了第一名。",
+            "pinyin": "Tā gāoxìng jí le, yīnwèi kǎo le dì-yī míng.",
+            "vietnamese": "Cô ấy vui mừng khôn xiết vì đã thi đạt giải nhất."
+          },
+          {
+            "chinese": "今天的天气好极了。",
+            "pinyin": "Jīntiān de tiānqì hǎo jí le.",
+            "vietnamese": "Thời tiết hôm nay cực kỳ đẹp."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 6,
+    "vocabulary": [
+      {
+        "word": "眼镜",
+        "pinyin": "yǎnjìng",
+        "meaning": "kính mắt"
+      },
+      {
+        "word": "突然",
+        "pinyin": "tūrán",
+        "meaning": "đột nhiên, bỗng nhiên"
+      },
+      {
+        "word": "离开",
+        "pinyin": "líkāi",
+        "meaning": "rời khỏi, rời đi"
+      },
+      {
+        "word": "清楚",
+        "pinyin": "qīngchu",
+        "meaning": "rõ ràng"
+      },
+      {
+        "word": "刚才",
+        "pinyin": "gāngcái",
+        "meaning": "vừa mới, vừa lúc nãy"
+      },
+      {
+        "word": "帮忙",
+        "pinyin": "bāngmáng",
+        "meaning": "giúp đỡ"
+      },
+      {
+        "word": "特别",
+        "pinyin": "tèbié",
+        "meaning": "đặc biệt, rất"
+      },
+      {
+        "word": "讲",
+        "pinyin": "jiǎng",
+        "meaning": "nói, giảng giải"
+      },
+      {
+        "word": "明白",
+        "pinyin": "míngbai",
+        "meaning": "hiểu, rõ ràng"
+      },
+      {
+        "word": "锻炼",
+        "pinyin": "duànliàn",
+        "meaning": "rèn luyện, tập thể dục"
+      },
+      {
+        "word": "音乐",
+        "pinyin": "yīnyuè",
+        "meaning": "âm nhạc"
+      },
+      {
+        "word": "公园",
+        "pinyin": "gōngyuán",
+        "meaning": "công viên"
+      },
+      {
+        "word": "聊天",
+        "pinyin": "liáotiān",
+        "meaning": "nói chuyện, tán gẫu"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "找眼镜 (Tìm kính mắt)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "我的眼镜怎么突然找不到了？你看到了吗？",
+            "pinyin": "Wǒ de yǎnjìng zěnme tūrán zhǎo bu dào le? Nǐ kàndào le ma?",
+            "vietnamese": "Kính mắt của tôi sao đột nhiên lại không tìm thấy nữa? Bạn có nhìn thấy không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我刚才看见就在桌子上，你再找找。自由",
+            "pinyin": "Wǒ gāngcái kànjiàn jiù zài zhuōzi shàng, nǐ zài zhǎozhao.",
+            "vietnamese": "Lúc nãy tôi thấy ở trên bàn mà, bạn tìm lại xem sao."
+          },
+          {
+            "speaker": "A",
+            "chinese": "桌子上没有，离我不远的地方我都看过了。",
+            "pinyin": "Zhuōzi shàng méiyǒu, lí wǒ bù yuǎn de dìfang wǒ dōu kànguò le.",
+            "vietnamese": "Trên bàn không có, những chỗ không xa tôi tôi đều tìm qua rồi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "你看，不就在你的头上吗？",
+            "pinyin": "Nǐ kàn, bù jiù zài nǐ de tóu shàng ma?",
+            "vietnamese": "Bạn nhìn xem, chẳng phải ở ngay trên đầu bạn sao?"
+          }
+        ]
+      },
+      {
+        "title": "在公园 (At the park / Ở công viên)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "今天的复习你听懂了吗？",
+            "pinyin": "Jīntiān de fùxí nǐ tīng dǒng le ma?",
+            "vietnamese": "Bài ôn tập hôm nay bạn nghe có hiểu không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "老师讲得特别清楚，我都听懂了。",
+            "pinyin": "Lǎoshī jiǎng de tèbié qīngchu, wǒ dōu tīng dǒng le.",
+            "vietnamese": "Thầy giáo giảng rất rõ ràng, tôi đều nghe hiểu hết rồi."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那我有个问题想请你帮忙，你能帮我讲讲吗？",
+            "pinyin": "Nà wǒ yǒu gè wèntí xiǎng qǐng nǐ bāngmáng, nǐ néng bāng wǒ jiǎngjiang ma?",
+            "vietnamese": "Vậy tôi có một câu hỏi muốn nhờ bạn giúp, bạn giảng giúp tôi được không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "没问题，我们去公园一边散步一边讲吧。",
+            "pinyin": "Méi wèntí, wǒmen qù gōngyuán yìbiān sànbù yìbiān jiǎng ba.",
+            "vietnamese": "Không vấn đề gì, chúng ta ra công viên vừa đi dạo vừa giảng nhé."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Bổ ngữ khả năng: Động từ + 得 / 不 + Kết quả/Hướng đi (V + 得/不 + 懂/见/到)",
+        "examples": [
+          {
+            "chinese": "老师说话的声音太小，我听不见。",
+            "pinyin": "Lǎoshī shuōhuà de shēngyīn tài xiǎo, wǒ tīng bu jiàn.",
+            "vietnamese": "Giọng thầy giáo nói nhỏ quá, tôi nghe không thấy."
+          },
+          {
+            "chinese": "字太小了，你看得清楚吗？",
+            "pinyin": "Zì tài xiǎo le, nǐ kàn de qīngchu ma?",
+            "vietnamese": "Chữ nhỏ quá, bạn nhìn có rõ không?"
+          },
+          {
+            "chinese": "作业太多了，我今天做不完。",
+            "pinyin": "Zuòyè tài duō le, wǒ jīntiān zuò bu wán.",
+            "vietnamese": "Bài tập nhiều quá, hôm nay tôi làm không xong."
+          }
+        ]
+      },
+      {
+        "title": "Phó từ '突然' (Đột nhiên, bỗng nhiên) làm trạng ngữ hoặc tính từ",
+        "examples": [
+          {
+            "chinese": "小狗突然跑了出来。",
+            "pinyin": "Xiǎogǒu tūrán pǎo le chūlái.",
+            "vietnamese": "Chú chó nhỏ đột nhiên chạy ra."
+          },
+          {
+            "chinese": "这个事情太突然了，我还没准备好。",
+            "pinyin": "Zhège shìqing tài tūrán le, wǒ hái méi zhǔnbèi hǎo.",
+            "vietnamese": "Chuyện này đột ngột quá, tôi còn chưa chuẩn bị xong."
+          },
+          {
+            "chinese": "天突然下起雨来了。",
+            "pinyin": "Tiān tūrán xià qǐ yǔ lái le.",
+            "vietnamese": "Trời bỗng nhiên đổ mưa."
+          }
+        ]
+      },
+      {
+        "title": "Phân biệt '刚才' (Vừa mới - Danh từ thời gian) và '刚' (Vừa - Phó từ)",
+        "examples": [
+          {
+            "chinese": "你刚才去哪儿了？我找了你半天。",
+            "pinyin": "Nǐ gāngcái qù nǎr le? Wǒ zhǎo le nǐ bàntiān.",
+            "vietnamese": "Lúc nãy bạn đi đâu đấy? Tôi tìm bạn nửa ngày trời."
+          },
+          {
+            "chinese": "他刚才说的话，我没听明白。",
+            "pinyin": "Tā gāngcái shuō de huà, wǒ méi tīng míngbai.",
+            "vietnamese": "Lời anh ấy vừa nói, tôi nghe không hiểu."
+          },
+          {
+            "chinese": "我刚到家，还没吃饭呢。",
+            "pinyin": "Wǒ gāng dào jiā, hái méi chīfàn ne.",
+            "vietnamese": "Tôi vừa về đến nhà, còn chưa ăn cơm."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 7,
+    "vocabulary": [
+      {
+        "word": "同事",
+        "pinyin": "tóngshì",
+        "meaning": "đồng nghiệp"
+      },
+      {
+        "word": "以前",
+        "pinyin": "yǐqián",
+        "meaning": "trước đây, trước khi"
+      },
+      {
+        "word": "银行",
+        "pinyin": "yínháng",
+        "meaning": "ngân hàng"
+      },
+      {
+        "word": "结婚",
+        "pinyin": "jiéhūn",
+        "meaning": "kết hôn"
+      },
+      {
+        "word": "欢迎",
+        "pinyin": "huānyíng",
+        "meaning": "hoan nghênh, chào đón"
+      },
+      {
+        "word": "迟到",
+        "pinyin": "chídào",
+        "meaning": "đến muộn, trễ"
+      },
+      {
+        "word": "半",
+        "pinyin": "bàn",
+        "meaning": "nửa"
+      },
+      {
+        "word": "接",
+        "pinyin": "jiē",
+        "meaning": "đón, nhận"
+      },
+      {
+        "word": "刻",
+        "pinyin": "kè",
+        "meaning": "15 phút, khắc"
+      },
+      {
+        "word": "差",
+        "pinyin": "chà",
+        "meaning": "kém, thiếu"
+      },
+      {
+        "word": "熟悉",
+        "pinyin": "shúxī",
+        "meaning": "quen thuộc, am hiểu"
+      },
+      {
+        "word": "兴趣",
+        "pinyin": "xìngqù",
+        "meaning": "hứng thú, sở thích"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "谈朋友 (Nói về bạn bè)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "那个说话的女孩子是谁？你认识她吗？",
+            "pinyin": "Nàge shuōhuà de nǚ háizi shì shéi? Nǐ rènshi tā ma?",
+            "vietnamese": "Cô gái đang nói chuyện kia là ai vậy? Bạn có quen cô ấy không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "认识，我和她都认识五年了。她是我以前的同事。",
+            "pinyin": "Rènshi, wǒ hé tā dōu rènshi wǔ nián le. Tā shì wǒ yǐqián de tóngshì.",
+            "vietnamese": "Quen chứ, tôi và cô ấy quen nhau 5 năm rồi. Cô ấy là đồng nghiệp trước đây của tôi."
+          },
+          {
+            "speaker": "A",
+            "chinese": "她是做什么工作的？",
+            "pinyin": "Tā shì zuò shénme gōngzuò de?",
+            "vietnamese": "Cô ấy làm nghề gì vậy?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "她以前在银行工作，现在在学校教书。",
+            "pinyin": "Tā yǐqián zài yínháng gōngzuò, xiànzài zài xuéxiào jiāoshū.",
+            "vietnamese": "Trước đây cô ấy làm việc ở ngân hàng, hiện tại dạy học ở trường."
+          }
+        ]
+      },
+      {
+        "title": "接人 (Đón người)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你几点去机场接小张？",
+            "pinyin": "Nǐ jǐ diǎn qù jīchǎng jiē Xiǎo Zhāng?",
+            "vietnamese": "Mấy giờ bạn đi sân bay đón Tiểu Trương?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "他的飞机差一刻八点到，我七点半出发。",
+            "pinyin": "Tā de fēijī chà yí kè bā diǎn dào, wǒ qī diǎn bàn chūfā.",
+            "vietnamese": "Máy bay của anh ấy 8 giờ kém 15 đến, tôi 7 rưỡi xuất phát."
+          },
+          {
+            "speaker": "A",
+            "chinese": "路上车很多，你别迟到了。",
+            "pinyin": "Lùshang chē hěn duō, nǐ bié chídào le.",
+            "vietnamese": "Trên đường rất nhiều xe, bạn đừng để bị trễ nhé."
+          },
+          {
+            "speaker": "B",
+            "chinese": "放心吧，我对这条路很熟悉，不会迟到的。",
+            "pinyin": "Fàngxīn ba, wǒ duì zhè tiáo lù hěn shúxī, bú huì chídào de.",
+            "vietnamese": "Yên tâm đi, tôi rất quen thuộc đường này, không trễ đâu."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Biểu thị thời lượng của hành động tiếp diễn: Động từ + 了 + Thời gian + 了",
+        "examples": [
+          {
+            "chinese": "我在这家公司工作了三年了。",
+            "pinyin": "Wǒ zài zhè jiā gōngsī gōngzuò le sān nián le.",
+            "vietnamese": "Tôi đã làm việc ở công ty này được ba năm rồi (hiện vẫn đang làm)."
+          },
+          {
+            "chinese": "他学汉语学了一年多了。",
+            "pinyin": "Tā xué Hànyǔ xué le yì nián duō le.",
+            "vietnamese": "Anh ấy học tiếng Hán hơn một năm rồi."
+          },
+          {
+            "chinese": "他们结婚十年了，生活很幸福。",
+            "pinyin": "Tāmen jiéhūn shí nián le, shēnghuó hěn xìngfú.",
+            "vietnamese": "Họ kết hôn được mười năm rồi, cuộc sống rất hạnh phúc."
+          }
+        ]
+      },
+      {
+        "title": "Cách biểu thị thời gian / Giờ giấc (刻, 差, 半)",
+        "examples": [
+          {
+            "chinese": "现在是七点一刻。",
+            "pinyin": "Xiànzài shì qī diǎn yí kè.",
+            "vietnamese": "Bây giờ là 7 giờ 15 phút."
+          },
+          {
+            "chinese": "差五分九点我们上课。",
+            "pinyin": "Chà wǔ fēn jiǔ diǎn wǒmen shàngkè.",
+            "vietnamese": "9 giờ kém 5 phút chúng tôi vào học."
+          },
+          {
+            "chinese": "我们八点半在门外集合。",
+            "pinyin": "Wǒmen bā diǎn bàn zài mén wài jíhé.",
+            "vietnamese": "Chúng ta tập hợp ở ngoài cửa lúc 8 giờ rưỡi."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc '对……感兴趣 / 有兴趣' (Có hứng thú với...)",
+        "examples": [
+          {
+            "chinese": "我对中国历史很感兴趣。",
+            "pinyin": "Wǒ duì Zhōngguó lìshǐ hěn gǎn xìngqù.",
+            "vietnamese": "Tôi rất có hứng thú với lịch sử Trung Quốc."
+          },
+          {
+            "chinese": "小明对打篮球没有兴趣。",
+            "pinyin": "Xiǎomíng duì dǎ lánqiú méiyǒu xìngqù.",
+            "vietnamese": "Tiểu Minh không có hứng thú với việc chơi bóng rổ."
+          },
+          {
+            "chinese": "你对什么音乐感兴趣？",
+            "pinyin": "Nǐ duì shénme yīnyuè gǎn xìngqù?",
+            "vietnamese": "Bạn có hứng thú với âm nhạc gì?"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 8,
+    "vocabulary": [
+      {
+        "word": "眼睛",
+        "pinyin": "yǎnjing",
+        "meaning": "con mắt, đôi mắt"
+      },
+      {
+        "word": "变化",
+        "pinyin": "biànhuà",
+        "meaning": "thay đổi, sự thay đổi"
+      },
+      {
+        "word": "饮料",
+        "pinyin": "yǐnliào",
+        "meaning": "đồ uống, thức uống"
+      },
+      {
+        "word": "另外",
+        "pinyin": "lìngwài",
+        "meaning": "ngoài ra, khác"
+      },
+      {
+        "word": "舒服",
+        "pinyin": "shūfu",
+        "meaning": "thoải mái, dễ chịu"
+      },
+      {
+        "word": "满意",
+        "pinyin": "mǎnyì",
+        "meaning": "hài lòng, vừa ý"
+      },
+      {
+        "word": "决定",
+        "pinyin": "juédìng",
+        "meaning": "quyết định"
+      },
+      {
+        "word": "愿意",
+        "pinyin": "yuànyì",
+        "meaning": "bằng lòng, mong muốn"
+      },
+      {
+        "word": "总是",
+        "pinyin": "zǒngshì",
+        "meaning": "luôn luôn, lúc nào cũng"
+      },
+      {
+        "word": "瘦",
+        "pinyin": "shòu",
+        "meaning": "gầy, ốm"
+      },
+      {
+        "word": "敢",
+        "pinyin": "gǎn",
+        "meaning": "dám"
+      },
+      {
+        "word": "几乎",
+        "pinyin": "jīhū",
+        "meaning": "hầu như, suýt nữa"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "点菜 (Gọi món ăn)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "晚上我们吃什么？你去哪儿我就去哪儿吃。",
+            "pinyin": "Wǎnshang wǒmen chī shénme? Nǐ qù nǎr wǒ jiù qù nǎr chī.",
+            "vietnamese": "Tối nay chúng ta ăn gì? Bạn đi đâu ăn thì tôi đi đó."
+          },
+          {
+            "speaker": "B",
+            "chinese": "你想吃水饺还是吃面条？你吃什么我就吃什么。",
+            "pinyin": "Nǐ xiǎng chī shuǐjiǎo háishi chī miàntiáo? Nǐ chī shénme wǒ jiù chī shénme.",
+            "vietnamese": "Bạn muốn ăn sủi cáo hay ăn mì? Bạn ăn gì tôi ăn nấy."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那我们去吃四川菜吧，喝点儿什么饮料呢？",
+            "pinyin": "Nà wǒmen qù chī Sìchuān cài ba, hē diǎnr shénme yǐnliào ne?",
+            "vietnamese": "Vậy chúng ta đi ăn món Tứ Xuyên đi, uống đồ uống gì nhỉ?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "喝什么都可以，你决定吧。",
+            "pinyin": "Hē shénme dōu kěyǐ, nǐ juédìng ba.",
+            "vietnamese": "Uống gì cũng được, bạn quyết định đi."
+          }
+        ]
+      },
+      {
+        "title": "聊近况 (Trò chuyện về tình hình gần đây)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "几年不见，你的变化真大！比以前瘦多了。",
+            "pinyin": "Jǐ nián bú jiàn, nǐ de biànhuà zhēn dà! Bǐ yǐqián shòu duō le.",
+            "vietnamese": "Mấy năm không gặp, sự thay đổi của bạn thật lớn! Gầy hơn trước đây nhiều."
+          },
+          {
+            "speaker": "B",
+            "chinese": "是啊，我每天都坚持运动，几乎每天都去跑步。",
+            "pinyin": "Shì a, wǒ měitiān dōu jiānchí yùndòng, jīhū měitiān dōu qù pǎobù.",
+            "vietnamese": "Đúng vậy, hàng ngày tôi đều kiên trì vận động, hầu như ngày nào cũng đi chạy bộ."
+          },
+          {
+            "speaker": "A",
+            "chinese": "难怪你看起来这么健康，我也要向你学习。",
+            "pinyin": "Nánguài nǐ kàn qǐlái zhème jiànkāng, wǒ yě yào xiàng nǐ xuéxí.",
+            "vietnamese": "Thảo nào nhìn bạn khỏe mạnh thế này, tôi cũng phải học tập bạn thôi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "只要你愿意，随时可以跟我一起锻炼。",
+            "pinyin": "Zhǐyào nǐ yuànyì, suíshí kěyǐ gēn wǒ yìqǐ duànliàn.",
+            "vietnamese": "Chỉ cần bạn bằng lòng, bất cứ lúc nào cũng có thể cùng tôi tập luyện."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Đại từ nghi vấn dùng liên tiếp (……哪儿……就……哪儿 / ……什么……就……什么)",
+        "examples": [
+          {
+            "chinese": "你去哪儿，我就去哪儿。",
+            "pinyin": "Nǐ qù nǎr, wǒ jiù qù nǎr.",
+            "vietnamese": "Bạn đi đâu, tôi đi đó."
+          },
+          {
+            "chinese": "什么便宜，我就买什么。",
+            "pinyin": "Shénme piányi, wǒ jiù mǎi shénme.",
+            "vietnamese": "Cái gì rẻ thì tôi mua cái đó."
+          },
+          {
+            "chinese": "你怎么做，我就怎么做。",
+            "pinyin": "Nǐ zěnme zuò, wǒ jiù zěnme zuò.",
+            "vietnamese": "Bạn làm thế nào, tôi làm thế ấy."
+          }
+        ]
+      },
+      {
+        "title": "Bổ ngữ xu hướng phức hợp (V + 上/下/进/出/回/过/起 + 来/去)",
+        "examples": [
+          {
+            "chinese": "老师拿出来了一本书。",
+            "pinyin": "Lǎoshī ná chūlái le yì běn shū.",
+            "vietnamese": "Thầy giáo lấy ra một quyển sách."
+          },
+          {
+            "chinese": "走上路去，不要坐在车上。",
+            "pinyin": "Zǒu shàng lù qù, bú yào zuò zài chē shàng.",
+            "vietnamese": "Đi lên đường đi, đừng ngồi ở trên xe."
+          },
+          {
+            "chinese": "听到这个好消息，大家都笑了起来。",
+            "pinyin": "Tīngdào zhège hǎo xiāoxi, dàjiā dōu xiào le qǐlái.",
+            "vietnamese": "Nghe thấy tin tốt này, mọi người đều cười lên."
+          }
+        ]
+      },
+      {
+        "title": "Phó từ '几乎' (Hầu như, gần như)",
+        "examples": [
+          {
+            "chinese": "我和他几乎每天都在一起。",
+            "pinyin": "Wǒ hé tā jīhū měitiān dōu zài yìqǐ.",
+            "vietnamese": "Tôi và anh ấy hầu như ngày nào cũng ở cùng nhau."
+          },
+          {
+            "chinese": "这篇文章我几乎全看懂了。",
+            "pinyin": "Zhè piān zhāngzhāng wǒ jīhū quán kàn dǒng le.",
+            "vietnamese": "Bài viết này tôi gần như đọc hiểu hết rồi."
+          },
+          {
+            "chinese": "我们班几乎没有迟到的人。",
+            "pinyin": "Wǒmen bān jīhū méiyǒu chídào de rén.",
+            "vietnamese": "Lớp chúng tôi hầu như không có ai đi muộn."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 9,
+    "vocabulary": [
+      {
+        "word": "中文",
+        "pinyin": "zhōngwén",
+        "meaning": "tiếng Trung, văn hóa Trung Hoa"
+      },
+      {
+        "word": "班",
+        "pinyin": "bān",
+        "meaning": "lớp"
+      },
+      {
+        "word": "一样",
+        "pinyin": "yíyàng",
+        "meaning": "giống nhau, như nhau"
+      },
+      {
+        "word": "最后",
+        "pinyin": "zuìhòu",
+        "meaning": "cuối cùng"
+      },
+      {
+        "word": "放心",
+        "pinyin": "fàngxīn",
+        "meaning": "yên tâm"
+      },
+      {
+        "word": "一定",
+        "pinyin": "yídìng",
+        "meaning": "nhất định"
+      },
+      {
+        "word": "了解",
+        "pinyin": "liǎojiě",
+        "meaning": "hiểu rõ, tìm hiểu"
+      },
+      {
+        "word": "先",
+        "pinyin": "xiān",
+        "meaning": "trước, trước tiên"
+      },
+      {
+        "word": "参加",
+        "pinyin": "cānjiā",
+        "meaning": "tham gia"
+      },
+      {
+        "word": "影响",
+        "pinyin": "yǐngxiǎng",
+        "meaning": "ảnh hưởng"
+      },
+      {
+        "word": "矮",
+        "pinyin": "ǎi",
+        "meaning": "thấp, lùn"
+      },
+      {
+        "word": "办法",
+        "pinyin": "bànfǎ",
+        "meaning": "biện pháp, cách làm"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "谈学习汉语 (Nói về việc học tiếng Hán)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "大卫的中文说得真好！",
+            "pinyin": "Dàwèi de Zhōngwén shuō de zhēn hǎo!",
+            "vietnamese": "Tiếng Trung của David nói hay thật đấy!"
+          },
+          {
+            "speaker": "B",
+            "chinese": "是啊，他的汉语说得跟中国人一样好。",
+            "pinyin": "Shì a, tā de Hànyǔ shuō de gēn Zhōngguórén yíyàng hǎo.",
+            "vietnamese": "Đúng vậy, tiếng Hán của anh ấy nói tốt như người Trung Quốc vậy."
+          },
+          {
+            "speaker": "A",
+            "chinese": "他有什么好办法吗？",
+            "pinyin": "Tā yǒu shénme hǎo bànfǎ ma?",
+            "vietnamese": "Anh ấy có phương pháp hay gì không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "他每天都跟中国朋友聊天，越学越有兴趣。",
+            "pinyin": "Tā měitiān dōu gēn Zhōngguó péngyou liáotiān, yuè xué yuè yǒu xìngqù.",
+            "vietnamese": "Hàng ngày anh ấy đều nói chuyện với bạn Trung Quốc, càng học càng có hứng thú."
+          }
+        ]
+      },
+      {
+        "title": "准备考试 (Chuẩn bị thi đấu / kỳ thi)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "下周的汉语比赛你参加吗？",
+            "pinyin": "Xià zhōu de Hànyǔ bǐsài nǐ cānjiā ma?",
+            "vietnamese": "Cuộc thi tiếng Hán tuần sau bạn có tham gia không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我一定参加。但是我有点儿担心。",
+            "pinyin": "Wǒ yídìng cānjiā. Dànshì wǒ yǒudiǎnr dānxīn.",
+            "vietnamese": "Tôi nhất định tham gia. Nhưng tôi hơi lo lắng."
+          },
+          {
+            "speaker": "A",
+            "chinese": "放心吧，你的水平提高得很快，没问题的。",
+            "pinyin": "Fàngxīn ba, nǐ de shuǐpíng tígāo de hěn kuài, méi wèntí de.",
+            "vietnamese": "Yên tâm đi, trình độ của bạn nâng cao rất nhanh, không có vấn đề gì đâu."
+          },
+          {
+            "speaker": "B",
+            "chinese": "谢谢你，我先复习词语，然后再练习听力。",
+            "pinyin": "Xièxie nǐ, wǒ xiān fùxí cíyǔ, ránhòu zài liànxí tīnglì.",
+            "vietnamese": "Cảm ơn bạn, tôi trước tiên ôn tập từ vựng, sau đó mới luyện nghe."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Cấu trúc so sánh bằng: A 跟 B 一样 (+ Adj) / A 跟 B 不一样 (+ Adj)",
+        "examples": [
+          {
+            "chinese": "她的汉语说得跟中国人一样好。",
+            "pinyin": "Tā de Hànyǔ shuō de gēn Zhōngguórén yíyàng hǎo.",
+            "vietnamese": "Tiếng Hán của cô ấy nói tốt như người Trung Quốc."
+          },
+          {
+            "chinese": "这件衣服的颜色跟那件不一样。",
+            "pinyin": "Zhè jiàn yīfu de yánsè gēn nà jiàn bù yíyàng.",
+            "vietnamese": "Màu sắc của bộ quần áo này không giống bộ kia."
+          },
+          {
+            "chinese": "我弟弟跟我一样高。",
+            "pinyin": "Wǒ dìdi gēn wǒ yíyàng gāo.",
+            "vietnamese": "Em trai tôi cao bằng tôi."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc '越……越……' (Càng... càng...)",
+        "examples": [
+          {
+            "chinese": "雨越下越大。",
+            "pinyin": "Yǔ yuè xià yuè dà.",
+            "vietnamese": "Mưa càng lúc càng to."
+          },
+          {
+            "chinese": "这本书我越看越想看。",
+            "pinyin": "Zhè běn shū wǒ yuè kàn yuè xiǎng kàn.",
+            "vietnamese": "Quyển sách này tôi càng đọc càng muốn đọc."
+          },
+          {
+            "chinese": "汉语越学越有意思。",
+            "pinyin": "Hànyǔ yuè xué yuè yǒu yìsi.",
+            "vietnamese": "Tiếng Hán càng học càng thấy hay."
+          }
+        ]
+      },
+      {
+        "title": "Trật tự thời gian / Biện pháp: 先……再/又…… (Trước tiên... rồi sau đó...)",
+        "examples": [
+          {
+            "chinese": "我们先洗手，然后再吃饭。",
+            "pinyin": "Wǒmen xiān xǐshǒu, ránhòu zài chīfàn.",
+            "vietnamese": "Chúng ta rửa tay trước, rồi sau đó mới ăn cơm."
+          },
+          {
+            "chinese": "你先听我说完，你再说话。",
+            "pinyin": "Nǐ xiān tīng wǒ shuō wán, nǐ zài shuōhuà.",
+            "vietnamese": "Bạn hãy nghe tôi nói xong trước, rồi bạn mới nói."
+          },
+          {
+            "chinese": "回家后我先做作业，再看电视。",
+            "pinyin": "Huí jiā hòu wǒ xiān zuò zuòyè, zài kàn diànshì.",
+            "vietnamese": "Sau khi về nhà tôi làm bài tập trước, rồi mới xem tivi."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 10,
+    "vocabulary": [
+      {
+        "word": "数学",
+        "pinyin": "shùxué",
+        "meaning": "môn Toán"
+      },
+      {
+        "word": "历史",
+        "pinyin": "lìshǐ",
+        "meaning": "lịch sử"
+      },
+      {
+        "word": "体育",
+        "pinyin": "tǐyù",
+        "meaning": "thể dục, thể thao"
+      },
+      {
+        "word": "骑",
+        "pinyin": "qí",
+        "meaning": "cưỡi, đi (xe hai bánh)"
+      },
+      {
+        "word": "自行车",
+        "pinyin": "zìxíngchē",
+        "meaning": "xe đạp"
+      },
+      {
+        "word": "吉他",
+        "pinyin": "jǐtā",
+        "meaning": "đàn ghi-ta"
+      },
+      {
+        "word": "换",
+        "pinyin": "huàn",
+        "meaning": "đổi, thay"
+      },
+      {
+        "word": "容易",
+        "pinyin": "róngyì",
+        "meaning": "dễ dàng"
+      },
+      {
+        "word": "难",
+        "pinyin": "nán",
+        "meaning": "khó"
+      },
+      {
+        "word": "简单",
+        "pinyin": "jiǎndān",
+        "meaning": "đơn giản"
+      },
+      {
+        "word": "脚",
+        "pinyin": "jiǎo",
+        "meaning": "bàn chân"
+      },
+      {
+        "word": "搬",
+        "pinyin": "bān",
+        "meaning": "dọn, chuyển, bê"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "谈科目和考试 (Nói về môn học và kỳ thi)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你觉得数学和历史哪个难？",
+            "pinyin": "Nǐ juéde shùxué hé lìshǐ nǎge nán?",
+            "vietnamese": "Bạn cảm thấy toán học và lịch sử môn nào khó hơn?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我觉得数学比历史难多了，历史简单多了。",
+            "pinyin": "Wǒ juéde shùxué bǐ lìshǐ nán duō le, lìshǐ jiǎndān duō le.",
+            "vietnamese": "Tôi cảm thấy toán học khó hơn lịch sử nhiều, lịch sử đơn giản hơn nhiều."
+          },
+          {
+            "speaker": "A",
+            "chinese": "可是我历史总是记不住，数学考得更好一些。",
+            "pinyin": "Kěshì wǒ lìshǐ zǒngshì jì bu zhù, shùxué kǎo de gèng hǎo yìxiē.",
+            "vietnamese": "Nhưng lịch sử tôi lúc nào cũng không nhớ được, toán học lại thi tốt hơn một chút."
+          },
+          {
+            "speaker": "B",
+            "chinese": "每个人不一样，我对数字不太敏感。",
+            "pinyin": "Měi gè rén bù yíyàng, wǒ duì shùzì bú tài mǐngǎn.",
+            "vietnamese": "Mỗi người một khác, tôi không nhạy cảm với con số lắm."
+          }
+        ]
+      },
+      {
+        "title": "聊出行方式 (Nói về phương tiện đi lại)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "明天你打算怎么去学校？骑自行车还是坐公共汽车？",
+            "pinyin": "Míngtiān nǐ dǎsuàn zěnme qù xuéxiào? Qí zìxíngchē háishi zuò gōnggòng qìchē?",
+            "vietnamese": "Ngày mai bạn dự định đến trường bằng cách nào? Đi xe đạp hay đi xe buýt?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "骑自行车比坐公共汽车快一点儿，我不喜欢等车。",
+            "pinyin": "Qí zìxíngchē bǐ zuò gōnggòng qìchē kuài yìdiǎnr, wǒ bù xǐhuan děng chē.",
+            "vietnamese": "Đi xe đạp nhanh hơn đi xe buýt một chút, tôi không thích chờ xe."
+          },
+          {
+            "speaker": "A",
+            "chinese": "但是骑车比较累，特别是天气热的时候。",
+            "pinyin": "Dànshì qí chē bǐjiào lèi, tèbié shì tiānqì rè de shíhou.",
+            "vietnamese": "Nhưng đi xe đạp khá mệt, đặc biệt là khi trời nóng."
+          },
+          {
+            "speaker": "B",
+            "chinese": "就当是锻炼身体吧，体育锻炼对身体好。",
+            "pinyin": "Jiù dàng shì duànliàn shēn tǐ ba, tǐyù duànliàn duì shēntǐ hǎo.",
+            "vietnamese": "Coi như là rèn luyện cơ thể đi, tập thể dục thể thao tốt cho sức khỏe mà."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Câu so sánh với '比': A 比 B + Tính từ + 多了 / 一点儿 / 一些",
+        "examples": [
+          {
+            "chinese": "数学比历史难多了。",
+            "pinyin": "Shùxué bǐ lìshǐ nán duō le.",
+            "vietnamese": "Toán học khó hơn lịch sử nhiều."
+          },
+          {
+            "chinese": "今天比昨天冷一点儿。",
+            "pinyin": "Jīntiān bǐ zuótiān lěng yìdiǎnr.",
+            "vietnamese": "Hôm nay lạnh hơn hôm qua một chút."
+          },
+          {
+            "chinese": "骑自行车比坐公交车更快一些。",
+            "pinyin": "Qí zìxíngchē bǐ zuò gōngjiāochē gèng kuài yìxiē.",
+            "vietnamese": "Đi xe đạp nhanh hơn đi xe buýt một tí."
+          }
+        ]
+      },
+      {
+        "title": "Bổ ngữ động lượng: Động từ + 次 / 遍 (So sánh: '次' chỉ số lần, '遍' chỉ số lần từ đầu đến cuối)",
+        "examples": [
+          {
+            "chinese": "这本书我看过两次。",
+            "pinyin": "Zhè běn shū wǒ kànguò liǎng cì.",
+            "vietnamese": "Quyển sách này tôi đã đọc qua hai lần."
+          },
+          {
+            "chinese": "请你再读一遍这个词语。",
+            "pinyin": "Qǐng nǐ zài dú yí biàn zhège cíyǔ.",
+            "vietnamese": "Mời bạn đọc lại từ vựng này một lần nữa (từ đầu đến cuối)."
+          },
+          {
+            "chinese": "我我去过三个人名医院。",
+            "pinyin": "Wǒ qùguò sān cì yīyuàn.",
+            "vietnamese": "Tôi đã đi bệnh viện ba lần."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc '除了……以外，都 / 还 / 也……' (Ngoài... ra, đều / còn / cũng...)",
+        "examples": [
+          {
+            "chinese": "除了数学以外，别的科目我都不错。",
+            "pinyin": "Chúle shùxué yǐwài, bié de kēmù wǒ dōu búcuò.",
+            "vietnamese": "Ngoại trừ môn Toán ra, các môn khác tôi đều khá tốt."
+          },
+          {
+            "chinese": "除了骑自行车，他还会弹吉他。",
+            "pinyin": "Chúle qí zìxíngchē, tā hái huì tán jǐtā.",
+            "vietnamese": "Ngoài đi xe đạp ra, anh ấy còn biết đánh đàn ghi-ta."
+          },
+          {
+            "chinese": "除了小明，大家也都来了。",
+            "pinyin": "Chúle Xiǎomíng, dàjiā yě dōu lái le.",
+            "vietnamese": "Trừ Tiểu Minh ra, mọi người cũng đều đến rồi."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 11,
+    "vocabulary": [
+      {
+        "word": "双",
+        "pinyin": "shuāng",
+        "meaning": "đôi, cặp (lượng từ)"
+      },
+      {
+        "word": "鞋",
+        "pinyin": "xié",
+        "meaning": "giày"
+      },
+      {
+        "word": "换",
+        "pinyin": "huàn",
+        "meaning": "đổi, thay"
+      },
+      {
+        "word": "饮料",
+        "pinyin": "yǐnliào",
+        "meaning": "thức uống, đồ uống"
+      },
+      {
+        "word": "空调",
+        "pinyin": "kōngtiáo",
+        "meaning": "máy điều hòa"
+      },
+      {
+        "word": "关",
+        "pinyin": "guān",
+        "meaning": "đóng, tắt (thiết bị)"
+      },
+      {
+        "word": "地铁",
+        "pinyin": "dìtiě",
+        "meaning": "tàu điện ngầm"
+      },
+      {
+        "word": "瓶",
+        "pinyin": "píng",
+        "meaning": "chai, bình (lượng từ)"
+      },
+      {
+        "word": "图书",
+        "pinyin": "túshū",
+        "meaning": "sách vở, sách báo"
+      },
+      {
+        "word": "借",
+        "pinyin": "jiè",
+        "meaning": "mượn, vay"
+      },
+      {
+        "word": "词典",
+        "pinyin": "cídiǎn",
+        "meaning": "từ điển"
+      },
+      {
+        "word": "还",
+        "pinyin": "huán",
+        "meaning": "trả lại"
+      },
+      {
+        "word": "会议室",
+        "pinyin": "huìyìshì",
+        "meaning": "phòng họp"
+      },
+      {
+        "word": "结束",
+        "pinyin": "jiéshù",
+        "meaning": "kết thúc"
+      },
+      {
+        "word": "忘记",
+        "pinyin": "wàngjì",
+        "meaning": "quên"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "准备出门 (Chuẩn bị ra ngoài)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "我们快走吧，电影马上就要 bắt đầu 了。",
+            "pinyin": "Wǒmen kuài zǒu ba, diànyǐng mǎshàng jiù yào kāishǐ le.",
+            "vietnamese": "Chúng ta đi nhanh thôi, phim sắp bắt đầu rồi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "等一下，你把空调关了吗？",
+            "pinyin": "Děng yíxià, nǐ bǎ kōngtiáo guān le ma?",
+            "vietnamese": "Chờ một chút, bạn đã tắt điều hòa chưa?"
+          },
+          {
+            "speaker": "A",
+            "chinese": "还没呢，我这就去把空调关了。",
+            "pinyin": "Hái méi ne, wǒ zhè jiù qù bǎ kōngtiáo guān le.",
+            "vietnamese": "Vẫn chưa, tôi đi tắt điều hòa ngay đây."
+          },
+          {
+            "speaker": "B",
+            "chinese": "别忘了把灯也关了。",
+            "pinyin": "Bié wàng le bǎ dēng yě guān le.",
+            "vietnamese": "Đừng quên tắt cả đèn nữa nhé."
+          }
+        ]
+      },
+      {
+        "title": "在图书馆 (Tại thư viện)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你把借来的汉语词典还了吗？",
+            "pinyin": "Nǐ bǎ jiè lái de Hànyǔ cídiǎn huán le ma?",
+            "vietnamese": "Bạn đã trả quyển từ điển tiếng Trung mượn hôm nọ chưa?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我已经把词典还给图书馆了。",
+            "pinyin": "Wǒ yǐjīng bǎ cídiǎn huán gěi túshūguǎn le.",
+            "vietnamese": "Tôi đã trả từ điển cho thư viện rồi."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那你今天还要借新书吗？",
+            "pinyin": "Nà nǐ jīntiān hái yào jiè xīn shū ma?",
+            "vietnamese": "Thế hôm nay bạn còn muốn mượn sách mới không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "想，我想把这几本历史书借回家看。",
+            "pinyin": "Xiǎng, wǒ xiǎng bǎ zhè jǐ běn lìshǐ shū jiè huí jiā kàn.",
+            "vietnamese": "Có chứ, tôi muốn mượn mấy cuốn sách lịch sử này về nhà đọc."
+          }
+        ]
+      },
+      {
+        "title": "会议结束后 (Sau khi cuộc họp kết thúc)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "会议结束后，请把灯和空调都关了。",
+            "pinyin": "Huìyì jiéshù hòu, qǐng bǎ dēng hé kōngtiáo dōu guān le.",
+            "vietnamese": "Sau khi cuộc họp kết thúc, xin hãy tắt cả đèn và điều hòa."
+          },
+          {
+            "speaker": "B",
+            "chinese": "好的，我会把门锁好的。",
+            "pinyin": "Hǎo de, wǒ huì bǎ mén suǒ hǎo de.",
+            "vietnamese": "Vâng, tôi cũng sẽ khóa cửa cẩn thận."
+          },
+          {
+            "speaker": "A",
+            "chinese": "把这些饮料也带出去吧。",
+            "pinyin": "Bǎ zhèxiē yǐnliào yě dài chūqù ba.",
+            "vietnamese": "Mang cả mấy chai nước uống này ra ngoài luôn nhé."
+          },
+          {
+            "speaker": "B",
+            "chinese": "没问题，我这就整理。",
+            "pinyin": "Méi wèntí, wǒ zhè jiù zhěnglǐ.",
+            "vietnamese": "Không vấn đề gì, tôi dọn dẹp ngay đây."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Câu chữ \"把\" (1): Chủ ngữ + 把 + Tân ngữ + Động từ + Thành phần khác",
+        "examples": [
+          {
+            "chinese": "请你把空调关了。",
+            "pinyin": "Qǐng nǐ bǎ kōngtiáo guān le.",
+            "vietnamese": "Xin bạn hãy tắt máy điều hòa đi."
+          },
+          {
+            "chinese": "我把作业做完了。",
+            "pinyin": "Wǒ bǎ zuòyè zuò wán le.",
+            "vietnamese": "Tôi đã làm xong bài tập rồi."
+          },
+          {
+            "chinese": "别忘了把门锁上。",
+            "pinyin": "Bié wàng le bǎ mén suǒ shàng.",
+            "vietnamese": "Đừng quên khóa cửa lại."
+          }
+        ]
+      },
+      {
+        "title": "Bổ ngữ kết quả \"好\" biểu thị hành động đã hoàn thành và đạt mức độ làm hài lòng",
+        "examples": [
+          {
+            "chinese": "我已经准备好开会的东西了。",
+            "pinyin": "Wǒ yǐjīng zhǔnbèi hǎo kāihuì de dōngxi le.",
+            "vietnamese": "Tôi đã chuẩn bị xong đồ đạc để họp rồi."
+          },
+          {
+            "chinese": "饭做好了，快来吃吧。",
+            "pinyin": "Fàn zuò hǎo le, kuài lái chī ba.",
+            "vietnamese": "Cơm nấu xong rồi, mau vào ăn thôi."
+          },
+          {
+            "chinese": "我和他商量好了去旅游的事。",
+            "pinyin": "Wǒ hé tā shāngliang hǎo le qù lǚyóu de shì.",
+            "vietnamese": "Tôi và anh ấy đã bàn bạc xong chuyện đi du lịch."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 12,
+    "vocabulary": [
+      {
+        "word": "方便",
+        "pinyin": "fāngbiàn",
+        "meaning": "thuận tiện, tiện lợi"
+      },
+      {
+        "word": "迟到",
+        "pinyin": "chídào",
+        "meaning": "đến muộn, trễ"
+      },
+      {
+        "word": "半",
+        "pinyin": "bàn",
+        "meaning": "nửa, rưỡi"
+      },
+      {
+        "word": "接",
+        "pinyin": "jiē",
+        "meaning": "đón, nhận"
+      },
+      {
+        "word": "刻",
+        "pinyin": "kè",
+        "meaning": "15 phút (khắc)"
+      },
+      {
+        "word": "差",
+        "pinyin": "chà",
+        "meaning": "kém, thiếu"
+      },
+      {
+        "word": "护照",
+        "pinyin": "hùzhào",
+        "meaning": "hộ chiếu"
+      },
+      {
+        "word": "钱包",
+        "pinyin": "qiánbāo",
+        "meaning": "ví tiền"
+      },
+      {
+        "word": "证件",
+        "pinyin": "zhèngjiàn",
+        "meaning": "giấy tờ tùy thân"
+      },
+      {
+        "word": "放在",
+        "pinyin": "fàng zài",
+        "meaning": "đặt ở, để ở"
+      },
+      {
+        "word": "放心",
+        "pinyin": "fàngxīn",
+        "meaning": "an tâm, yên tâm"
+      },
+      {
+        "word": "拿",
+        "pinyin": "ná",
+        "meaning": "cầm, lấy"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "在房间整理东西 (Sắp xếp đồ đạc trong phòng)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "我的护照和钱包怎么找不到了？",
+            "pinyin": "Wǒ de hùzhào hé qiánbāo zěnme zhǎo bù dào le?",
+            "vietnamese": "Thẻ hộ chiếu và ví tiền của tôi sao không tìm thấy nữa rồi?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "别急，把重要的东西放在我这儿吧，不会丢的。",
+            "pinyin": "Bié jí, bǎ zhòngyào de dōngxi fàng zài wǒ zhèr ba, bú huì diū de.",
+            "vietnamese": "Đừng cuống, hãy để những đồ quan trọng ở chỗ tôi này, không mất được đâu."
+          },
+          {
+            "speaker": "A",
+            "chinese": "太好了，我先把护照放进这个包里。",
+            "pinyin": "Tài hǎo le, wǒ xiān bǎ hùzhào fàng jìn zhège bāo lǐ.",
+            "vietnamese": "Tốt quá, tôi cất hộ chiếu vào túi này trước."
+          },
+          {
+            "speaker": "B",
+            "chinese": "嗯，这样去机场的时候就方便多了。",
+            "pinyin": "Èn, zhèyàng qù jīchǎng de shíhou jiù fāngbiàn duō le.",
+            "vietnamese": "Ừ, như vậy lúc ra sân bay sẽ thuận tiện hơn nhiều."
+          }
+        ]
+      },
+      {
+        "title": "赶去接人 (Vội đi đón người)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "现在几点了？来得及吗？",
+            "pinyin": "Xiànzài jǐ diǎn le? Lái de jí ma?",
+            "vietnamese": "Bây giờ mấy giờ rồi? Liệu có kịp không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "现在差一刻三点，我们三点半去接他，不会迟到。",
+            "pinyin": "Xiànzài chà yí kè sān diǎn, wǒmen sān diǎn bàn qù jiē tā, bú huì chídào.",
+            "vietnamese": "Bây giờ là 3 giờ kém 15, chúng ta 3 giờ rưỡi đi đón anh ấy, sẽ không bị muộn đâu."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那就好，记得把钥匙拿上。",
+            "pinyin": "Nà jiù hǎo, jìde bǎ yàoshi ná shàng.",
+            "vietnamese": "Thế thì tốt, nhớ cầm theo chìa khóa nhé."
+          },
+          {
+            "speaker": "B",
+            "chinese": "放心吧，我早就把钥匙放在口袋里了。",
+            "pinyin": "Fàngxīn ba, wǒ zǎojiù bǎ yàoshi fàng zài kǒudài lǐ le.",
+            "vietnamese": "Yên tâm đi, tôi đã để chìa khóa vào túi áo từ lâu rồi."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Câu chữ \"把\" (2): Chủ ngữ + 把 + Tân ngữ + Động từ + Ở/Đến/Cho + Địa điểm/Người",
+        "examples": [
+          {
+            "chinese": "请把这张照片贴在墙上。",
+            "pinyin": "Qǐng bǎ zhè zhāng zhàopiàn tiē zài qiáng shàng.",
+            "vietnamese": "Xin hãy dán bức ảnh này lên tường."
+          },
+          {
+            "chinese": "我把书放在桌子上了。",
+            "pinyin": "Wǒ bǎ shū fàng zài zhuōzi shàng le.",
+            "vietnamese": "Tôi đã để quyển sách lên trên bàn rồi."
+          },
+          {
+            "chinese": "他把护照交给了工作人员。",
+            "pinyin": "Tā bǎ hùzhào jiāo gěi le gōngzuò renyuán.",
+            "vietnamese": "Anh ấy đã đưa hộ chiếu cho nhân viên làm việc."
+          }
+        ]
+      },
+      {
+        "title": "Cách biểu thị thời gian với \"刻\" (15 phút) và \"差\" (kém)",
+        "examples": [
+          {
+            "chinese": "现在是一点一刻。",
+            "pinyin": "Xiànzài shì yì diǎn yí kè.",
+            "vietnamese": "Bây giờ là 1 giờ 15 phút."
+          },
+          {
+            "chinese": "差十分八点，我们要上课了。",
+            "pinyin": "Chà shí fēn bā diǎn, wǒmen yào shàngkè le.",
+            "vietnamese": "8 giờ kém 10, chúng ta phải vào học rồi."
+          },
+          {
+            "chinese": "电影差一刻十点开始。",
+            "pinyin": "Diànyǐng chà yí kè shí diǎn kāishǐ.",
+            "vietnamese": "Phim bắt đầu lúc 10 giờ kém 15."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 13,
+    "vocabulary": [
+      {
+        "word": "终于",
+        "pinyin": "zhōngyú",
+        "meaning": "cuối cùng, rốt cuộc"
+      },
+      {
+        "word": "爷爷",
+        "pinyin": "yéye",
+        "meaning": "ông nội"
+      },
+      {
+        "word": "奶奶",
+        "pinyin": "nǎinai",
+        "meaning": "bà nội"
+      },
+      {
+        "word": "礼物",
+        "pinyin": "lǐwù",
+        "meaning": "quà tặng, món quà"
+      },
+      {
+        "word": "遇到",
+        "pinyin": "yùdào",
+        "meaning": "gặp phải, bắt gặp"
+      },
+      {
+        "word": "过去",
+        "pinyin": "guòqù",
+        "meaning": "đi qua, quá khứ"
+      },
+      {
+        "word": "一般",
+        "pinyin": "yìbān",
+        "meaning": "thông thường, bình thường"
+      },
+      {
+        "word": "愿意",
+        "pinyin": "yuànyì",
+        "meaning": "bằng lòng, mong muốn"
+      },
+      {
+        "word": "起来",
+        "pinyin": "qǐlái",
+        "meaning": "dậy, đứng dậy"
+      },
+      {
+        "word": "应该",
+        "pinyin": "yīnggāi",
+        "meaning": "nên, cần phải"
+      },
+      {
+        "word": "生活",
+        "pinyin": "shēnghuó",
+        "meaning": "cuộc sống, sống"
+      },
+      {
+        "word": "校长",
+        "pinyin": "xiàozhǎng",
+        "meaning": "hiệu trưởng"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "回到家 (Về đến nhà)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你怎么才到家？没坐公交车吗？",
+            "pinyin": "Nǐ zěnme cái dào jiā? Méi zuò gōngjiāochē ma?",
+            "vietnamese": "Sao giờ này bạn mới về nhà? Không đi xe buýt à?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "今天天气很好，我是走回来的。",
+            "pinyin": "Jīntiān tiānqì hěn hǎo, wǒ shì zǒu huílái de.",
+            "vietnamese": "Hôm nay thời tiết rất đẹp, tôi là đi bộ về đấy."
+          },
+          {
+            "speaker": "A",
+            "chinese": "路上遇到熟人了吗？",
+            "pinyin": "Lùshang yùdào shúrén le ma?",
+            "vietnamese": "Trên đường có gặp người quen không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "遇到了，我遇到了以前的校长，聊了一会儿。",
+            "pinyin": "Yùdào le, wǒ yùdào le yǐqián de xiàozhǎng, liáo le yíhuìr.",
+            "vietnamese": "Có chứ, tôi gặp thầy hiệu trưởng cũ và trò chuyện một lúc."
+          }
+        ]
+      },
+      {
+        "title": "聊爷爷奶奶的生活 (Nói về cuộc sống của ông bà)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "爷爷奶奶终于愿意搬来跟我们一起住了。",
+            "pinyin": "Yéye nǎinai zhōngyú yuànyì bān lái gēn wǒmen yìqǐ zhù le.",
+            "vietnamese": "Ông bà cuối cùng cũng đồng ý chuyển đến sống cùng chúng ta rồi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "太好了！他们是从老家坐火车过来的吗？",
+            "pinyin": "Tài hǎo le! Tāmen shì cóng lǎojiā zuò huǒchē guòlái de ma?",
+            "vietnamese": "Tốt quá! Họ là đi tàu hỏa từ quê lên đây à?"
+          },
+          {
+            "speaker": "A",
+            "chinese": "是的，叔叔开车把他们送到车站，他们坐火车过来的。",
+            "pinyin": "Shì de, shūshu kāichē bǎ tāmen sòng dào chēzhàn, tāmen zuò huǒchē guòlái de.",
+            "vietnamese": "Đúng thế, chú lái xe đưa ông bà ra ga, rồi ông bà đi tàu hỏa tới."
+          },
+          {
+            "speaker": "B",
+            "chinese": "我们应该给他们准备一份特别的礼物。",
+            "pinyin": "Wǒmen yīnggāi gěi tāmen zhǔnbèi yí fèn tèbié de lǐwù.",
+            "vietnamese": "Chúng ta nên chuẩn bị một món quà đặc biệt cho ông bà."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Bổ ngữ xu hướng kép: Động từ + Bổ ngữ phương hướng (上/下/进/出/回/过/起) + 来/去",
+        "examples": [
+          {
+            "chinese": "他是走回来的，没坐车。",
+            "pinyin": "Tā shì zǒu huílái de, méi zuò chē.",
+            "vietnamese": "Anh ấy là đi bộ về, không đi xe."
+          },
+          {
+            "chinese": "老师拿出来了一本新书。",
+            "pinyin": "Lǎoshī ná chūlái le yì běn xīn shū.",
+            "vietnamese": "Thầy giáo lấy ra một cuốn sách mới."
+          },
+          {
+            "chinese": "小狗跑过去了。",
+            "pinyin": "Xiǎogǒu pǎo guòqù le.",
+            "vietnamese": "Chú chó nhỏ đã chạy qua đó rồi."
+          }
+        ]
+      },
+      {
+        "title": "Phó từ \"终于\" nhấn mạnh kết quả đạt được sau một thời gian dài hoặc qua nhiều cố gắng",
+        "examples": [
+          {
+            "chinese": "经过努力，他终于考上了大学。",
+            "pinyin": "Jīngguò nǔlì, tā zhōngyú kǎoshàng le dàxué.",
+            "vietnamese": "Thông qua nỗ lực, cuối cùng anh ấy cũng thi đỗ đại học."
+          },
+          {
+            "chinese": "等了半个小时，公交车终于来了。",
+            "pinyin": "Děng le bàn gè xiǎoshí, gōngjiāochē zhōngyú lái le.",
+            "vietnamese": "Đợi mất nửa tiếng, cuối cùng xe buýt cũng đến rồi."
+          },
+          {
+            "chinese": "这个问题我们终于解决了。",
+            "pinyin": "Zhège wèntí wǒmen zhōngyú jiějué le.",
+            "vietnamese": "Vấn đề này cuối cùng chúng tôi đã giải quyết xong."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 14,
+    "vocabulary": [
+      {
+        "word": "搬",
+        "pinyin": "bān",
+        "meaning": "dọn, di chuyển"
+      },
+      {
+        "word": "瓶子",
+        "pinyin": "píngzi",
+        "meaning": "cái chai, cái bình"
+      },
+      {
+        "word": "树",
+        "pinyin": "shù",
+        "meaning": "cây"
+      },
+      {
+        "word": "亮",
+        "pinyin": "liàng",
+        "meaning": "sáng, sáng rực"
+      },
+      {
+        "word": "太阳",
+        "pinyin": "tàiyáng",
+        "meaning": "mặt trời"
+      },
+      {
+        "word": "月亮",
+        "pinyin": "yuèliang",
+        "meaning": "mặt trăng"
+      },
+      {
+        "word": "过来",
+        "pinyin": "guòlái",
+        "meaning": "qua đây, lại đây"
+      },
+      {
+        "word": "过去",
+        "pinyin": "guòqù",
+        "meaning": "qua bên kia, quá khứ"
+      },
+      {
+        "word": "搬家",
+        "pinyin": "bānjiā",
+        "meaning": "chuyển nhà"
+      },
+      {
+        "word": "帮忙",
+        "pinyin": "bāngmáng",
+        "meaning": "giúp đỡ"
+      },
+      {
+        "word": "站",
+        "pinyin": "zhàn",
+        "meaning": "đứng, trạm (xe)"
+      },
+      {
+        "word": "水果",
+        "pinyin": "shuǐguǒ",
+        "meaning": "hoa quả, trái cây"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "准备准备吃下午茶 (Chuẩn bị ăn trà chiều)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "桌子上有点儿乱，你把水果拿过来吧。",
+            "pinyin": "Zhuōzi shàng yǒudǐanr luàn, nǐ bǎ shuǐguǒ ná guòlái ba.",
+            "vietnamese": "Trên bàn hơi lộn xộn, bạn mang trái cây qua đây nhé."
+          },
+          {
+            "speaker": "B",
+            "chinese": "好的，我顺便把这几瓶饮料也洗一洗。",
+            "pinyin": "Hǎo de, wǒ shùnbiàn bǎ zhè jǐ píng yǐnliào yě xǐ yì xǐ.",
+            "vietnamese": "Được rồi, tiện thể tôi rửa luôn mấy chai nước uống này."
+          },
+          {
+            "speaker": "A",
+            "chinese": "把椅子也搬过来，我们一起在外面晒太阳。",
+            "pinyin": "Bǎ yǐzi yě bān guòlái, wǒmen yìqǐ zài wàimian shài tàiyáng.",
+            "vietnamese": "Chuyển cả ghế qua đây luôn, chúng ta cùng ra ngoài tắm nắng."
+          },
+          {
+            "speaker": "B",
+            "chinese": "没问题，我这就去搬。",
+            "pinyin": "Méi wèntí, wǒ zhè jiù qù bān.",
+            "vietnamese": "Không vấn đề gì, tôi đi bê sang ngay."
+          }
+        ]
+      },
+      {
+        "title": "帮忙搬家 (Giúp đỡ chuyển nhà)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "东西太多了，谢谢你来帮忙搬家。",
+            "pinyin": "Dōngxi tài duō le, xièxie nǐ lái bāngmáng bānjiā.",
+            "vietnamese": "Đồ đạc nhiều quá, cảm ơn bạn đã đến giúp chuyển nhà."
+          },
+          {
+            "speaker": "B",
+            "chinese": "客气什么！把这个大箱子搬到那边去吗？",
+            "pinyin": "Kèqi shénme! Bǎ zhège dà xiāngzi bān dào nàbiān qù ma?",
+            "vietnamese": "Khách khí làm gì! Bê chiếc thùng to này sang bên kia phải không?"
+          },
+          {
+            "speaker": "A",
+            "chinese": "对，先把箱子搬过去，然后再把这些瓶子放好。",
+            "pinyin": "Duì, xiān bǎ xiāngzi bān guòqù, ránhòu zài bǎ zhèxiē píngzi fàng hǎo.",
+            "vietnamese": "Đúng thế, bê thùng qua đó trước, sau đó sắp xếp lại mấy cái chai này."
+          },
+          {
+            "speaker": "B",
+            "chinese": "行，你看，今天的月亮真亮啊！",
+            "pinyin": "Xíng, nǐ kàn, jīntiān de yuèliang zhēn liàng a!",
+            "vietnamese": "Được thôi, bạn nhìn kìa, mặt trăng hôm nay sáng thật đấy!"
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Câu chữ \"把\" kết hợp Bổ ngữ xu hướng: Chủ ngữ + 把 + Tân ngữ + Động từ + Bổ ngữ xu hướng (过来/过去/出来...)",
+        "examples": [
+          {
+            "chinese": "请你把水果拿过来。",
+            "pinyin": "Qǐng nǐ bǎ shuǐguǒ ná guòlái.",
+            "vietnamese": "Xin bạn mang hoa quả lại đây."
+          },
+          {
+            "chinese": "我们把这台桌子搬过去吧。",
+            "pinyin": "Wǒmen bǎ zhè tái zhuōzi bān guòqù ba.",
+            "vietnamese": "Chúng ta hãy bê chiếc bàn này sang bên kia đi."
+          },
+          {
+            "chinese": "请把护照拿出来给我看一下。",
+            "pinyin": "Qǐng bǎ hùzhào ná chūlái gěi wǒ kàn yíxià.",
+            "vietnamese": "Xin hãy lấy hộ chiếu ra cho tôi xem một chút."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc thứ tự hành động \"先...，再/然后...\" (Trước tiên..., sau đó...)",
+        "examples": [
+          {
+            "chinese": "你先洗手，然后再吃饭。",
+            "pinyin": "Nǐ xiān xǐ shǒu, ránhòu zài chīfàn.",
+            "vietnamese": "Bạn rửa tay trước, rồi sau đó mới ăn cơm."
+          },
+          {
+            "chinese": "我们先讨论一下，再做决定。",
+            "pinyin": "Wǒmen xiān tǎolùn yíxià, zài zuò juédìng.",
+            "vietnamese": "Chúng ta thảo luận một chút trước, rồi hẵng đưa ra quyết định."
+          },
+          {
+            "chinese": "我先把作业做完，再去玩。",
+            "pinyin": "Wǒ xiān bǎ zuòyè zuò wán, zài qù wán.",
+            "vietnamese": "Tôi làm xong bài tập trước rồi mới đi chơi."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 15,
+    "vocabulary": [
+      {
+        "word": "留学",
+        "pinyin": "liúxué",
+        "meaning": "du học"
+      },
+      {
+        "word": "水平",
+        "pinyin": "shuǐpíng",
+        "meaning": "trình độ"
+      },
+      {
+        "word": "提高",
+        "pinyin": "tígāo",
+        "meaning": "nâng cao"
+      },
+      {
+        "word": "练习",
+        "pinyin": "liànxí",
+        "meaning": "luyện tập, bài tập"
+      },
+      {
+        "word": "完成",
+        "pinyin": "wánchéng",
+        "meaning": "hoàn thành"
+      },
+      {
+        "word": "句子",
+        "pinyin": "jùzi",
+        "meaning": "câu"
+      },
+      {
+        "word": "其他",
+        "pinyin": "qítā",
+        "meaning": "khác, những cái khác"
+      },
+      {
+        "word": "发音",
+        "pinyin": "fāyīn",
+        "meaning": "phát âm"
+      },
+      {
+        "word": "要求",
+        "pinyin": "yāoqiú",
+        "meaning": "yêu cầu"
+      },
+      {
+        "word": "注意",
+        "pinyin": "zhùyì",
+        "meaning": "chú ý"
+      },
+      {
+        "word": "上网",
+        "pinyin": "shàngwǎng",
+        "meaning": "lên mạng, truy cập internet"
+      },
+      {
+        "word": "新闻",
+        "pinyin": "xīnwén",
+        "meaning": "tin tức, thời sự"
+      },
+      {
+        "word": "极了",
+        "pinyin": "jí le",
+        "meaning": "cực kỳ, rất"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "检查汉语学习情况 (Kiểm tra tình hình học tiếng Trung)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "老师，您看我写的这些句子怎么样？",
+            "pinyin": "Lǎoshī, nín kàn wǒ xiě de zhèxiē jùzi zěnmeyàng?",
+            "vietnamese": "Thầy/Cô ơi, thầy/cô xem mấy câu em viết này thế nào ạ?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "除了这个字写错了以外，其他都没什么问题。",
+            "pinyin": "Chúle zhège zì xiě cuò le yǐwài, qítā dōu méi shénme wèntí.",
+            "vietnamese": "Ngoại trừ chữ này viết sai ra, những thứ khác đều không có vấn đề gì."
+          },
+          {
+            "speaker": "A",
+            "chinese": "我的汉语水平有所提高吗？",
+            "pinyin": "Wǒ de Hànyǔ shuǐpíng yǒu suǒ tígāo ma?",
+            "vietnamese": "Trình độ tiếng Trung của em có nâng cao hơn không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "提高很大！你的发音好极了。",
+            "pinyin": "Tígāo hěn dà! Nǐ de fāyīn hǎo jí le.",
+            "vietnamese": "Tiến bộ rất lớn! Phát âm của em tốt cực kỳ."
+          }
+        ]
+      },
+      {
+        "title": "谈出国留学的准备 (Nói về sự chuẩn bị đi du học)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你要去中国留学的事准备得怎么样了？",
+            "pinyin": "Nǐ yào qù Zhōngguó liúxué de shì zhǔnbèi de zěnmeyàng le?",
+            "vietnamese": "Chuyện bạn đi Trung Quốc du học chuẩn bị tới đâu rồi?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "除了护照还没拿到，其他都没什么问题了。",
+            "pinyin": "Chúle hùzhào hái méi ná dào, qítā dōu méi shénme wèntí le.",
+            "vietnamese": "Ngoại trừ hộ chiếu vẫn chưa lấy được, những thứ khác đều không có vấn đề gì."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那你可以在网上看看新闻，多了解那里的生活。",
+            "pinyin": "Nà nǐ kěyǐ zài wǎngshàng kànkan xīnwén, duō liǎojiě nàlǐ de shēnghuó.",
+            "vietnamese": "Thế thì bạn có thể lên mạng xem tin tức, tìm hiểu thêm về cuộc sống ở đó."
+          },
+          {
+            "speaker": "B",
+            "chinese": "好的，我会注意的，谢谢你！",
+            "pinyin": "Hǎo de, wǒ huì zhùyì de, xièxie nǐ!",
+            "vietnamese": "Được rồi, tôi sẽ chú ý, cảm ơn bạn!"
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Cấu trúc \"除了...以外，都/还/也...\" (Ngoại trừ... ra, đều/còn/cũng...)",
+        "examples": [
+          {
+            "chinese": "除了小明以外，大家都来了。",
+            "pinyin": "Chúle Xiǎomíng yǐwài, dàjiā dōu lái le.",
+            "vietnamese": "Ngoại trừ Tiểu Minh ra, mọi người đều đã đến rồi."
+          },
+          {
+            "chinese": "除了看书以外，我还喜欢听音乐。",
+            "pinyin": "Chúle kàn shū yǐwài, wǒ hái xǐhuan tīng yīnyuè.",
+            "vietnamese": "Ngoài đọc sách ra, tôi còn thích nghe nhạc."
+          },
+          {
+            "chinese": "除了这道题以外，其他的我都会做。",
+            "pinyin": "Chúle zhè dào tí yǐwài, qítā de wǒ dōu huì zuò.",
+            "vietnamese": "Ngoại trừ câu hỏi này ra, những câu khác tôi đều biết làm."
+          }
+        ]
+      },
+      {
+        "title": "Cách dùng \"没什么\" / Đại từ nghi vấn biểu thị sự linh hoạt, phiếm chỉ",
+        "examples": [
+          {
+            "chinese": "其他都没什么问题。",
+            "pinyin": "Qítā dōu méi shénme wèntí.",
+            "vietnamese": "Những thứ khác đều không có vấn đề gì."
+          },
+          {
+            "chinese": "我今天没什么事，可以陪你出去。",
+            "pinyin": "Wǒ jīntiān méi shénme shì, kěyǐ péi nǐ chūqù.",
+            "vietnamese": "Hôm nay tôi không có việc gì mấy, có thể đi ra ngoài cùng bạn."
+          },
+          {
+            "chinese": "这个菜没什么味道。",
+            "pinyin": "Zhège cài méi shénme wèidao.",
+            "vietnamese": "Món ăn này không có vị gì mấy."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc \"Tính từ + 极了\" biểu thị mức độ cao (Cực kỳ / Rất)",
+        "examples": [
+          {
+            "chinese": "这里的风景美极了。",
+            "pinyin": "Zhèlǐ de fēngjǐng měi jí le.",
+            "vietnamese": "Phong cảnh ở đây đẹp cực kỳ."
+          },
+          {
+            "chinese": "听到这个消息，他高兴极了。",
+            "pinyin": "Tīngdào zhège xiāoxi, tā gāoxìng jí le.",
+            "vietnamese": "Nghe được tin này, anh ấy vui mừng vô cùng."
+          },
+          {
+            "chinese": "今天的工作累极了。",
+            "pinyin": "Jīntiān de gōngzuò lèi jí le.",
+            "vietnamese": "Công việc hôm nay mệt vô cùng."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 16,
+    "vocabulary": [
+      {
+        "word": "累",
+        "pinyin": "lèi",
+        "meaning": "mệt"
+      },
+      {
+        "word": "困",
+        "pinyin": "kùn",
+        "meaning": "buồn ngủ"
+      },
+      {
+        "word": "电梯",
+        "pinyin": "diàntī",
+        "meaning": "thang máy"
+      },
+      {
+        "word": "楼",
+        "pinyin": "lóu",
+        "meaning": "tầng, nhà tầng"
+      },
+      {
+        "word": "走",
+        "pinyin": "zǒu",
+        "meaning": "đi"
+      },
+      {
+        "word": "零",
+        "pinyin": "líng",
+        "meaning": "số không"
+      },
+      {
+        "word": "刷牙",
+        "pinyin": "shuā yá",
+        "meaning": "đánh răng"
+      },
+      {
+        "word": "脏",
+        "pinyin": "zāng",
+        "meaning": "bẩn"
+      },
+      {
+        "word": "简单",
+        "pinyin": "jiǎndān",
+        "meaning": "đơn giản"
+      },
+      {
+        "word": "关系",
+        "pinyin": "guānxi",
+        "meaning": "quan hệ, mối quan hệ"
+      },
+      {
+        "word": "舒服",
+        "pinyin": "shūfu",
+        "meaning": "thoải mái, dễ chịu"
+      },
+      {
+        "word": "休息",
+        "pinyin": "xiūxi",
+        "meaning": "nghỉ ngơi"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "在公司 (At the company / Tại công ty)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你怎么了？脸色看起来不太好。",
+            "pinyin": "Nǐ zěnme le? Liǎnsè kàn qǐlái bú tài hǎo.",
+            "vietnamese": "Bạn sao thế? Sắc mặt trông không được tốt lắm."
+          },
+          {
+            "speaker": "B",
+            "chinese": "我最近工作太忙了，我现在累得下了班就想睡觉。",
+            "pinyin": "Wǒ zuìjìn gōngzuò tài máng le, wǒ xiànzài lèi de xià le bān jiù xiǎng shuìjiào.",
+            "vietnamese": "Dạo này công việc bận quá, bây giờ tôi mệt đến mức tan làm chỉ muốn ngủ."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那你要多注意休息，别太累了。",
+            "pinyin": "Nà nǐ yào duō zhùyì xiūxi, bié tài lèi le.",
+            "vietnamese": "Thế bạn phải chú ý nghỉ ngơi nhiều vào, đừng mệt quá."
+          },
+          {
+            "speaker": "B",
+            "chinese": "好的，谢谢你。我打算周末好好休息一天。",
+            "pinyin": "Hǎo de, xièxie nǐ. Wǒ dǎsuàn zhōumò hǎohāo xiūxi yì tiān.",
+            "vietnamese": "Được rồi, cảm ơn bạn. Tôi định cuối tuần nghỉ ngơi xả hơi một ngày."
+          }
+        ]
+      },
+      {
+        "title": "在楼下 (At the bottom of the building / Ở dưới nhà)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "今天的电梯怎么坏了？",
+            "pinyin": "Jīntiān de diàntī zěnme huài le?",
+            "vietnamese": "Thang máy hôm nay sao hỏng rồi?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "没办法，我们只能走上去了。",
+            "pinyin": "Méi bànfǎ, wǒmen zhǐ néng zǒu shàngqù le.",
+            "vietnamese": "Chẳng có cách nào khác, chúng ta chỉ có thể đi bộ lên thôi."
+          },
+          {
+            "speaker": "A",
+            "chinese": "你住十二楼，走上去太累了吧！",
+            "pinyin": "Nǐ zhù shí'èr lóu, zǒu shàngqù tài lèi le ba!",
+            "vietnamese": "Bạn ở tầng 12, đi bộ lên thì mệt lắm đấy!"
+          },
+          {
+            "speaker": "B",
+            "chinese": "就当是锻炼身体了，走吧。",
+            "pinyin": "Jiù dàng shì duànliàn shēntǐ le, zǒu ba.",
+            "vietnamese": "Cứ coi như là tập thể dục đi, đi thôi."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Bổ ngữ trạng thái/trình độ với chữ 得 (V/Adj + 得...)",
+        "examples": [
+          {
+            "chinese": "我累得下了班就想睡觉。",
+            "pinyin": "Wǒ lèi de xià le bān jiù xiǎng shuìjiào.",
+            "vietnamese": "Tôi mệt đến mức tan làm chỉ muốn ngủ."
+          },
+          {
+            "chinese": "他忙得连饭都没时间吃。",
+            "pinyin": "Tā máng de lián fàn dōu méi shíjiān chī.",
+            "vietnamese": "Anh ấy bận đến mức cả cơm cũng không có thời gian ăn."
+          },
+          {
+            "chinese": "大家高兴得跳了起来。",
+            "pinyin": "Dàjiā gāoxìng de tiào le qǐlái.",
+            "vietnamese": "Mọi người vui đến mức nhảy dựng cả lên."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc V1 + 了…… 就 + V2…… (Làm xong V1 thì làm V2 ngay)",
+        "examples": [
+          {
+            "chinese": "我下了班就去医院看朋友。",
+            "pinyin": "Wǒ xià le bān jiù qù yīyuàn kàn péngyou.",
+            "vietnamese": "Tôi tan làm là đi bệnh viện thăm bạn ngay."
+          },
+          {
+            "chinese": "妈妈做好了饭我们就吃。",
+            "pinyin": "Māma zuò hǎo le fàn wǒmen jiù chī.",
+            "vietnamese": "Mẹ nấu cơm xong là chúng tôi ăn liền."
+          },
+          {
+            "chinese": "他听了这话就生气了。",
+            "pinyin": "Tā tīng le zhè huà jiù shēngqì le.",
+            "vietnamese": "Anh ấy nghe xong lời này liền tức giận."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc 越来越…… (Càng ngày càng...)",
+        "examples": [
+          {
+            "chinese": "天气越来越冷了。",
+            "pinyin": "Tiānqì yuè lái yuè lěng le.",
+            "vietnamese": "Thời tiết càng ngày càng lạnh rồi."
+          },
+          {
+            "chinese": "你的汉语说得越来越好了。",
+            "pinyin": "Nǐ de Hànyǔ shuō de yuè lái yuè hǎo le.",
+            "vietnamese": "Tiếng Trung của bạn nói càng ngày càng tốt rồi."
+          },
+          {
+            "chinese": "我越来越喜欢这里的文化了。",
+            "pinyin": "Wǒ yuè lái yuè xǐhuan zhèlǐ de wénhuà le.",
+            "vietnamese": "Tôi càng ngày càng thích văn hóa ở đây."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 17,
+    "vocabulary": [
+      {
+        "word": "办法",
+        "pinyin": "bànfǎ",
+        "meaning": "biện pháp, cách"
+      },
+      {
+        "word": "饱",
+        "pinyin": "bǎo",
+        "meaning": "no"
+      },
+      {
+        "word": "树",
+        "pinyin": "shù",
+        "meaning": "cây"
+      },
+      {
+        "word": "亮",
+        "pinyin": "liàng",
+        "meaning": "sáng"
+      },
+      {
+        "word": "太阳",
+        "pinyin": "tàiyáng",
+        "meaning": "mặt trời"
+      },
+      {
+        "word": "西",
+        "pinyin": "xī",
+        "meaning": "phía Tây"
+      },
+      {
+        "word": "生气",
+        "pinyin": "shēngqì",
+        "meaning": "tức giận"
+      },
+      {
+        "word": "新闻",
+        "pinyin": "xīnwén",
+        "meaning": "tin tức"
+      },
+      {
+        "word": "照顾",
+        "pinyin": "zhàogù",
+        "meaning": "chăm sóc"
+      },
+      {
+        "word": "总是",
+        "pinyin": "zǒngshì",
+        "meaning": "luôn luôn"
+      },
+      {
+        "word": "放心",
+        "pinyin": "fàngxīn",
+        "meaning": "yên tâm"
+      },
+      {
+        "word": "复习",
+        "pinyin": "fùxí",
+        "meaning": "ôn tập"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "在医院 (At the hospital / Tại bệnh viện)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "医生，我的病严重吗？要吃很久的药吗？",
+            "pinyin": "Yīshēng, wǒ de bìng yánzhòng ma? Yào chī hěn jiǔ de yào ma?",
+            "vietnamese": "Bác sĩ, bệnh của tôi có nặng không? Có phải uống thuốc lâu không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "不用担心，谁都有办法看好你的病，按时吃药就行。",
+            "pinyin": "Búyòng dānxīn, shéi dōu yǒu bànfǎ kàn hǎo nǐ de bìng, ànshí chī yào jiù xíng.",
+            "vietnamese": "Không cần lo lắng, ai cũng có cách chữa khỏi bệnh cho bạn, uống thuốc đúng giờ là được."
+          },
+          {
+            "speaker": "A",
+            "chinese": "听你这么说，我就放心了。",
+            "pinyin": "Tīng nǐ zhème shuō, wǒ jiù fàngxīn le.",
+            "vietnamese": "Nghe bác sĩ nói thế, tôi yên tâm rồi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "回去多喝开水，少吃辣的东西。",
+            "pinyin": "Huíqù duō hē kāishuǐ, shǎo chī là de dōngxi.",
+            "vietnamese": "Về nhà uống nhiều nước sôi, ăn ít đồ cay thôi."
+          }
+        ]
+      },
+      {
+        "title": "在家里 (At home / Ở nhà)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你总是看手机，少看一会儿不行吗？",
+            "pinyin": "Nǐ zǒngshì kàn shǒujī, shǎo kàn yíhuìr bù xíng ma?",
+            "vietnamese": "Anh cứ luôn xem điện thoại, bớt xem một tí không được sao?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我在看今天的新闻呢，看新闻能了解很多事。",
+            "pinyin": "Wǒ zài kàn jīntiān de xīnwén ne, kàn xīnwén néng liǎojiě hěn duō shì.",
+            "vietnamese": "Anh đang xem tin tức hôm nay mà, xem tin tức có thể hiểu biết thêm nhiều việc."
+          },
+          {
+            "speaker": "A",
+            "chinese": "那也得注意眼睛啊，树多绿啊，多看看外面吧。",
+            "pinyin": "Nà yě děi zhùyì yǎnjing a, shù duō lǜ a, duō kànkan wàimiàn ba.",
+            "vietnamese": "Thế thì cũng phải chú ý mắt chứ, cây cối xanh mát thế kia, nhin ra ngoài nhiều hơn đi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "好，好，我这就关掉手机。",
+            "pinyin": "Hǎo, hǎo, wǒ zhè jiù guān diào shǒujī.",
+            "vietnamese": "Được rồi, được rồi, anh tắt điện thoại ngay đây."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Đại từ nghi vấn biểu thị sự phiếm chỉ (谁都/什么都/哪儿都)",
+        "examples": [
+          {
+            "chinese": "这个事谁都知道。",
+            "pinyin": "Zhè ge shì shéi dōu zhīdào.",
+            "vietnamese": "Chuyện này ai cũng biết."
+          },
+          {
+            "chinese": "今天我什么都不想吃。",
+            "pinyin": "Jīntiān wǒ shénme dōu bù xiǎng chī.",
+            "vietnamese": "Hôm nay cái gì tôi cũng không muốn ăn."
+          },
+          {
+            "chinese": "周末我哪儿都不想去。",
+            "pinyin": "Zhōumò wǒ nǎr dōu bù xiǎng qù.",
+            "vietnamese": "Cuối tuần tôi chẳng muốn đi đâu cả."
+          }
+        ]
+      },
+      {
+        "title": "Bổ ngữ kết quả 好 (kết quả hoàn thành và làm người ta hài lòng)",
+        "examples": [
+          {
+            "chinese": "我已经准备好明天的考试了。",
+            "pinyin": "Wǒ yǐjīng zhǔnbèi hǎo míngtiān de kǎoshì le.",
+            "vietnamese": "Tôi đã chuẩn bị xong xuôi cho kỳ thi ngày mai rồi."
+          },
+          {
+            "chinese": "医生一定会看好你的病。",
+            "pinyin": "Yīshēng yídìng huì kàn hǎo nǐ de bìng.",
+            "vietnamese": "Bác sĩ nhất định sẽ chữa khỏi bệnh cho bạn."
+          },
+          {
+            "chinese": "我们商量好了，明天九点出发。",
+            "pinyin": "Wǒmen shāngliang hǎo le, míngtiān jiǔ diǎn chūfā.",
+            "vietnamese": "Chúng tôi bàn bạc ổn thỏa rồi, 9 giờ sáng mai xuất phát."
+          }
+        ]
+      },
+      {
+        "title": "Phó từ 总是 (Luôn luôn)",
+        "examples": [
+          {
+            "chinese": "他总是第一个到教室。",
+            "pinyin": "Tā zǒngshì dì-yī ge dào jiàoshì.",
+            "vietnamese": "Anh ấy luôn là người đầu tiên đến phòng học."
+          },
+          {
+            "chinese": "你怎么总是抱怨？",
+            "pinyin": "Nǐ zěnme zǒngshì bàoyuàn?",
+            "vietnamese": "Sao bạn cứ luôn than phiền thế?"
+          },
+          {
+            "chinese": "生活总是充满了希望。",
+            "pinyin": "Shēnghuó zǒngshì chōngmǎn le xīwàng.",
+            "vietnamese": "Cuộc sống luôn tràn ngập hy vọng."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 18,
+    "vocabulary": [
+      {
+        "word": "相信",
+        "pinyin": "xiāngxìn",
+        "meaning": "tin tưởng"
+      },
+      {
+        "word": "猜",
+        "pinyin": "cāi",
+        "meaning": "đoán"
+      },
+      {
+        "word": "节目",
+        "pinyin": "jiémù",
+        "meaning": "chương trình"
+      },
+      {
+        "word": "参加",
+        "pinyin": "cānjiā",
+        "meaning": "tham gia"
+      },
+      {
+        "word": "极",
+        "pinyin": "jí",
+        "meaning": "cực kỳ"
+      },
+      {
+        "word": "检查",
+        "pinyin": "jiǎnchá",
+        "meaning": "kiểm tra"
+      },
+      {
+        "word": "认真",
+        "pinyin": "rènzhēn",
+        "meaning": "chăm chỉ, nghiêm túc"
+      },
+      {
+        "word": "聊天",
+        "pinyin": "liáotiān",
+        "meaning": "trò chuyện, tán gẫu"
+      },
+      {
+        "word": "画",
+        "pinyin": "huà",
+        "meaning": "vẽ, bức tranh"
+      },
+      {
+        "word": "体育",
+        "pinyin": "tǐyù",
+        "meaning": "thể dục, thể thao"
+      },
+      {
+        "word": "合适",
+        "pinyin": "héshì",
+        "meaning": "phù hợp, thích hợp"
+      },
+      {
+        "word": "决定",
+        "pinyin": "juédìng",
+        "meaning": "quyết định"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "在办公室 (At the office / Tại văn phòng)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你觉得这个方案大家会同意吗？",
+            "pinyin": "Nǐ juéde zhè ge fāng'àn dàjiā huì tóngyì ma?",
+            "vietnamese": "Bạn thấy phương án này mọi người có đồng ý không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我相信他们会同意的，因为这个方案写得非常认真。",
+            "pinyin": "Wǒ xiāngxìn tāmen huì tóngyì de, yīnwèi zhè ge fāng'àn xiě de fēicháng rènzhēn.",
+            "vietnamese": "Tôi tin họ sẽ đồng ý thôi, bởi vì phương án này viết rất cẩn thận."
+          },
+          {
+            "speaker": "A",
+            "chinese": "但愿如此，我已经检查了好几遍了。",
+            "pinyin": "Dànyuàn rúcǐ, wǒ yǐjīng jiǎnchá le hǎo jǐ biàn le.",
+            "vietnamese": "Mong là như vậy, tôi đã kiểm tra mấy lần rồi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "放心吧，一定没问题的。",
+            "pinyin": "Fàngxīn ba, yídìng méi wèntí de.",
+            "vietnamese": "Yên tâm đi, nhất định không có vấn đề gì đâu."
+          }
+        ]
+      },
+      {
+        "title": "在客厅 (In the living room / Ở phòng khách)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "今晚的电视节目满意吗？",
+            "pinyin": "Jīnwǎn de diànshì jiémù mǎnyì ma?",
+            "vietnamese": "Chương trình truyền hình tối nay bạn thấy hài lòng không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "这个体育节目好看极了！",
+            "pinyin": "Zhè ge tǐyù jiémù hǎokàn jí le!",
+            "vietnamese": "Chương trình thể thao này hay cực kỳ!"
+          },
+          {
+            "speaker": "A",
+            "chinese": "你猜谁会赢得比赛？",
+            "pinyin": "Nǐ cāi shéi huì yíng dé bǐsài?",
+            "vietnamese": "Bạn đoán xem ai sẽ thắng trận đấu?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我猜中国队会赢。",
+            "pinyin": "Wǒ cāi Zhōngguó duì huì yíng.",
+            "vietnamese": "Tôi đoán đội Trung Quốc sẽ thắng."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Bổ ngữ trình độ Adj + 极了 (Cực kỳ / Rất...)",
+        "examples": [
+          {
+            "chinese": "这个电影好看极了。",
+            "pinyin": "Zhè ge diànyǐng hǎokàn jí le.",
+            "vietnamese": "Bộ phim này hay cực kỳ."
+          },
+          {
+            "chinese": "今天的天气好极了。",
+            "pinyin": "Jīntiān de tiānqì hǎo jí le.",
+            "vietnamese": "Thời tiết hôm nay tốt cực kỳ."
+          },
+          {
+            "chinese": "听了这件事，他高兴极了。",
+            "pinyin": "Tīng le zhè jiàn shì, tā gāoxìng jí le.",
+            "vietnamese": "Nghe xong chuyện này, anh ấy vui cực kỳ."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc 会……的 (Biểu thị khả năng sự việc sẽ xảy ra)",
+        "examples": [
+          {
+            "chinese": "我相信他会来的。",
+            "pinyin": "Wǒ xiāngxìn tā huì lái de.",
+            "vietnamese": "Tôi tin anh ấy sẽ đến mà."
+          },
+          {
+            "chinese": "别担心，他们会同意的。",
+            "pinyin": "Bié dānxīn, tāmen huì tóngyì de.",
+            "vietnamese": "Đừng lo, họ sẽ đồng ý thôi."
+          },
+          {
+            "chinese": "只要努力，你一定会成功的。",
+            "pinyin": "Zhǐyào nǔlì, nǐ yídìng huì chénggōng de.",
+            "vietnamese": "Chỉ cần nỗ lực, bạn nhất định sẽ thành công thôi."
+          }
+        ]
+      },
+      {
+        "title": "Phó từ 又 (Diễn tả sự lặp lại của hành động đã diễn ra)",
+        "examples": [
+          {
+            "chinese": "今天你怎么又迟到了？",
+            "pinyin": "Jīntiān nǐ zěnme yòu chídào le?",
+            "vietnamese": "Hôm nay sao bạn lại đi muộn nữa rồi?"
+          },
+          {
+            "chinese": "他昨天来过，今天又来了。",
+            "pinyin": "Tā zuótiān lái guò, jīntiān yòu lái le.",
+            "vietnamese": "Hôm qua anh ấy đã đến, hôm nay lại đến nữa."
+          },
+          {
+            "chinese": "外面又下雨了。",
+            "pinyin": "Wàimiàn yòu xià yǔ le.",
+            "vietnamese": "Bên ngoài lại mưa rồi."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 19,
+    "vocabulary": [
+      {
+        "word": "迟到",
+        "pinyin": "chídào",
+        "meaning": "đến muộn, trễ"
+      },
+      {
+        "word": "换",
+        "pinyin": "huàn",
+        "meaning": "đổi, thay"
+      },
+      {
+        "word": "变化",
+        "pinyin": "biànhuà",
+        "meaning": "biến đổi, thay đổi"
+      },
+      {
+        "word": "健康",
+        "pinyin": "jiànkāng",
+        "meaning": "sức khỏe, khỏe mạnh"
+      },
+      {
+        "word": "重要",
+        "pinyin": "zhòngyào",
+        "meaning": "quan trọng"
+      },
+      {
+        "word": "瘦",
+        "pinyin": "shòu",
+        "meaning": "gầy"
+      },
+      {
+        "word": "几乎",
+        "pinyin": "jīhū",
+        "meaning": "hầu như, gần như"
+      },
+      {
+        "word": "清楚",
+        "pinyin": "qīngchu",
+        "meaning": "rõ ràng"
+      },
+      {
+        "word": "眼睛",
+        "pinyin": "yǎnjīng",
+        "meaning": "mắt"
+      },
+      {
+        "word": "矮",
+        "pinyin": "ǎi",
+        "meaning": "thấp, lùn"
+      },
+      {
+        "word": "态度",
+        "pinyin": "tàidu",
+        "meaning": "thái độ"
+      },
+      {
+        "word": "整齐",
+        "pinyin": "zhěngqí",
+        "meaning": "gọn gàng, ngăn nắp"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "在街上 (On the street / Trên đường)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "那不是小张吗？他变化真大啊！",
+            "pinyin": "Nà bú shì Xiǎo Zhāng ma? Tā biànhuà zhēn dà a!",
+            "vietnamese": "Kia chẳng phải là Tiểu Trương sao? Cậu ấy thay đổi lớn thật đấy!"
+          },
+          {
+            "speaker": "B",
+            "chinese": "你没看出来吗？他比以前瘦多了。",
+            "pinyin": "Nǐ méi kàn chūlái ma? Tā bǐ yǐqián shòu duō le.",
+            "vietnamese": "Bạn không nhìn ra sao? Cậu ấy gầy hơn trước nhiều lắm."
+          },
+          {
+            "speaker": "A",
+            "chinese": "而且他现在还戴眼镜了，我几乎没认出来。",
+            "pinyin": "Érqiě tā xiànzài hái dài yǎnjìng le, wǒ jīhū méi rèn chūlái.",
+            "vietnamese": "Hơn nữa bây giờ cậu ấy còn đeo kính nữa, tớ suýt chút nữa không nhận ra."
+          },
+          {
+            "speaker": "B",
+            "chinese": "听说他最近一直在坚持跑步，身体越来越健康了。",
+            "pinyin": "Tīngshuō tā zuìjìn yìzhí zài jiānchí pǎobù, shēntǐ yuè lái yuè jiànkāng le.",
+            "vietnamese": "Nghe nói dạo này cậu ấy liên tục kiên trì chạy bộ, cơ thể càng ngày càng khỏe mạnh."
+          }
+        ]
+      },
+      {
+        "title": "在教室 (In the classroom / Trong lớp học)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "黑板上的字你能看清楚吗？",
+            "pinyin": "Hēibǎn shàng de zì nǐ néng kàn qīngchu ma?",
+            "vietnamese": "Chữ trên bảng bạn nhìn rõ không?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "看不清楚，我换个座位吧。",
+            "pinyin": "Kàn bù qīngchu, wǒ huàn ge zuòwèi ba.",
+            "vietnamese": "Không nhìn rõ, tớ đổi chỗ ngồi khác vậy."
+          },
+          {
+            "speaker": "A",
+            "chinese": "除了第一排以外，别的座位都有人了。",
+            "pinyin": "Chúle dì-yī pái yǐwài, bié de zuòwèi dōu yǒu rén le.",
+            "vietnamese": "Ngoại trừ hàng đầu tiên ra, các chỗ khác đều có người rồi."
+          },
+          {
+            "speaker": "B",
+            "chinese": "那我就坐第一排吧，第一排看的很清楚。",
+            "pinyin": "Nà wǒ jiù zuò dì-yī pái ba, dì-yī pái kàn de hěn qīngchu.",
+            "vietnamese": "Thế tớ ngồi hàng đầu vậy, hàng đầu nhìn rất rõ."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Bổ ngữ xu hướng phức hợp V + 出来 (Nhận ra, làm ra)",
+        "examples": [
+          {
+            "chinese": "你没看出来吗？他瘦了。",
+            "pinyin": "Nǐ méi kàn chūlái ma? Tā shòu le.",
+            "vietnamese": "Bạn không nhìn ra sao? Anh ấy gầy đi rồi."
+          },
+          {
+            "chinese": "我听出来这是谁的声音了。",
+            "pinyin": "Wǒ tīng chūlái zhè shì shéi de shēngyīn le.",
+            "vietnamese": "Tôi nghe ra đây là giọng của ai rồi."
+          },
+          {
+            "chinese": "你想出来解决问题的办法了吗？",
+            "pinyin": "Nǐ xiǎng chūlái jiějué wèntí de bànfǎ le ma?",
+            "vietnamese": "Bạn đã nghĩ ra cách giải quyết vấn đề chưa?"
+          }
+        ]
+      },
+      {
+        "title": "Phó từ 几乎 (Hầu như, gần như)",
+        "examples": [
+          {
+            "chinese": "这个变化我几乎没注意到。",
+            "pinyin": "Zhè ge biànhuà wǒ jīhū méi zhùyì dào.",
+            "vietnamese": "Sự thay đổi này hầu như tôi không chú ý tới."
+          },
+          {
+            "chinese": "他们俩长得几乎一样。",
+            "pinyin": "Tāmen liǎ zhǎng de jīhū yíyàng.",
+            "vietnamese": "Hai người bọn họ trông gần như giống hệt nhau."
+          },
+          {
+            "chinese": "我几乎把这件事忘了。",
+            "pinyin": "Wǒ jīhū bǎ zhè jiàn shì wàng le.",
+            "vietnamese": "Tôi suýt nữa thì quên mất việc này."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc 除了……以外，都/还/也…… (Ngoại trừ... ra, thì...)",
+        "examples": [
+          {
+            "chinese": "除了小明以外，大家都来了。",
+            "pinyin": "Chúle Xiǎo Míng yǐwài, dàjiā dōu lái le.",
+            "vietnamese": "Ngoại trừ Tiểu Minh ra, mọi người đều đến rồi."
+          },
+          {
+            "chinese": "除了英语以外，他还会说汉语。",
+            "pinyin": "Chúle Yīngyǔ yǐwài, tā hái huì shuō Hànyǔ.",
+            "vietnamese": "Ngoài tiếng Anh ra, anh ấy còn biết nói tiếng Trung."
+          },
+          {
+            "chinese": "除了看书以外，我还喜欢听音乐。",
+            "pinyin": "Chúle kàn shū yǐwài, wǒ hái xǐhuan tīng yīnyuè.",
+            "vietnamese": "Ngoài đọc sách ra, tôi còn thích nghe nhạc."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "lessonNumber": 20,
+    "vocabulary": [
+      {
+        "word": "被",
+        "pinyin": "bèi",
+        "meaning": "bị, được (câu bị động)"
+      },
+      {
+        "word": "影响",
+        "pinyin": "yǐngxiǎng",
+        "meaning": "ảnh hưởng"
+      },
+      {
+        "word": "解释",
+        "pinyin": "jiěshì",
+        "meaning": "giải thích"
+      },
+      {
+        "word": "习惯",
+        "pinyin": "xíguàn",
+        "meaning": "thói quen, quen"
+      },
+      {
+        "word": "短信",
+        "pinyin": "duǎnxìn",
+        "meaning": "tin nhắn"
+      },
+      {
+        "word": "难过",
+        "pinyin": "nánguò",
+        "meaning": "buồn bã, khó chịu"
+      },
+      {
+        "word": "改变",
+        "pinyin": "gǎibiàn",
+        "meaning": "thay đổi"
+      },
+      {
+        "word": "关于",
+        "pinyin": "guānyú",
+        "meaning": "về, liên quan đến"
+      },
+      {
+        "word": "努力",
+        "pinyin": "nǔlì",
+        "meaning": "nỗ lực, cố gắng"
+      },
+      {
+        "word": "声音",
+        "pinyin": "shēngyīn",
+        "meaning": "âm thanh, tiếng"
+      },
+      {
+        "word": "忘记",
+        "pinyin": "wàngjì",
+        "meaning": "quên"
+      },
+      {
+        "word": "发现",
+        "pinyin": "fāxiàn",
+        "meaning": "phát hiện"
+      }
+    ],
+    "dialogues": [
+      {
+        "title": "在操场 (On the playground / Trên sân tập)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "你现在怎么也喜欢每天早上来跑步了？",
+            "pinyin": "Nǐ xiànzài zěnme yě xǐhuan měitiān zǎoshang lái pǎobù le?",
+            "vietnamese": "Bây giờ sao bạn cũng thích mỗi sáng đến chạy bộ thế?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "我是被他影响了，他每天都坚持锻炼。",
+            "pinyin": "Wǒ shì bèi tā yǐngxiǎng le, tā měitiān dōu jiānchí duànliàn.",
+            "vietnamese": "Tôi là bị anh ấy ảnh hưởng đấy, anh ấy ngày nào cũng kiên trì tập luyện."
+          },
+          {
+            "speaker": "A",
+            "chinese": "这是个好习惯，早起跑步对身体很好。",
+            "pinyin": "Zhè shì ge hǎo xíguàn, zǎo qǐ pǎobù duì shēntǐ hěn hǎo.",
+            "vietnamese": "Đây là một thói quen tốt, dậy sớm chạy bộ rất tốt cho cơ thể."
+          },
+          {
+            "speaker": "B",
+            "chinese": "是的，只要坚持，身体就会越来越好。",
+            "pinyin": "Shì de, zhǐyào jiānchí, shēntǐ jiù huì yuè lái yuè hǎo.",
+            "vietnamese": "Đúng thế, chỉ cần kiên trì, cơ thể sẽ ngày càng tốt hơn."
+          }
+        ]
+      },
+      {
+        "title": "在教室 (In the classroom / Trong lớp học)",
+        "lines": [
+          {
+            "speaker": "A",
+            "chinese": "我的蛋糕被谁吃了？",
+            "pinyin": "Wǒ de dàngāo bèi shéi chī le?",
+            "vietnamese": "Bánh ngọt của tôi bị ai ăn mất rồi?"
+          },
+          {
+            "speaker": "B",
+            "chinese": "是不是被小狗吃了？我刚才看到小狗在桌子旁。",
+            "pinyin": "Shì bú shì bèi xiǎogǒu chī le? Wǒ gāngcái kàndào xiǎogǒu zài zhuōzi páng.",
+            "vietnamese": "Có phải bị chú chó nhỏ ăn rồi không? Vừa nãy tớ thấy chú chó ở bên cạnh bàn."
+          },
+          {
+            "speaker": "A",
+            "chinese": "真让人难过，我本来留着当午饭的。",
+            "pinyin": "Zhēn ràng rén nánguò, wǒ běnlái liú zhe dāng wǔfàn de.",
+            "vietnamese": "Thật làm người ta buồn mà, tớ vốn dĩ giữ lại làm bữa trưa."
+          },
+          {
+            "speaker": "B",
+            "chinese": "别难过了，我请你去食堂吃吧。",
+            "pinyin": "Bié nánguò le, wǒ qǐng nǐ qù shítáng chī ba.",
+            "vietnamese": "Đừng buồn nữa, tớ mời bạn xuống nhà ăn ăn nhé."
+          }
+        ]
+      }
+    ],
+    "grammar": [
+      {
+        "title": "Câu bị động với chữ 被 (S + 被 + O + V + Thành phần khác)",
+        "examples": [
+          {
+            "chinese": "我被他影响了。",
+            "pinyin": "Wǒ bèi tā yǐngxiǎng le.",
+            "vietnamese": "Tôi bị anh ấy ảnh hưởng rồi."
+          },
+          {
+            "chinese": "苹果被弟弟吃了。",
+            "pinyin": "Píngguǒ bèi dìdi chī le.",
+            "vietnamese": "Quả táo bị em trai ăn rồi."
+          },
+          {
+            "chinese": "我的词典被他拿走了。",
+            "pinyin": "Wǒ de cídiǎn bèi tā ná zǒu le.",
+            "vietnamese": "Từ điển của tôi bị anh ấy lấy đi rồi."
+          }
+        ]
+      },
+      {
+        "title": "Cấu trúc điều kiện 只要……就…… (Chỉ cần... thì...)",
+        "examples": [
+          {
+            "chinese": "只要好好复习，就一定能考好。",
+            "pinyin": "Zhǐyào hǎohāo fùxí, jiù yídìng néng kǎo hǎo.",
+            "vietnamese": "Chỉ cần ôn tập tốt thì nhất định có thể thi tốt."
+          },
+          {
+            "chinese": "只要不下雨，我们就去爬山。",
+            "pinyin": "Zhǐyào bù xià yǔ, wǒmen jiù qù páshān.",
+            "vietnamese": "Chỉ cần không mưa thì chúng ta sẽ đi leo núi."
+          },
+          {
+            "chinese": "只要你愿意，随时可以来找我。",
+            "pinyin": "Zhǐyào nǐ yuànyì, suíshí kěyǐ lái zhǎo wǒ.",
+            "vietnamese": "Chỉ cần bạn đồng ý, bất cứ lúc nào cũng có thể đến tìm tôi."
+          }
+        ]
+      },
+      {
+        "title": "Giới từ 关于 (Về, liên quan đến)",
+        "examples": [
+          {
+            "chinese": "这是一本关于中国历史的书。",
+            "pinyin": "Zhè shì yì běn guānyú Zhōngguó lìshǐ de shū.",
+            "vietnamese": "Đây là một cuốn sách về lịch sử Trung Quốc."
+          },
+          {
+            "chinese": "关于这个会议，我有些想法。",
+            "pinyin": "Guānyú zhè ge huìyì, wǒ yǒu xiē xiǎngfǎ.",
+            "vietnamese": "Về cuộc họp này, tôi có một vài ý kiến."
+          },
+          {
+            "chinese": "老师解释了关于这道题的问题。",
+            "pinyin": "Lǎoshī jiěshì le guānyú zhè dào tí de wèntí.",
+            "vietnamese": "Thầy giáo đã giải thích vấn đề liên quan đến câu hỏi này."
+          }
+        ]
+      }
+    ]
+  }
+]

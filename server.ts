@@ -26,7 +26,7 @@ const responseSchema: Schema = {
           examplePinyin: { type: Type.STRING },
           exampleMeaning: { type: Type.STRING },
         },
-        required: ["word", "pinyin", "meaning", "radicals", "story", "actualWord"],
+        required: ["word", "pinyin", "meaning", "radicals", "story", "actualWord", "exampleSentence", "examplePinyin", "exampleMeaning"],
       },
     },
   },
@@ -35,17 +35,18 @@ const responseSchema: Schema = {
 // API Route for Batch Gemini analysis
 app.post("/api/gemini/analyze-batch", async (req, res) => {
   try {
-    const { words } = req.body;
+    const { words, apiKey: clientApiKey, model: clientModel } = req.body;
     if (!words || !Array.isArray(words)) {
       return res.status(400).json({ error: "Missing words array" });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = (clientApiKey && clientApiKey.trim()) || process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY không tồn tại trên server.");
+      return res.status(400).json({ error: "GEMINI_API_KEY không tồn tại trên server và không có Custom API Key được cấu hình." });
     }
 
+    const modelName = clientModel || "gemini-3.5-flash";
     const ai = new GoogleGenAI({ apiKey });
 
     const prompt = `Phân tích danh sách ${words.length} từ tiếng Trung sau đây.
@@ -63,7 +64,7 @@ Danh sách từ: ${words.join(', ')}`;
     while (retries > 0) {
       try {
          const genResponse = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
+          model: modelName,
           contents: prompt,
           config: {
             temperature: 0.2,

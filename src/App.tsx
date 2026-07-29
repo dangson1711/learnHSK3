@@ -56,6 +56,8 @@ import {
   getVocabulariesForTopic,
   ALL_600_VOCABULARIES,
 } from "./data/vocabulary";
+import { TOPIC_DIALOGUES } from "./data/dialogues";
+import { TOPIC_GRAMMARS } from "./data/grammar";
 import { StrokeOrderVisualizer } from "./components/StrokeOrderVisualizer";
 import { VocabularyReview } from "./components/VocabularyReview";
 import { AIAnalysisPanel } from "./components/AIAnalysisPanel";
@@ -1219,6 +1221,7 @@ export default function App() {
 
   // Lesson state
   const [activeTopic, setActiveTopic] = useState<Topic | null>(null);
+  const [topicMode, setTopicMode] = useState<"vocabulary" | "dialogue" | "grammar">("vocabulary");
   const [lessonWordIndex, setLessonWordIndex] = useState<number>(0);
   const [showExampleTranslation, setShowExampleTranslation] =
     useState<boolean>(false);
@@ -1799,6 +1802,7 @@ export default function App() {
   // Handle start topic lesson
   const startTopicLesson = (topic: Topic) => {
     setActiveTopic(topic);
+    setTopicMode("vocabulary");
     setLessonWordIndex(0);
     setQuizMode(false);
     setQuizCompleted(false);
@@ -2875,7 +2879,7 @@ export default function App() {
                                         className="text-base font-bold text-slate-900 hover:text-blue-600 cursor-pointer"
                                         onClick={() => startTopicLesson(topic)}
                                       >
-                                        Bài {idx + 1}: {topic.title}
+                                        {topic.title}
                                       </h3>
                                       <span className="text-[10px] px-2 py-0.5 font-bold font-serif bg-slate-100 text-slate-700 rounded-full border border-slate-200">
                                         {topic.vietnameseTitle}
@@ -2946,7 +2950,7 @@ export default function App() {
                             >
                               {topicsForActive600Tab.map((topic, i) => (
                                 <option key={topic.id} value={topic.order}>
-                                  Bài {i + 1}: {topic.title}
+                                  {topic.title}
                                 </option>
                               ))}
                             </select>
@@ -3596,24 +3600,131 @@ export default function App() {
                   </span>
                 </div>
 
-                {/* Progress status bar */}
-                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                  <div
-                    className="bg-blue-600 h-full transition-all duration-300"
-                    style={{
-                      width: `${
-                        quizMode
-                          ? ((lessonWordIndex + 1) / quizQuestions.length) * 100
-                          : ((lessonWordIndex + 1) /
-                              activeTopicVocabularies.length) *
-                            100
-                      }%`,
-                    }}
-                  />
-                </div>
+                {/* Mode Tabs */}
+                {!quizMode && (
+                  <div className="flex border-b border-slate-100 mb-4 px-2">
+                    <button
+                      onClick={() => setTopicMode("vocabulary")}
+                      className={`flex-1 py-3 text-sm font-bold text-center border-b-2 transition-colors ${
+                        topicMode === "vocabulary"
+                          ? "border-blue-600 text-blue-600"
+                          : "border-transparent text-slate-400 hover:text-slate-700"
+                      }`}
+                    >
+                      Từ vựng
+                    </button>
+                    {TOPIC_DIALOGUES.some((d) => d.topicId === activeTopic.id) && (
+                      <button
+                        onClick={() => setTopicMode("dialogue")}
+                        className={`flex-1 py-3 text-sm font-bold text-center border-b-2 transition-colors ${
+                          topicMode === "dialogue"
+                            ? "border-blue-600 text-blue-600"
+                            : "border-transparent text-slate-400 hover:text-slate-700"
+                        }`}
+                      >
+                        Bài khóa
+                      </button>
+                    )}
+                    {TOPIC_GRAMMARS.some((g) => g.topicId === activeTopic.id) && (
+                      <button
+                        onClick={() => setTopicMode("grammar")}
+                        className={`flex-1 py-3 text-sm font-bold text-center border-b-2 transition-colors ${
+                          topicMode === "grammar"
+                            ? "border-blue-600 text-blue-600"
+                            : "border-transparent text-slate-400 hover:text-slate-700"
+                        }`}
+                      >
+                        Ngữ pháp
+                      </button>
+                    )}
+                  </div>
+                )}
 
-                {/* Quiz screen template */}
-                {quizMode ? (
+                {/* Progress status bar */}
+                {topicMode === "vocabulary" && (
+                  <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                    <div
+                      className="bg-blue-600 h-full transition-all duration-300"
+                      style={{
+                        width: `${
+                          quizMode
+                            ? ((lessonWordIndex + 1) / quizQuestions.length) * 100
+                            : ((lessonWordIndex + 1) /
+                                activeTopicVocabularies.length) *
+                              100
+                        }%`,
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Main Content Area */}
+                {topicMode === "grammar" ? (
+                  <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-6 text-left">
+                    <h3 className="text-lg font-bold text-slate-800">Ngữ pháp ({activeTopic.title})</h3>
+                    <div className="space-y-6">
+                      {TOPIC_GRAMMARS.find((g) => g.topicId === activeTopic.id)?.grammarPoints.map((point, idx) => (
+                        <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-4">
+                          <h4 className="font-bold text-blue-700 border-b border-slate-200 pb-2">{point.title}</h4>
+                          <div className="space-y-3 pt-2">
+                            {point.examples.map((example, exIdx) => (
+                              <div key={exIdx} className="space-y-1">
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-base font-serif font-semibold text-slate-800">
+                                    {example.chinese}
+                                  </span>
+                                  <button
+                                    onClick={(e) => speakChineseText(example.chinese, e)}
+                                    className="text-slate-400 hover:text-blue-600 transition-colors p-1 rounded-full hover:bg-blue-50"
+                                  >
+                                    <Volume2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                                <div className="text-sm font-mono text-slate-500">{example.pinyin}</div>
+                                <div className="text-sm text-slate-600">{example.vietnamese}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : topicMode === "dialogue" ? (
+                  <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-6 text-left">
+                    <h3 className="text-lg font-bold text-slate-800">Bài khóa ({activeTopic.title})</h3>
+                    <div className="space-y-6">
+                      {TOPIC_DIALOGUES.find((d) => d.topicId === activeTopic.id)?.dialogues.map((dialogue, idx) => (
+                        <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-4">
+                          <h4 className="font-bold text-blue-700 border-b border-slate-200 pb-2">
+                            {dialogue.title ? `Bài khóa ${idx + 1}: ${dialogue.title}` : `Bài khóa ${idx + 1}`}
+                          </h4>
+                          {dialogue.lines.map((line, lineIdx) => (
+                            <div key={lineIdx} className="flex space-x-3">
+                              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0 mt-1">
+                                {line.speaker}
+                              </div>
+                              <div>
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-lg font-serif font-semibold text-slate-800">
+                                    {line.chinese}
+                                  </span>
+                                  <button
+                                    onClick={(e) => speakChineseText(line.chinese, e)}
+                                    className="text-slate-400 hover:text-blue-600 transition-colors p-1 rounded-full hover:bg-blue-50"
+                                  >
+                                    <Volume2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                                <div className="text-sm text-slate-500 font-mono mt-0.5">{line.pinyin}</div>
+                                <div className="text-sm text-slate-700 mt-0.5">{line.vietnamese}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : quizMode ? (
                   <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-6">
                     {/* Quiz finished layout */}
                     {quizCompleted ? (

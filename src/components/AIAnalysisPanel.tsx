@@ -65,22 +65,49 @@ export function AIAnalysisPanel({
 
       } else {
         // Tự động gọi AI API nếu chưa có trong Database
+        const savedApiKey = localStorage.getItem("gemini_api_key") || "";
+        const savedModel = localStorage.getItem("gemini_model") || "gemini-3.5-flash";
+
         const res = await fetch("/api/gemini/analyze-batch", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ words: [word] }),
+          body: JSON.stringify({ 
+            words: [word],
+            apiKey: savedApiKey,
+            model: savedModel
+          }),
         });
 
         if (!res.ok) {
+          let errorMessage = `Yêu cầu thất bại (Mã lỗi: ${res.status})`;
           try {
-            const errBody = await res.json();
-            throw new Error(errBody.error || "Không thể tạo dữ liệu mới từ AI.");
-          } catch (e: any) {
-            throw new Error(e.message || "Không thể tạo dữ liệu mới từ AI.");
-          }
+            const contentType = res.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+              const errBody = await res.json();
+              errorMessage = errBody.error || errorMessage;
+            } else {
+              const text = await res.text();
+              if (text.includes("<!doctype") || text.includes("<html")) {
+                errorMessage = "Máy chủ bận hoặc gặp lỗi cấu hình hệ thống. Vui lòng thử lại sau.";
+              } else {
+                errorMessage = text.slice(0, 100) || errorMessage;
+              }
+            }
+          } catch (e) {}
+          throw new Error(errorMessage);
         }
 
-        const results = await res.json();
+        let results;
+        try {
+          const contentType = res.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            results = await res.json();
+          } else {
+            throw new Error("Không nhận được dữ liệu JSON hợp lệ từ server.");
+          }
+        } catch (jsonErr: any) {
+          throw new Error("Dữ liệu phản hồi không đúng định dạng: " + jsonErr.message);
+        }
         
         if (Array.isArray(results) && results.length > 0 && results[0].word) {
           const item = results[0];

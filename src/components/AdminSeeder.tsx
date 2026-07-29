@@ -1,29 +1,74 @@
-import React, { useState } from "react";
-import { Database, Loader2 } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Database, Loader2, Eye, EyeOff, Cpu, Key } from "lucide-react";
 import { HSK_1_WORDS_LIST, HSK_2_WORDS_LIST, HSK_3_WORDS_LIST } from "../data/vocabulary";
 import { AUTOMATION_WORDS } from "../data/automation";
 import { db } from "../lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection, getDocs } from "firebase/firestore";
 
 export function AdminSeeder() {
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [logs, setLogs] = useState<string[]>([]);
   const [isFinished, setIsFinished] = useState(false);
-  const isRunningRef = React.useRef(false);
+  const [pendingCount, setPendingCount] = useState<number | null>(null);
+  const [checking, setChecking] = useState(false);
+  const isRunningRef = useRef(false);
 
-  const allWords = [
-    ...HSK_1_WORDS_LIST.map(w => w.word),
-    ...HSK_2_WORDS_LIST.map(w => w.word),
-    ...HSK_3_WORDS_LIST.map(w => w.word),
-    ...AUTOMATION_WORDS.map(w => w.word)
-  ];
+  // Configuration settings for custom API Key and Gemini model
+  const [customApiKey, setCustomApiKey] = useState<string>(() => {
+    return localStorage.getItem("gemini_api_key") || "";
+  });
+  const [selectedModel, setSelectedModel] = useState<string>(() => {
+    return localStorage.getItem("gemini_model") || "gemini-3.5-flash";
+  });
+  const [showKey, setShowKey] = useState(false);
 
-  const BATCH_SIZE = 30;
+  useEffect(() => {
+    localStorage.setItem("gemini_api_key", customApiKey);
+  }, [customApiKey]);
+
+  useEffect(() => {
+    localStorage.setItem("gemini_model", selectedModel);
+  }, [selectedModel]);
+
+  // Deduplicate all words to ensure unique entries
+  const allWords = Array.from(
+    new Set([
+      ...HSK_1_WORDS_LIST.map(w => w.word),
+      ...HSK_2_WORDS_LIST.map(w => w.word),
+      ...HSK_3_WORDS_LIST.map(w => w.word),
+      ...AUTOMATION_WORDS.map(w => w.word)
+    ])
+  );
+
+  const BATCH_SIZE = 20; // 20 words per batch
 
   const addLog = (msg: string) => {
     setLogs(prev => [...prev, msg].slice(-10)); // Keep only last 10 logs
   };
+
+  // Check pending words on mount
+  useEffect(() => {
+    const checkPendingOnMount = async () => {
+      setChecking(true);
+      try {
+        const querySnapshot = await getDocs(collection(db, "vocabularies"));
+        const existingWords = new Set();
+        querySnapshot.forEach((doc) => {
+          existingWords.add(doc.id);
+        });
+
+        const pending = allWords.filter(w => !existingWords.has(w.trim().replace(/\//g, '-')));
+        setPendingCount(pending.length);
+        setProgress({ current: 0, total: pending.length });
+      } catch (err: any) {
+        console.error("Lỗi khi kiểm tra dữ liệu cũ:", err);
+      } finally {
+        setChecking(false);
+      }
+    };
+    checkPendingOnMount();
+  }, []);
 
   const startSeeding = async () => {
     if (isRunningRef.current) return;
@@ -34,7 +79,6 @@ export function AdminSeeder() {
     addLog(`Đang kiểm tra dữ liệu hiện có trên Database...`);
 
     try {
-      const { collection, getDocs } = await import("firebase/firestore");
       const querySnapshot = await getDocs(collection(db, "vocabularies"));
       const existingWords = new Set();
       querySnapshot.forEach((doc) => {
@@ -42,18 +86,18 @@ export function AdminSeeder() {
       });
 
       const pendingWords = allWords.filter(w => !existingWords.has(w.trim().replace(/\//g, '-')));
+      setPendingCount(pendingWords.length);
+      setProgress({ current: 0, total: pendingWords.length });
       
       if (pendingWords.length === 0) {
         addLog(`✅ Tất cả ${allWords.length} từ đã được phân tích. Không cần chạy thêm.`);
         setIsRunning(false);
         isRunningRef.current = false;
         setIsFinished(true);
-        setProgress({ current: allWords.length, total: allWords.length });
         return;
       }
 
       addLog(`🚀 Bắt đầu quá trình Bơm dữ liệu (${pendingWords.length} từ chưa có)...`);
-      setProgress({ current: 0, total: pendingWords.length });
 
       let totalProcessed = 0;
 
@@ -76,15 +120,43 @@ export function AdminSeeder() {
             const res = await fetch("/api/gemini/analyze-batch", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ words: batch }),
+              body: JSON.stringify({ 
+                words: batch,
+                apiKey: customApiKey,
+                model: selectedModel
+              }),
             });
 
             if (!res.ok) {
-              const errBody = await res.json();
-              throw new Error(errBody.error || "Server error");
+              let errorMessage = `Yêu cầu thất bại (Mã lỗi: ${res.status})`;
+              try {
+                const contentType = res.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                  const errBody = await res.json();
+                  errorMessage = errBody.error || errorMessage;
+                } else {
+                  const text = await res.text();
+                  if (text.includes("<!doctype") || text.includes("<html")) {
+                    errorMessage = "Máy chủ bận hoặc gặp lỗi quota Gemini. Vui lòng thử lại sau.";
+                  } else {
+                    errorMessage = text.slice(0, 100) || errorMessage;
+                  }
+                }
+              } catch (e) {}
+              throw new Error(errorMessage);
             }
 
-            const results = await res.json();
+            let results;
+            try {
+              const contentType = res.headers.get("content-type");
+              if (contentType && contentType.includes("application/json")) {
+                results = await res.json();
+              } else {
+                throw new Error("Không nhận được dữ liệu JSON hợp lệ từ server.");
+              }
+            } catch (jsonErr: any) {
+              throw new Error("Dữ liệu phản hồi không đúng định dạng: " + jsonErr.message);
+            }
             
             if (!Array.isArray(results) || results.length === 0) {
               throw new Error("Không nhận được dữ liệu hợp lệ từ AI");
@@ -108,9 +180,19 @@ export function AdminSeeder() {
             success = true;
             totalProcessed += batch.length;
             setProgress(p => ({ ...p, current: totalProcessed }));
+            setPendingCount(prev => prev !== null ? Math.max(0, prev - batch.length) : null);
 
-            // Rate limit breaker
-            await new Promise(r => setTimeout(r, 1000));
+            // Rate limit breaker: 60 seconds delay before next batch (if any)
+            if (i + BATCH_SIZE < pendingWords.length && isRunningRef.current) {
+              addLog(`⏱️ Chờ 60 giây trước khi tiếp tục đợt tiếp theo...`);
+              for (let sec = 60; sec > 0; sec--) {
+                if (!isRunningRef.current) break;
+                if (sec === 60 || sec === 45 || sec === 30 || sec === 15 || sec <= 5) {
+                  addLog(`⏱️ Còn lại ${sec} giây...`);
+                }
+                await new Promise(r => setTimeout(r, 1000));
+              }
+            }
             
           } catch (error: any) {
             retries++;
@@ -153,18 +235,110 @@ export function AdminSeeder() {
       </div>
 
       <div className="space-y-6">
+        {/* Gemini AI Config Section */}
+        <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-4 space-y-4">
+          <div className="flex items-center space-x-2 text-slate-700 font-bold text-sm">
+            <Cpu className="w-4 h-4 text-indigo-500" />
+            <span>Cấu hình Gemini AI</span>
+          </div>
+          
+          <div className="space-y-3 text-xs">
+            {/* Model select */}
+            <div className="space-y-1.5">
+              <label className="text-slate-500 font-medium block">Phiên bản Mô hình:</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedModel("gemini-3.5-flash")}
+                  className={`py-2 px-3 rounded-lg border text-center font-semibold transition-all ${
+                    selectedModel === "gemini-3.5-flash"
+                      ? "bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm"
+                      : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  Gemini 3.5 Flash <span className="text-[9px] block opacity-80">(Mặc định)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedModel("gemini-2.5-flash")}
+                  className={`py-2 px-3 rounded-lg border text-center font-semibold transition-all ${
+                    selectedModel === "gemini-2.5-flash"
+                      ? "bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm"
+                      : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  Gemini 2.5 Flash <span className="text-[9px] block opacity-80">(Tốc độ cao)</span>
+                </button>
+              </div>
+            </div>
+
+            {/* API Key Input */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <label className="text-slate-500 font-medium flex items-center gap-1">
+                  <Key className="w-3.5 h-3.5 text-slate-400" />
+                  Custom Gemini API Key:
+                </label>
+                {customApiKey && (
+                  <button
+                    type="button"
+                    onClick={() => setCustomApiKey("")}
+                    className="text-[10px] text-rose-500 hover:underline font-semibold"
+                  >
+                    Xóa Key tùy chỉnh
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <input
+                  type={showKey ? "text" : "password"}
+                  value={customApiKey}
+                  onChange={(e) => setCustomApiKey(e.target.value)}
+                  placeholder="Mặc định (Dùng API Key của hệ thống)"
+                  className="w-full pl-3 pr-10 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 focus:outline-none bg-white text-slate-700 font-mono text-[11px]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowKey(!showKey)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                >
+                  {showKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-400 font-normal leading-relaxed">
+                * Nếu tài khoản dùng thử của hệ thống hết giới hạn (Quota Limit), bạn có thể dán API Key cá nhân của mình vào đây để tiếp tục học và bơm dữ liệu.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Pending word count summary */}
+        {checking ? (
+          <div className="flex items-center space-x-2 text-sm text-slate-500 justify-center bg-slate-50 rounded-2xl py-3 border border-slate-100">
+            <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
+            <span>Đang kiểm tra số từ cần bơm...</span>
+          </div>
+        ) : pendingCount !== null ? (
+          <div className="bg-indigo-50/60 rounded-2xl p-4 border border-indigo-100/50 flex justify-between items-center text-sm">
+            <span className="text-slate-600 font-semibold">Số từ chưa có cần bơm:</span>
+            <span className="font-bold text-indigo-700 bg-white px-3 py-1 rounded-full border border-indigo-100 shadow-sm tabular-nums text-base">
+              {pendingCount}
+            </span>
+          </div>
+        ) : null}
+
         {/* Progress Display */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm font-bold">
-            <span className="text-slate-600 uppercase tracking-widest text-[10px]">Tiến trình</span>
+            <span className="text-slate-600 uppercase tracking-widest text-[10px]">Tiến trình bơm</span>
             <span className="text-indigo-600 tabular-nums">
-              {progress.current} / {allWords.length}
+              {progress.total > 0 ? `Đã hoàn thành ${progress.current} từ (${Math.round((progress.current / progress.total) * 100)}%)` : 'Sẵn sàng'}
             </span>
           </div>
           <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
             <div
               className="bg-indigo-600 h-3 rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${allWords.length > 0 ? (progress.current / allWords.length) * 100 : 0}%` }}
+              style={{ width: `${progress.total > 0 ? (progress.current / progress.total) * 100 : 0}%` }}
             />
           </div>
         </div>
@@ -172,7 +346,7 @@ export function AdminSeeder() {
         {/* Action Button */}
         <button
           onClick={startSeeding}
-          disabled={isRunning}
+          disabled={isRunning || checking}
           className="w-full py-4 px-6 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white rounded-xl font-bold shadow-sm transition-all shadow-indigo-100 flex items-center justify-center space-x-2"
         >
           {isRunning ? (
