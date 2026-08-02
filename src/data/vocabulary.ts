@@ -55,7 +55,8 @@ export const TOPICS_DATA: Topic[] = [
   { id: 'top_hsk3_17', hskLevel: 3, title: 'Bài 17: 谁都有办法看好你的病 (Ai cũng có cách chữa khỏi bệnh cho bạn)', vietnameseTitle: '第17课：谁都有办法看好你的病 (Ai cũng có cách chữa khỏi bệnh cho bạn)', description: 'Nói về y tế, động viên tinh thần người bệnh, niềm tin vào các biện pháp chữa trị.', order: 17 },
   { id: 'top_hsk3_18', hskLevel: 3, title: 'Bài 18: 我相信 họ sẽ đồng ý (Tôi tin họ sẽ đồng ý)', vietnameseTitle: '第18课：我相信 họ sẽ đồng ý (Tôi tin họ sẽ đồng ý)', description: 'Bày tỏ sự tự tin, thuyết phục đối tác hoặc người khác đồng ý với kế hoạch.', order: 18 },
   { id: 'top_hsk3_19', hskLevel: 3, title: 'Bài 19: 你没看出来吗 (Bạn không nhìn ra sao)', vietnameseTitle: '第19课：你没看出来吗 (Bạn không nhìn ra sao)', description: 'Diễn tả sự ngạc nhiên, nhận ra sự thay đổi ở người khác hoặc sự việc xung quanh.', order: 19 },
-  { id: 'top_hsk3_20', hskLevel: 3, title: 'Bài 20: 我被他影响了 (Tôi bị anh ấy ảnh hưởng rồi)', vietnameseTitle: '第20课：我被他影响了 (Tôi bị anh ấy ảnh hưởng rồi)', description: 'Sử dụng câu chữ "被" biểu thị tác động bị động, thay đổi thói quen tốt từ người khác.', order: 20 }
+  { id: 'top_hsk3_20', hskLevel: 3, title: 'Bài 20: 我被他影响了 (Tôi bị anh ấy ảnh hưởng rồi)', vietnameseTitle: '第20课：我被他影响了 (Tôi bị anh ấy ảnh hưởng rồi)', description: 'Sử dụng câu chữ "被" biểu thị tác động bị động, thay đổi thói quen tốt từ người khác.', order: 20 },
+  ...AUTOMATION_TOPICS
 ];
 
 export const HSK_1_WORDS_LIST = [
