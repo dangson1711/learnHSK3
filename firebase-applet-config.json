@@ -1,12 +1,12 @@
 {
-  "projectId": "inner-passkey-ck7s0",
-  "appId": "1:871820112804:web:70abcf6365bcf66a05c731",
-  "apiKey": "AIzaSyB7yltWK3r1i02Sc3oi4QXrzw0B1F1UyQI",
-  "authDomain": "inner-passkey-ck7s0.firebaseapp.com",
+  "projectId": "hanzi-story-db",
+  "appId": "1:128966283576:web:6e9dbf0b472fb478f671cd",
+  "apiKey": "AIzaSyCDak_ehcD1eRM36Guejilv43-oIQy6Qxc",
+  "authDomain": "hanzi-story-db.firebaseapp.com",
   "firestoreDatabaseId": "ai-studio-hanzistory-ea855c84-c716-496b-aef3-2737280e3735",
-  "storageBucket": "inner-passkey-ck7s0.firebasestorage.app",
-  "messagingSenderId": "871820112804",
+  "storageBucket": "hanzi-story-db.firebasestorage.app",
+  "messagingSenderId": "128966283576",
   "measurementId": "",
-  "oAuthClientId": "871820112804-31cent73ev1l2h5dt3ods3ahkn75adn8.apps.googleusercontent.com",
+  "oAuthClientId": "128966283576-c3me5cub8lbgfohtb5tb70kmm94jju9e.apps.googleusercontent.com",
   "recaptchaSiteKey": ""
 }
