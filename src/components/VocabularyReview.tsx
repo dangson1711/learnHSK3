@@ -137,7 +137,7 @@ export function VocabularyReview({
 
   // Quiz state
   const [quizQuestions, setQuizQuestions] = useState<{
-    word: Vocabulary;
+    item: any;
     options: string[];
     correctIndex: number;
   }[]>([]);
@@ -145,6 +145,15 @@ export function VocabularyReview({
   const [selectedAnswerIdx, setSelectedAnswerIdx] = useState<number | null>(null);
   const [quizScore, setQuizScore] = useState(0);
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
+
+  // Safely computed active items to prevent out-of-bounds undefined reading crashes
+  const currentFlashcard = activeList[flashcardIndex] !== undefined 
+    ? activeList[flashcardIndex] 
+    : (activeList.length > 0 ? activeList[0] : null);
+
+  const currentQuizQuestion = quizQuestions[quizCurrentIdx] !== undefined 
+    ? quizQuestions[quizCurrentIdx] 
+    : null;
 
   // Reset states on mode transition
   useEffect(() => {
@@ -191,12 +200,12 @@ export function VocabularyReview({
   };
 
   const handleAnswerSubmit = (idx: number) => {
-    if (selectedAnswerIdx !== null) return;
+    if (selectedAnswerIdx !== null || !currentQuizQuestion) return;
     setSelectedAnswerIdx(idx);
-    const correctGoal = quizQuestions[quizCurrentIdx].correctIndex;
+    const correctGoal = currentQuizQuestion.correctIndex;
     const isCorrect = idx === correctGoal;
     
-    const item = quizQuestions[quizCurrentIdx].item;
+    const item = currentQuizQuestion.item;
     const key = reviewType === 'radical' ? item.character : item.word;
 
     if (isCorrect) {
@@ -460,7 +469,7 @@ export function VocabularyReview({
       )}
 
       {/* --- 2. FLASHCARD MODE IN SRS --- */}
-      {sessionMode === 'flashcard' && activeList.length > 0 && (
+      {sessionMode === 'flashcard' && currentFlashcard && (
         <div className="space-y-6 max-w-xl mx-auto">
           {/* Header controls */}
           <div className="flex items-center justify-between">
@@ -471,7 +480,7 @@ export function VocabularyReview({
               <ChevronLeft className="w-4 h-4" /> Về Danh Sách
             </button>
             <span className="text-xs font-mono font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
-              Từ ôn tập: {flashcardIndex + 1} / {activeList.length}
+              Từ ôn tập: {Math.min(flashcardIndex + 1, activeList.length)} / {activeList.length}
             </span>
           </div>
 
@@ -492,7 +501,7 @@ export function VocabularyReview({
               {!isCardFlipped ? (
                 <div className="space-y-3">
                   <h2 className="text-7xl font-serif font-black text-slate-800 tracking-tight">
-                    {reviewType === 'radical' ? activeList[flashcardIndex].character : activeList[flashcardIndex].word}
+                    {reviewType === 'radical' ? currentFlashcard.character : currentFlashcard.word}
                   </h2>
                   <span className="text-xs font-bold text-slate-400 italic block pt-1">Nhấp lật thẻ để đánh giá độ thuộc nhằm xếp lịch</span>
                 </div>
@@ -502,25 +511,25 @@ export function VocabularyReview({
                     <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest block font-mono">Phiên âm & Nghĩa Việt</span>
                     <h3 className="text-2xl font-black text-slate-900 font-sans leading-tight">
                       {reviewType === 'radical' 
-                        ? `${activeList[flashcardIndex].vietnameseName} - ${activeList[flashcardIndex].meaning}`
-                        : activeList[flashcardIndex].meaning}
+                        ? `${currentFlashcard.vietnameseName} - ${currentFlashcard.meaning}`
+                        : currentFlashcard.meaning}
                     </h3>
                     <span className="text-lg font-bold text-indigo-600 font-mono tracking-wider uppercase">
-                      / {activeList[flashcardIndex].pinyin} /
+                      / {currentFlashcard.pinyin} /
                     </span>
                   </div>
 
                   {reviewType === 'vocab' && (
                     <div className="text-left w-full">
                       <AIAnalysisPanel 
-                        word={activeList[flashcardIndex].word} 
+                        word={currentFlashcard.word} 
                         onRadicalClick={onRadicalClick}
                       />
                     </div>
                   )}
                   {reviewType === 'radical' && (
                     <div className="text-sm text-slate-600 italic bg-blue-50/50 p-3 rounded-xl border border-blue-100 text-left">
-                      {activeList[flashcardIndex].story}
+                      {currentFlashcard.story}
                     </div>
                   )}
                 </div>
@@ -546,10 +555,10 @@ export function VocabularyReview({
                       key={grade}
                       onClick={(e) => {
                         e.stopPropagation();
-                        const key = reviewType === 'radical' ? activeList[flashcardIndex].character : activeList[flashcardIndex].word;
+                        const key = reviewType === 'radical' ? currentFlashcard.character : currentFlashcard.word;
                         onUpdateSrs(key, grade as 1|2|3|4, reviewType === 'radical');
                         setIsCardFlipped(false);
-                        if (flashcardIndex === activeList.length - 1) {
+                        if (flashcardIndex >= activeList.length - 1) {
                           setSessionMode('list');
                         } else {
                           setFlashcardIndex(prev => prev + 1);
@@ -571,7 +580,7 @@ export function VocabularyReview({
                 <span className="text-xs font-bold text-slate-500 flex items-center gap-1 mb-1">
                   ✍️ Tập Viết Đúng Thứ Tự Các Nét Vẽ Ô Kẻ Mễ
                 </span>
-                <StrokeOrderVisualizer text={reviewType === 'radical' ? activeList[flashcardIndex].character : activeList[flashcardIndex].word} />
+                <StrokeOrderVisualizer text={reviewType === 'radical' ? currentFlashcard.character : currentFlashcard.word} />
               </div>
             )}
 
@@ -589,14 +598,14 @@ export function VocabularyReview({
               </button>
 
               <button
-                onClick={() => speakChinese(reviewType === 'radical' ? activeList[flashcardIndex].character : activeList[flashcardIndex].word)}
+                onClick={() => speakChinese(reviewType === 'radical' ? currentFlashcard.character : currentFlashcard.word)}
                 className="px-4.5 py-2.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-xl text-slate-600 font-bold text-xs cursor-pointer"
               >
                 🔊 Nghe Chuẩn
               </button>
 
               <button
-                disabled={flashcardIndex === activeList.length - 1}
+                disabled={flashcardIndex >= activeList.length - 1}
                 onClick={() => {
                   setFlashcardIndex(prev => prev + 1);
                   setIsCardFlipped(false);
@@ -611,7 +620,7 @@ export function VocabularyReview({
       )}
 
       {/* --- 3. MCQ QUIZ GAME --- */}
-      {sessionMode === 'quiz' && quizQuestions.length > 0 && (
+      {sessionMode === 'quiz' && currentQuizQuestion && (
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <button
@@ -633,9 +642,9 @@ export function VocabularyReview({
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Nhận diện mặt chữ</span>
                 
                 <div className="text-7xl font-serif font-black text-slate-800 tracking-tight flex items-center justify-center gap-2.5 my-3">
-                  {reviewType === 'radical' ? quizQuestions[quizCurrentIdx].item.character : quizQuestions[quizCurrentIdx].item.word}
+                  {reviewType === 'radical' ? currentQuizQuestion.item.character : currentQuizQuestion.item.word}
                   <button
-                    onClick={() => speakChinese(reviewType === 'radical' ? quizQuestions[quizCurrentIdx].item.character : quizQuestions[quizCurrentIdx].item.word)}
+                    onClick={() => speakChinese(reviewType === 'radical' ? currentQuizQuestion.item.character : currentQuizQuestion.item.word)}
                     className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-500 rounded-full cursor-pointer flex items-center justify-center"
                     title="Nghe chuẩn phát âm"
                   >
@@ -644,15 +653,15 @@ export function VocabularyReview({
                 </div>
                 
                 <span className="text-base font-bold text-indigo-600 font-mono tracking-wider block uppercase">
-                  / {quizQuestions[quizCurrentIdx].item.pinyin} /
+                  / {currentQuizQuestion.item.pinyin} /
                 </span>
               </div>
 
               {/* Distractor option buttons */}
               <div className="space-y-2 pt-2">
-                {quizQuestions[quizCurrentIdx].options.map((opt, oIdx) => {
+                {currentQuizQuestion.options.map((opt: string, oIdx: number) => {
                   const isSelected = selectedAnswerIdx === oIdx;
-                  const isCorrect = oIdx === quizQuestions[quizCurrentIdx].correctIndex;
+                  const isCorrect = oIdx === currentQuizQuestion.correctIndex;
                   
                   let optStyle = 'border-slate-200 hover:bg-slate-50 text-slate-700';
                   if (selectedAnswerIdx !== null) {
@@ -724,7 +733,7 @@ export function VocabularyReview({
                 </button>
                 <button
                   onClick={() => setSessionMode('list')}
-                  className="flex-1 py-3 bg-indigo-650 bg-indigo-600 hover:bg-slate-700 text-white rounded-2xl text-xs font-bold transition-all active:scale-95 select-none cursor-pointer"
+                  className="flex-1 py-3 bg-indigo-600 hover:bg-slate-700 text-white rounded-2xl text-xs font-bold transition-all active:scale-95 select-none cursor-pointer"
                 >
                   Xong
                 </button>
