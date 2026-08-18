@@ -3,7 +3,7 @@
   "appId": "1:128966283576:web:6e9dbf0b472fb478f671cd",
   "apiKey": "AIzaSyCDak_ehcD1eRM36Guejilv43-oIQy6Qxc",
   "authDomain": "hanzi-story-db.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-hanzistory-ea855c84-c716-496b-aef3-2737280e3735",
+  "firestoreDatabaseId": "(default)",
   "storageBucket": "hanzi-story-db.firebasestorage.app",
   "messagingSenderId": "128966283576",
   "measurementId": "",

@@ -182,12 +182,12 @@ export function AdminSeeder() {
             setProgress(p => ({ ...p, current: totalProcessed }));
             setPendingCount(prev => prev !== null ? Math.max(0, prev - batch.length) : null);
 
-            // Rate limit breaker: 60 seconds delay before next batch (if any)
+            // Rate limit breaker: 50 seconds delay before next batch (if any)
             if (i + BATCH_SIZE < pendingWords.length && isRunningRef.current) {
-              addLog(`⏱️ Chờ 60 giây trước khi tiếp tục đợt tiếp theo...`);
-              for (let sec = 60; sec > 0; sec--) {
+              addLog(`⏱️ Chờ 50 giây trước khi tiếp tục đợt tiếp theo...`);
+              for (let sec = 50; sec > 0; sec--) {
                 if (!isRunningRef.current) break;
-                if (sec === 60 || sec === 45 || sec === 30 || sec === 15 || sec <= 5) {
+                if (sec === 50 || sec === 40 || sec === 30 || sec === 20 || sec === 10 || sec <= 5) {
                   addLog(`⏱️ Còn lại ${sec} giây...`);
                 }
                 await new Promise(r => setTimeout(r, 1000));
