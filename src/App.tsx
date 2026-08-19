@@ -1704,7 +1704,7 @@ export default function App() {
   }, [progress.studyHistory, studyTimeSeconds]);
 
   // Progress metrics
-  const totalMasteryGoal = 700;
+  const totalMasteryGoal = VOCABULARY_DATA.length;
   const masteredVocabCount = useMemo(() => {
     return progress.learnedVocabulary.length;
   }, [progress.learnedVocabulary]);
@@ -1809,6 +1809,37 @@ export default function App() {
     setSelectedQuizAnswer(null);
     setQuizScore(0);
     setActiveLessonTab("details");
+  };
+
+  const masterTopicWords = (topic: Topic) => {
+    if (
+      window.confirm(
+        "Bạn có chắc chắn muốn đánh dấu đã thuộc tất cả từ vựng trong bài này và chuyển vào danh sách ôn tập ở mức độ nhớ khắc sâu?",
+      )
+    ) {
+      const topicVocabs = VOCABULARY_DATA.filter(
+        (v) => v.topicId === topic.id,
+      );
+
+      updateProgress((prev) => {
+        const newLearned = [...prev.learnedVocabulary];
+        const newSrs = prev.srsVocabulary ? { ...prev.srsVocabulary } : {};
+
+        topicVocabs.forEach((v) => {
+          if (!newLearned.includes(v.id) && !newLearned.includes(v.word)) {
+            newLearned.push(v.id);
+          }
+          const currentSrs = newSrs[v.word];
+          newSrs[v.word] = calculateSrs(v.word, 4, currentSrs);
+        });
+
+        return {
+          ...prev,
+          learnedVocabulary: newLearned,
+          srsVocabulary: newSrs,
+        };
+      });
+    }
   };
 
   // Complete Word in Lesson
@@ -2005,7 +2036,7 @@ export default function App() {
                 Hanzi Story
               </h1>
               <p className="text-[10px] text-slate-500 tracking-wider uppercase font-mono">
-                Bẻ khóa 700 từ vựng HSK 1-3 & Tự Động Hóa
+                Chinh phục HSK 3 & Tự Động Hóa
               </p>
             </div>
           </div>
@@ -2035,10 +2066,10 @@ export default function App() {
             {/* Target 600 level progress */}
             <div className="hidden sm:flex flex-col items-end">
               <span className="text-[9px] text-slate-400 font-bold uppercase font-mono">
-                HSK 1-3 Tiến độ
+                Số từ đã học
               </span>
               <span className="text-xs font-bold text-slate-800 font-mono">
-                {masteredVocabCount} / 600 từ
+                {masteredVocabCount} từ
               </span>
             </div>
 
@@ -2188,27 +2219,15 @@ export default function App() {
                 </span>
                 <Award className="w-5 h-5 text-yellow-400" />
               </div>
-              <h3 className="text-sm font-bold">Chinh phục 600 từ</h3>
+              <h3 className="text-sm font-bold">Chinh phục HSK 3</h3>
               <p className="text-xs text-slate-300 mt-1 mb-4 leading-relaxed">
                 Nắm vững chữ Hán từ bộ thủ nền tảng cổ xưa tới câu ví dụ thực
                 chiến!
               </p>
 
               <div className="space-y-1.5">
-                <div className="flex justify-between text-[11px] font-mono text-slate-400">
-                  <span>Tiến trình hoàn thành:</span>
-                  <span className="text-white font-bold">
-                    {overallHskProgressPercent}%
-                  </span>
-                </div>
-                <div className="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
-                  <div
-                    className="bg-blue-500 h-full rounded-full transition-all duration-500"
-                    style={{ width: `${overallHskProgressPercent}%` }}
-                  />
-                </div>
-                <p className="text-[10px] text-right text-slate-400">
-                  Đã thuộc {masteredVocabCount} / 700 từ vựng
+                <p className="text-[10px] text-slate-400">
+                  Đã học {masteredVocabCount} từ vựng
                 </p>
               </div>
             </div>
@@ -2250,7 +2269,7 @@ export default function App() {
                         </h2>
                         <p className="text-sm text-indigo-100 max-w-md">
                           Đi sâu thâu tóm 50 bộ thủ cổ sơ, liên kết câu chuyện,
-                          rồi áp dụng thực chiến lộ trình 600 từ vựng.
+                          rồi áp dụng thực chiến lộ trình HSK 3.
                         </p>
                       </div>
 
@@ -2318,24 +2337,12 @@ export default function App() {
                         </div>
                         <div className="flex-1 text-left">
                           <p className="text-xs text-slate-500 font-semibold tracking-wide uppercase">
-                            Đã mastered từ
+                            Số từ đã học
                           </p>
                           <div className="flex items-baseline justify-between mt-0.5">
                             <h4 className="text-xl font-bold text-slate-800 font-mono">
                               {masteredVocabCount} từ
                             </h4>
-                            <span className="text-[10px] text-indigo-500 font-semibold">
-                              Mục tiêu 600
-                            </span>
-                          </div>
-
-                          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-1">
-                            <div
-                              className="bg-indigo-500 h-full"
-                              style={{
-                                width: `${(masteredVocabCount / 600) * 100}%`,
-                              }}
-                            ></div>
                           </div>
                         </div>
                       </div>
@@ -2795,7 +2802,7 @@ export default function App() {
                             Lộ Trình Học HSK 1-3 Bài Bản
                           </h2>
                           <p className="text-xs text-slate-500 mt-0.5">
-                            Mái chèo bạt ngàn 600 từ vựng cốt lõi phân chia theo
+                            Khám phá từ vựng HSK cốt lõi phân chia theo
                             giáo trình.
                           </p>
                         </div>
@@ -2907,21 +2914,34 @@ export default function App() {
                                     </div>
                                   </div>
 
-                                  <button
-                                    onClick={() => startTopicLesson(topic)}
-                                    className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all ${
-                                      isFinished
-                                        ? "bg-slate-100 hover:bg-slate-200 text-slate-700"
-                                        : "bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-                                    }`}
-                                  >
-                                    <span>
-                                      {progressPercent > 0
-                                        ? "Học tiếp"
-                                        : "Học bài"}
-                                    </span>
-                                    <ChevronRight className="w-4 h-4" />
-                                  </button>
+                                  <div className="flex flex-col gap-2">
+                                    <button
+                                      onClick={() => startTopicLesson(topic)}
+                                      className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
+                                        isFinished
+                                          ? "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                                          : "bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                                      }`}
+                                    >
+                                      <span>
+                                        {progressPercent > 0
+                                          ? "Học tiếp"
+                                          : "Học bài"}
+                                      </span>
+                                      <ChevronRight className="w-4 h-4" />
+                                    </button>
+                                    {!isFinished && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          masterTopicWords(topic);
+                                        }}
+                                        className="px-4 py-2 rounded-xl text-[10px] font-bold border border-emerald-200 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors shadow-sm"
+                                      >
+                                        Thuộc tất cả bài rồi
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -2958,7 +2978,7 @@ export default function App() {
 
                           <div className="flex flex-col space-y-1 md:col-span-2">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                              Tìm kiếm nhanh trong 600 từ
+                              Tìm kiếm nhanh từ vựng
                             </label>
                             <div className="relative">
                               <input
@@ -3205,7 +3225,7 @@ export default function App() {
                             ) ? (
                               <>
                                 <Check className="w-3.5 h-3.5" />
-                                <span>Đã Mastered</span>
+                                <span>Đã thuộc</span>
                               </>
                             ) : (
                               <span>Đánh dấu đã thuộc chữ</span>
@@ -3482,7 +3502,7 @@ export default function App() {
                                 <p className="text-xs text-slate-500 leading-relaxed">
                                   Hệ thống hóa khoa học theo chủ điểm giao tiếp
                                   sinh động, tự tin chinh phục mốc lộ trình{" "}
-                                  <strong>600 từ vựng cốt lõi</strong>.
+                                  <strong>từ vựng HSK cốt lõi</strong>.
                                 </p>
                               </div>
                             </div>
@@ -3552,7 +3572,7 @@ export default function App() {
                               className="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                             >
                               <Layers className="w-3.5 h-3.5" />
-                              Lộ trình 600 từ
+                              Lộ trình HSK 3
                             </button>
                           </div>
                         </div>
@@ -3963,7 +3983,7 @@ export default function App() {
       <footer className="bg-white border-t border-slate-200 py-6 mt-12 text-slate-400 text-xs text-center">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>
-            © 2026 Hanzi Story. Khắc tạc 600 từ vựng và 50 bộ thủ liên cốt sinh
+            © 2026 Hanzi Story. Khắc tạc từ vựng HSK và 50 bộ thủ liên cốt sinh
             động.
           </p>
           <div className="flex space-x-4">
